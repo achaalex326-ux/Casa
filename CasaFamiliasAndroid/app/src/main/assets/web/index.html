@@ -1,0 +1,776 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#182746">
+  <meta name="description" content="Gestión privada de pagos, gastos y limpieza para seis familias.">
+  <title>Casa Familias</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="logo.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="logo.svg">
+  
+  
+  
+  <link rel="stylesheet" href="mobile.css">
+</head>
+<body class="professional"><div id="mobileApp" hidden><header id="mobileHeader"></header><main id="mobileContent"></main><nav id="mobileNav"></nav></div><div id="sourceOverlay" hidden><header><button onclick="Mobile.closeSource()">‹</button><h2 id="sourceTitle"></h2></header><main id="sourceContent"></main><button class="ghost" onclick="Mobile.closeSource()">Volver</button></div>
+  <section id="setupScreen" class="center-screen hidden">
+    <div class="panel narrow">
+      <img class="brand-logo" src="logo.svg" alt="Logo de Casa Familias">
+      <h1>Casa Familias</h1>
+      <h2>La aplicación necesita configuración</h2>
+      <p class="login-note">Pide al administrador que complete la conexión para acceder a Casa Familias.</p>
+    </div>
+  </section>
+
+  <section id="loginScreen" class="center-screen hidden">
+    <div class="panel narrow">
+      <img class="brand-logo" src="logo.svg" alt="Logo de Casa Familias">
+      <h1>Casa Familias</h1>
+      <p class="muted">Las cuentas de la casa, claras y al día</p>
+      <p class="login-note">Ingresa con el correo y la contraseña que te dieron. Si necesitas ayuda, pide apoyo al encargado.</p>
+      <form id="loginForm" class="form">
+        <label>Correo
+          <input id="loginEmail" type="email" autocomplete="username" required placeholder="familia@correo.com">
+        </label>
+        <label>Contraseña
+          <input id="loginPassword" type="password" autocomplete="current-password" required>
+        </label>
+        <button class="primary" type="submit">Entrar a mi cuenta</button>
+        <button id="forgotBtn" class="link-btn" type="button">Olvidé mi contraseña</button>
+        <div id="loginError" class="error" role="alert"></div>
+      </form>
+    </div>
+  </section>
+
+  <section id="resetScreen" class="center-screen hidden">
+    <div class="panel narrow">
+      <img class="brand-logo" src="logo.svg" alt="Logo de Casa Familias">
+      <h1>Nueva contraseña</h1>
+      <form id="resetForm" class="form">
+        <label>Nueva contraseña
+          <input id="resetPassword" type="password" minlength="8" required autocomplete="new-password">
+        </label>
+        <button class="primary" type="submit">Guardar contraseña</button>
+      </form>
+    </div>
+  </section>
+
+  <div id="app" class="app hidden">
+    <aside id="appSidebar" class="sidebar" aria-label="Menú principal">
+      <div class="brand-row">
+        <img class="brand-logo small" src="logo.svg" alt="Logo de Casa Familias">
+        <div><strong>Casa Familias</strong><small id="roleText"></small></div>
+        <button id="closeMenuBtn" class="menu-close" type="button" aria-label="Cerrar menú">×</button>
+      </div>
+      <div class="sidebar-context">Administración del hogar</div>
+      <nav id="nav"></nav>
+      <div class="side-actions">
+        <button id="installBtn" class="side-btn hidden">Instalar app</button>
+        <button id="largeTextBtn" class="side-btn" type="button" aria-pressed="false">Texto grande</button>
+        <button id="phoneNotifyBtn" class="side-btn">Activar avisos en este celular</button>
+        <button id="logoutBtn" class="side-btn">Cerrar sesión</button>
+      </div>
+    </aside>
+    <div id="menuBackdrop" class="menu-backdrop hidden" aria-hidden="true"></div>
+
+    <main class="main">
+      <header class="topbar">
+        <div class="topbar-brand-row">
+          <button id="menuToggle" class="menu-toggle" type="button" aria-expanded="false" aria-controls="appSidebar" aria-label="Abrir menú"><span aria-hidden="true">☰</span><span class="menu-toggle-label">Menú</span></button>
+          <div class="topbar-brand">
+            <img class="topbar-brand-logo" src="logo.svg" alt="">
+            <strong>Casa Familias</strong>
+          </div>
+          <button id="profileQuick" class="profile-quick" type="button" aria-label="Abrir configuración">CF</button>
+        </div>
+        <div class="topbar-leading">
+          <div class="topbar-title">
+          <span class="topbar-kicker">MI ESPACIO</span>
+          <h1 id="pageTitle" tabindex="-1">Inicio</h1>
+          <p id="userText" class="muted"></p>
+          </div>
+        </div>
+        <div class="header-actions">
+          <span id="systemStatus" class="system-pill">Conectando…</span>
+          <button id="notificationBtn" class="ghost"><span class="button-icon" aria-hidden="true">🔔</span> Avisos <span id="notifCount" class="count">0</span></button>
+          <button id="refreshBtn" class="ghost"><span class="button-icon" aria-hidden="true">↻</span> Actualizar</button>
+        </div>
+      </header>
+
+      <section id="view-dashboard" class="view">
+        <div class="metrics">
+          <article class="metric metric-debt"><span>Mi deuda</span><strong id="myDebt">0 Bs</strong></article>
+          <article class="metric metric-pending"><span>Comprobantes en revisión</span><strong id="myPending">0</strong></article>
+          <article class="metric metric-cleaning"><span>Próximo turno</span><strong id="nextTurn">-</strong></article>
+        </div>
+        <article id="payerCommandPanel" class="panel payer-command-panel hidden">
+          <div class="panel-head payer-command-head">
+            <div>
+              <span class="eyebrow">CONTROL PRINCIPAL</span>
+              <h2>Control de pagos</h2>
+              <p class="muted" id="payerFamilyNames">Familias 5 + 6 · un hogar, dos cuartos</p>
+              <span class="payer-debt-chip" id="payerOwnDebt"><span aria-hidden="true">✓</span> Deuda propia: 0 Bs</span>
+            </div>
+            <span class="workspace-badge"><span class="status-dot" aria-hidden="true"></span>Familia pagadora</span>
+          </div>
+          <div id="payerCommandMetrics" class="payer-command-metrics"></div>
+          <div class="payer-command-actions" aria-label="Acciones principales">
+            <button class="payer-command-btn payer-command-btn-primary" type="button" data-command-view="payments"><span aria-hidden="true">✓</span><span><strong>Aprobar pagos</strong><small>Revisar comprobantes pendientes</small></span><span aria-hidden="true">→</span></button>
+            <button class="payer-command-btn" type="button" data-command-view="balances"><span aria-hidden="true">👥</span><span><strong>Deudas por familia</strong><small>Ver cuánto debe cada familia</small></span><span aria-hidden="true">→</span></button>
+          </div>
+        </article>
+        <article class="dashboard-hero">
+          <div>
+            <span id="dashboardEyebrow" class="eyebrow">PANEL FAMILIAR</span>
+            <h2 id="dashboardHeroTitle">Las cuentas de la casa, claras y al día</h2>
+            <p id="dashboardHeroText">Todo lo importante está aquí. Usa los botones de abajo para ir directo a lo que necesitas.</p>
+          </div>
+          <div class="hero-stat"><strong>6</strong><span>familias</span></div>
+        </article>
+        <article id="quickStart" class="quick-start panel">
+          <div>
+            <h2>Accesos rápidos</h2>
+            </div>
+          <div id="quickActions" class="quick-actions" aria-label="Acciones frecuentes"></div>
+        </article>
+        <article id="homeCleaningPanel" class="panel home-cleaning-panel">
+          <div class="panel-head">
+            <div><span class="eyebrow">ORGANIZACIÓN DE LA CASA</span><h2 id="homeCleaningTitle">Turnos de limpieza</h2></div>
+            <span id="homeCleaningBadge" class="workspace-badge">Por semanas</span>
+          </div>
+          <div id="homeCleaningBody"></div>
+        </article>
+        <div class="grid2">
+          <article id="obligationsPanel" class="panel"><h2>Mis obligaciones</h2><div id="myDebtsList"></div></article>
+          <article id="noticesPanel" class="panel"><h2>Avisos de la casa</h2><div id="noticeList"></div></article>
+        </div>
+        <div class="grid2">
+          <article id="recentActivityPanel" class="panel"><h2 id="recentActivityTitle">Actividad reciente</h2><div id="recentActivity"></div></article>
+          <article id="comparisonPanel" class="panel"><h2>Comparación de servicios</h2><div id="comparisonBox"></div></article>
+        </div>
+      </section>
+
+      <section id="view-restaurant" class="view hidden standard-view">
+        <header class="view-page-header">
+          <button class="view-back-btn" type="button" data-back-view="dashboard" aria-label="Volver al inicio">←</button>
+          <div class="view-page-icon tone-blue" aria-hidden="true">🏪</div>
+          <div><span class="eyebrow">SERVICIOS</span><h2>Mis deudas</h2><p class="muted">Consulta los importes de servicios asignados.</p></div>
+        </header>
+        <div class="metrics">
+          <article class="metric"><span>Deuda pendiente</span><strong id="restaurantDebtTotal">0 Bs</strong></article>
+          <article class="metric"><span>Próximo vencimiento</span><strong id="restaurantNextDue">-</strong></article>
+        </div>
+        <article class="panel">
+          <div class="panel-head">
+            <div><h2>Mis deudas de servicios</h2><p class="muted">Aquí solo aparecen los montos de luz y agua que corresponden al restaurante.</p></div>
+          </div>
+          <div class="table-wrap">
+            <table><thead><tr><th>Mes</th><th>Servicio</th><th>Debes</th><th>Vence</th><th>Estado</th></tr></thead>
+            <tbody id="restaurantDebtsBody"></tbody></table>
+          </div>
+        </article>
+      </section>
+
+      <section id="view-expenses" class="view hidden expenses-view">
+
+        <header class="expenses-page-header">
+          <button id="expensesBackBtn" class="expenses-back-btn" type="button" aria-label="Volver al inicio">←</button>
+          <div class="expenses-page-icon" aria-hidden="true">🧾</div>
+          <div>
+            <span class="eyebrow">CONTROL DE LA CASA</span>
+            <h2 id="expensesViewTitle">Gastos</h2>
+            <p id="expensesViewSubtitle" class="muted">Registra, revisa y controla los gastos de la casa.</p>
+          </div>
+        </header>
+
+        <section id="expensesRoleSummary" class="expenses-summary" aria-label="Resumen de gastos"></section>
+
+        <nav id="expensesActionCards" class="expenses-action-cards" aria-label="Acciones de gastos"></nav>
+
+        <article id="expensesRecentPanel" class="expenses-recent-panel" aria-labelledby="expensesRecentTitle">
+          <div class="expenses-section-heading">
+            <div>
+              <h3 id="expensesRecentTitle">Últimos gastos</h3>
+              <p class="muted">Revisa rápidamente los movimientos más recientes.</p>
+            </div>
+            <span class="expenses-section-icon" aria-hidden="true">↗</span>
+          </div>
+          <div id="expensesRecentBody" class="expenses-recent-list"></div>
+          <a class="expenses-secondary-link" href="#expenseHistoryPanel">Ver todos los gastos <span aria-hidden="true">→</span></a>
+        </article>
+
+        <details id="monthlyServicesPanel" class="panel form-disclosure">
+          <summary>Servicios básicos del mes</summary>
+          <div class="disclosure-body"><p class="muted">Se registra un solo paquete por mes con Agua + Luz + Gas + WiFi. No se puede duplicar el mismo mes.</p>
+          <form id="monthlyServicesForm" class="form">
+            <section class="form-section form-section-primary">
+              <div class="section-heading">
+                <span class="section-number">1</span>
+                <div class="section-title"><h3>Periodo del cobro</h3><p>Indica el mes y la fecha en que deben pagar las familias.</p></div>
+              </div>
+              <div class="form-grid-2">
+                <label>Mes
+                  <input id="basicMonth" type="month" required>
+                </label>
+                <label>Fecha límite de pago
+                  <input id="basicDueDate" type="date" required>
+                </label>
+              </div>
+            </section>
+
+            <section class="form-section">
+              <div class="section-heading">
+                <span class="section-number">2</span>
+                <div class="section-title"><h3>Tipo de registro</h3><p>Usa esta opción solo para guardar una factura histórica y calcular el promedio.</p></div>
+              </div>
+              <label class="form-checkbox"><input id="referenceOnly" type="checkbox"><span>Factura histórica: no genera cobro a las familias ni deuda del restaurante.</span></label>
+            </section>
+
+            <section class="service-section">
+              <div class="service-heading"><span class="service-icon water" aria-hidden="true">💧</span><div><h3>Agua</h3><p>Registra el importe de la factura y adjunta su comprobante.</p></div></div>
+              <div class="service-fields service-fields-3">
+                <label>Importe de agua (Bs)
+                  <input id="waterAmount" type="number" min="0" step="0.01" required>
+                </label>
+                <label>Factura de agua
+                  <input id="waterReceipt" type="file" accept="image/*" required>
+                </label>
+                <label>Aporte adicional de agua (Bs)
+                  <input id="otherWaterContribution" type="number" min="0" step="0.01" value="0">
+                  <small class="muted">Pago por una actividad o uso del local.</small>
+                </label>
+              </div>
+            </section>
+
+            <section class="service-section">
+              <div class="service-heading"><span class="service-icon electricity" aria-hidden="true">💡</span><div><h3>Luz</h3><p>El restaurante cubre la diferencia sobre el promedio de las familias.</p></div></div>
+              <div class="service-fields service-fields-3">
+                <label>Importe de luz (Bs)
+                  <input id="electricityAmount" type="number" min="0" step="0.01" required>
+                </label>
+                <label>Factura de luz
+                  <input id="electricityReceipt" type="file" accept="image/*" required>
+                </label>
+                <label>Aporte adicional de luz (Bs)
+                  <input id="otherElectricityContribution" type="number" min="0" step="0.01" value="0">
+                  <small class="muted">Se descuenta de la parte de las seis familias.</small>
+                </label>
+              </div>
+            </section>
+
+            <section class="monthly-ocr-box span2" aria-label="Lectura inteligente de facturas">
+              <div class="monthly-ocr-copy">
+                <span class="eyebrow">LECTURA INTELIGENTE</span>
+                <strong>Leer precios de luz y agua con IA</strong>
+                <p>Sube la factura de <b>Luz</b> en su campo y la de <b>Agua</b> en el suyo. La IA buscará el total ubicado en la parte inferior derecha.</p>
+              </div>
+              <div class="monthly-ocr-action">
+                <button id="monthlyServicesOcrBtn" class="ghost" type="button"><span aria-hidden="true">⌕</span> Leer las dos facturas</button>
+                <span id="monthlyServicesOcrStatus" class="muted" role="status"></span>
+              </div>
+            </section>
+
+            <section class="service-section">
+              <div class="service-heading"><span class="service-icon gas" aria-hidden="true">🔥</span><div><h3>Gas</h3><p>Escribe el importe y sube la factura correspondiente.</p></div></div>
+              <div class="service-fields service-fields-2">
+                <label>Importe de gas (Bs)
+                  <input id="gasAmount" type="number" min="0" step="0.01" required>
+                </label>
+                <label>Factura de gas
+                  <input id="gasReceipt" type="file" accept="image/*" required>
+                </label>
+              </div>
+            </section>
+
+            <section class="service-section">
+              <div class="service-heading"><span class="service-icon wifi" aria-hidden="true">📶</span><div><h3>WiFi / Internet</h3><p>Registra el importe mensual y guarda su comprobante.</p></div></div>
+              <div class="service-fields service-fields-2">
+                <label>Importe de WiFi (Bs)
+                  <input id="wifiAmount" type="number" min="0" step="0.01" required>
+                </label>
+                <label>Factura de WiFi
+                  <input id="wifiReceipt" type="file" accept="image/*" required>
+                </label>
+              </div>
+            </section>
+
+            <div class="span2" id="payerFamiliesInfo"></div>
+            <button class="primary span2 form-submit" type="submit"><span aria-hidden="true">✓</span> Registrar servicios básicos del mes</button>
+          </form>
+        </div></details>
+
+        <article class="panel">
+          <div class="panel-head">
+            <h2>Servicios básicos registrados</h2>
+            <span class="muted">Un registro por mes</span>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr><th>Mes</th><th>Agua</th><th>Luz</th><th>Gas</th><th>WiFi</th><th>Total factura</th><th>Aportes extra</th><th>Aporte restaurante</th><th>Total familias</th><th>Cuota por familia</th><th>Vence</th></tr>
+              </thead>
+              <tbody id="monthlyServicesBody"></tbody>
+            </table>
+          </div>
+        </article>
+
+        <article id="externalUtilityPanel" class="panel">
+          <div class="panel-head">
+            <div><h2>Aportes del restaurante</h2><p class="muted">El sistema calcula automáticamente la diferencia entre la factura y el promedio normal de las familias.</p></div>
+          </div>
+          <div class="table-wrap">
+            <table><thead><tr><th>Mes</th><th>Servicio</th><th>Factura</th><th>Base familias</th><th>Debe restaurante</th><th>Estado</th><th>Acción</th></tr></thead>
+            <tbody id="externalUtilityBody"></tbody></table>
+          </div>
+        </article>
+
+        <details id="expenseCreatePanel" class="panel form-disclosure">
+          <summary>Registrar gasto externo / arreglo</summary>
+          <div class="disclosure-body"><p class="muted">Elige qué hacer con este monto: dividirlo entre las 6 familias, o descontarlo directamente de la próxima factura de un servicio.</p>
+          <div id="pendingCreditsInfo"></div>
+          <form id="expenseForm" class="form grid2form">
+            <label>Tipo
+              <select id="expenseCategory">
+                <option value="external">Gasto externo / arreglo</option>
+              </select>
+            </label>
+            <label class="span2">¿Qué quieres hacer con este monto?
+              <div class="row">
+                <label class="form-checkbox"><input type="radio" name="expenseMode" value="split" checked><span>Dividir entre las 6 familias</span></label>
+                <label class="form-checkbox"><input type="radio" name="expenseMode" value="discount"><span>Descontar de un servicio (sin dividir)</span></label>
+              </div>
+            </label>
+            <label>Concepto / detalle<input id="expenseConcept" required placeholder="Luz, agua, arreglo..."></label>
+            <label>Monto (Bs)<input id="expenseAmount" type="number" min="0.01" step="0.01" required></label>
+
+            <div id="expenseDiscountFields" class="span2 hidden">
+              <label>¿De qué servicio se descuenta?
+                <select id="utilityCreditService">
+                  <option value="water">Agua</option>
+                  <option value="electricity">Luz</option>
+                  <option value="gas">Gas</option>
+                  <option value="wifi">WiFi</option>
+                </select>
+              </label>
+            </div>
+
+            <div id="expenseSplitFields" class="span2 form-grid-2">
+              <label>Fecha del gasto<input id="expenseDate" type="date" required></label>
+              <label>Fecha límite<input id="expenseDueDate" type="date" required></label>
+              <label>Familia que adelantó el pago<select id="paidByFamily"></select></label>
+              <label>Plantilla recurrente<select id="recurringTemplate"><option value="">Ninguna</option></select></label>
+              <label class="span2">Justificación<textarea id="expenseJustification" rows="3"></textarea></label>
+            </div>
+
+            <div id="expenseScannerArea" class="span2 upload-box">
+              <label>Foto del comprobante<input id="expenseReceipt" type="file" accept="image/*"></label>
+              <div class="row"><button id="expenseOcrBtn" type="button" class="ghost">Leer foto y completar</button><span id="expenseOcrStatus" class="muted"></span></div>
+              <textarea id="expenseOcrText" class="hidden" rows="4" readonly></textarea>
+            </div>
+            <button class="primary span2" type="submit">Guardar</button>
+          </form>
+        </div></details>
+
+        <article class="panel" id="expenseHistoryPanel">
+          <div class="panel-head">
+            <h2>Gastos</h2>
+            <input id="expenseMonthFilter" type="month">
+          </div>
+          <div class="table-wrap">
+            <table><thead><tr><th>Fecha</th><th>Vence</th><th>Estado</th><th>Concepto</th><th>Total</th><th>Cuota aprox.</th><th>Justificación</th><th>Comprobante</th><th>Comentarios</th></tr></thead>
+            <tbody id="expensesBody"></tbody></table>
+          </div>
+        </article>
+
+      </section>
+
+      <section id="view-payments" class="view hidden payment-view">
+        <header class="payment-page-header">
+          <button id="paymentBackBtn" class="payment-back-btn" type="button" aria-label="Volver al inicio">←</button>
+          <div class="payment-page-icon" aria-hidden="true">💳</div>
+          <div>
+            <span class="eyebrow">GESTIÓN DE PAGOS</span>
+            <h2 id="paymentFormTitle">Pagar y comprobante</h2>
+            <p id="paymentHelp" class="muted">Selecciona una deuda, escribe el monto y sube el comprobante para enviarlo a revisión.</p>
+          </div>
+        </header>
+
+        <article class="panel payment-form-shell">
+          <div class="payment-section-heading">
+            <div>
+              <h3>Selecciona la deuda que deseas pagar</h3>
+              <p class="muted">Elige el mes que quieres cubrir. Si pagas de más, el excedente se conserva para tu familia.</p>
+            </div>
+            <span id="paymentDebtCount" class="payment-count-chip">Deudas pendientes</span>
+          </div>
+
+          <div id="paymentDebtCard" class="payment-debt-card">
+            <div class="payment-debt-icon" aria-hidden="true">▣</div>
+            <div class="payment-debt-copy">
+              <span id="paymentSelectedConcept">Cuota mensual</span>
+              <strong id="paymentSelectedAmount">0,00 Bs</strong>
+              <small id="paymentSelectedDue">Selecciona una deuda para continuar</small>
+            </div>
+            <span id="paymentSelectedStatus" class="payment-status-chip pending">Pendiente</span>
+            <label class="payment-debt-select-label">Deuda
+              <select id="paymentShare" required></select>
+            </label>
+          </div>
+
+          <form id="paymentForm" class="form payment-form-v7">
+            <div class="payment-amount-block">
+              <label class="payment-field-label" for="paymentAmount">Monto a pagar</label>
+              <div class="payment-amount-input-wrap">
+                <input id="paymentAmount" type="number" min="0.01" step="0.01" required placeholder="0,00" aria-describedby="paymentAmountHelp">
+                <span>Bs</span>
+              </div>
+              <small id="paymentAmountHelp" class="muted">Puedes pagar la cuota exacta o un monto mayor.</small>
+              <div id="paymentAllocationInfo" class="payment-allocation-info" role="status"></div>
+            </div>
+
+            <section class="payment-method-section" aria-labelledby="paymentMethodTitle">
+              <div class="payment-subheading">
+                <h3 id="paymentMethodTitle">¿Cómo realizarás el pago?</h3>
+                <span class="muted">Elige una opción</span>
+              </div>
+              <div class="payment-method-grid" role="group" aria-label="Método de pago">
+                <button type="button" class="payment-method-option" data-payment-method="cash" aria-pressed="false">
+                  <span class="payment-method-icon cash" aria-hidden="true">▣</span>
+                  <span><strong>Efectivo</strong><small>Pago directo</small></span>
+                  <span class="payment-method-check" aria-hidden="true">○</span>
+                </button>
+                <button type="button" class="payment-method-option selected" data-payment-method="qr" aria-pressed="true">
+                  <span class="payment-method-icon qr" aria-hidden="true">⌗</span>
+                  <span><strong>QR</strong><small>Pago digital</small></span>
+                  <span class="payment-method-check" aria-hidden="true">✓</span>
+                </button>
+              </div>
+              <select id="paymentMethod" class="payment-native-select" required aria-hidden="true" tabindex="-1">
+                <option value="qr">Pago por QR</option>
+                <option value="cash">Pago en efectivo</option>
+              </select>
+            </section>
+
+            <div id="paymentQrBox" class="qr-payment-box"></div>
+
+            <section class="payment-proof-box" aria-labelledby="paymentProofTitle">
+              <div class="payment-proof-heading">
+                <div>
+                  <h3 id="paymentProofTitle">Comprobante de pago</h3>
+                  <p class="muted">Adjunta una foto clara del comprobante.</p>
+                </div>
+                <span class="payment-proof-heading-icon" aria-hidden="true">▣</span>
+              </div>
+              <label id="paymentDropzone" class="payment-dropzone" for="paymentReceipt">
+                <span class="payment-dropzone-icon" aria-hidden="true">▣</span>
+                <strong id="paymentFileText">Toca para subir una foto</strong>
+                <small id="paymentReceiptHint" class="muted">La foto es obligatoria para pagos por QR.</small>
+                <input id="paymentReceipt" type="file" accept="image/*">
+              </label>
+              <div class="payment-proof-tools">
+                <button id="paymentOcrBtn" type="button" class="ghost">Leer foto con IA</button>
+                <span id="paymentOcrStatus" class="muted" role="status"></span>
+              </div>
+              <textarea id="paymentOcrText" class="hidden" rows="4" readonly></textarea>
+            </section>
+
+            <details class="payment-details">
+              <summary>Agregar fecha o referencia</summary>
+              <div class="payment-details-grid">
+                <label>Fecha del pago<input id="paymentDate" type="date" required></label>
+                <label>Referencia / nota<input id="paymentNote" placeholder="Nro. de operación o detalle"></label>
+              </div>
+            </details>
+
+            <button class="primary pay-submit" type="submit"><span aria-hidden="true">↑</span> Enviar comprobante</button>
+          </form>
+        </article>
+        <article class="panel payment-history-panel">
+          <div class="panel-head">
+            <div><h2>Aprobar pagos y comprobantes</h2><p class="muted">Revisa el monto aplicado y cualquier crédito generado.</p></div>
+          </div>
+          <div class="table-wrap">
+            <table><thead><tr><th>Fecha</th><th>Familia</th><th>Monto</th><th>Aplicado</th><th>Crédito</th><th>Estado</th><th>Nota</th><th>Comprobante</th><th>Revisión</th></tr></thead>
+            <tbody id="paymentsBody"></tbody></table>
+          </div>
+        </article>
+      </section>
+
+      <section id="view-balances" class="view hidden standard-view">
+        <header class="view-page-header">
+          <button class="view-back-btn" type="button" data-back-view="dashboard" aria-label="Volver al inicio">←</button>
+          <div class="view-page-icon tone-coral" aria-hidden="true">👥</div>
+          <div><span class="eyebrow">CONTROL DE LA CASA</span><h2>Deudas por familia</h2><p class="muted">Revisa cuánto debe cada familia.</p></div>
+        </header>
+        <article class="panel"><h2>Resumen por familia</h2><p class="muted">Consulta los saldos y pagos de cada familia.</p><div id="balancesCards" class="family-cards"></div></article>
+      </section>
+
+      <section id="view-cleaning" class="view hidden cleaning-view">
+        <header class="cleaning-page-header">
+          <button id="cleaningBackBtn" class="cleaning-back-btn" type="button" aria-label="Volver al inicio">←</button>
+          <div class="cleaning-page-icon" aria-hidden="true">🧹</div>
+          <div>
+            <span class="eyebrow">ORGANIZACIÓN DE LA CASA</span>
+            <h2 id="cleaningViewTitle">Mi limpieza</h2>
+            <p id="cleaningViewSubtitle" class="muted">Turnos organizados por semanas</p>
+          </div>
+        </header>
+
+        <article id="cleaningFocusCard" class="cleaning-focus-card hidden"></article>
+
+        <article id="cleaningTasksPanel" class="panel cleaning-tasks-panel hidden">
+          <div class="cleaning-card-heading">
+            <div><h3>Tareas de esta semana</h3><p class="muted">Completa estas tareas antes de marcar el turno como realizado.</p></div>
+            <span class="cleaning-card-icon" aria-hidden="true">✓</span>
+          </div>
+          <div id="cleaningTasksBody" class="cleaning-task-list"></div>
+          <div class="cleaning-action-row">
+            <button id="cleaningCompleteBtn" class="primary cleaning-complete-btn" type="button"><span aria-hidden="true">✓</span> Marcar limpieza realizada</button>
+            <button id="cleaningSwapBtn" class="ghost cleaning-swap-btn" type="button"><span aria-hidden="true">↔</span> Solicitar cambio de turno</button>
+          </div>
+        </article>
+
+        <article id="cleaningUpcomingPanel" class="panel cleaning-upcoming-panel hidden">
+          <div class="cleaning-card-heading">
+            <div><h3>Próximos turnos</h3><p class="muted">Consulta quién tiene asignada cada semana.</p></div>
+            <span class="cleaning-card-icon purple" aria-hidden="true">▤</span>
+          </div>
+          <div id="cleaningUpcomingBody" class="cleaning-upcoming-list"></div>
+        </article>
+
+        <section id="cleaningAdminWorkspace" class="cleaning-admin-workspace">
+          <details id="cleaningCreatePanel" class="panel form-disclosure">
+            <summary>Crear turno</summary>
+            <div class="disclosure-body"><form id="cleaningForm" class="form grid2form">
+              <label>Familia<select id="cleaningFamily"></select></label>
+              <label>Fecha<input id="cleaningDate" type="date" required></label>
+              <label class="span2">Tareas (una por línea)<textarea id="cleaningChecklist" rows="4" placeholder="Patio
+Gradas
+Pasillos
+Basurero"></textarea></label>
+              <label class="span2">Observación<input id="cleaningNote"></label>
+              <button class="primary span2" type="submit">Crear turno</button>
+            </form>
+          </div></details>
+          <article class="panel cleaning-calendar-panel">
+            <div class="panel-head"><div><h2>Calendario semanal</h2><p class="muted">Cada familia tiene su propio color y los turnos se organizan por semanas.</p></div><span class="workspace-badge">Por semanas</span></div>
+            <div id="cleaningCalendar"></div>
+          </article>
+          <article class="panel cleaning-table-panel"><div class="panel-head"><div><h2>Turnos y cambios</h2><p class="muted">Revisa el estado y las acciones disponibles.</p></div></div><div class="table-wrap"><table><thead><tr><th>Fecha</th><th>Familia</th><th>Estado</th><th>Tareas</th><th>Observación</th><th>Foto</th><th>Acción</th></tr></thead><tbody id="cleaningBody"></tbody></table></div></article>
+          <article class="panel cleaning-swaps-panel"><div class="panel-head"><div><h2>Solicitudes de cambio</h2><p class="muted">Aprueba o rechaza cambios de turno.</p></div></div><div id="swapList"></div></article>
+        </section>
+      </section>
+
+      <section id="view-proposals" class="view hidden standard-view">
+        <header class="view-page-header">
+          <button class="view-back-btn" type="button" data-back-view="dashboard" aria-label="Volver al inicio">←</button>
+          <div class="view-page-icon tone-purple" aria-hidden="true">🗳️</div>
+          <div><span class="eyebrow">PARTICIPACIÓN</span><h2>Propuestas</h2><p class="muted">Presenta y revisa mejoras para la casa.</p></div>
+        </header>
+        <details id="proposalCreatePanel" class="panel form-disclosure">
+          <summary>Proponer arreglo o gasto</summary>
+          <div class="disclosure-body"><form id="proposalForm" class="form grid2form">
+            <label>Concepto<input id="proposalConcept" required></label>
+            <label>Presupuesto estimado (Bs)<input id="proposalAmount" type="number" min="0.01" step="0.01" required></label>
+            <label class="span2">Justificación<textarea id="proposalJustification" rows="3" required></textarea></label>
+            <label class="span2">Presupuesto / foto<input id="proposalReceipt" type="file" accept="image/*"></label>
+            <button class="primary span2" type="submit">Publicar propuesta</button>
+          </form>
+        </div></details>
+        <article class="panel"><h2>Votaciones</h2><div id="proposalList"></div></article>
+      </section>
+
+      <section id="view-notices" class="view hidden standard-view">
+        <header class="view-page-header">
+          <button class="view-back-btn" type="button" data-back-view="dashboard" aria-label="Volver al inicio">←</button>
+          <div class="view-page-icon tone-amber" aria-hidden="true">📣</div>
+          <div><span class="eyebrow">COMUNICACIÓN</span><h2>Comunicados</h2><p class="muted">Información importante para toda la casa.</p></div>
+        </header>
+        <details id="noticeCreatePanel" class="panel form-disclosure">
+          <summary>Publicar aviso</summary>
+          <div class="disclosure-body"><form id="noticeForm" class="form grid2form">
+            <label>Título<input id="noticeTitle" required></label>
+            <label>Visible hasta<input id="noticeUntil" type="date"></label>
+            <label class="span2">Mensaje<textarea id="noticeBody" rows="4" required></textarea></label>
+            <button class="primary span2" type="submit">Publicar</button>
+          </form>
+        </div></details>
+        <article class="panel"><h2>Cartelera</h2><div id="allNotices"></div></article>
+      </section>
+
+      <section id="view-reports" class="view hidden standard-view">
+        <header class="view-page-header">
+          <button class="view-back-btn" type="button" data-back-view="dashboard" aria-label="Volver al inicio">←</button>
+          <div class="view-page-icon tone-green" aria-hidden="true">📊</div>
+          <div><span class="eyebrow">CONTROL</span><h2>Reportes</h2><p class="muted">Consulta y descarga los movimientos de la casa.</p></div>
+        </header>
+        <div class="grid2">
+          <article class="panel">
+            <h2>Reporte mensual</h2>
+            <label>Mes<input id="reportMonth" type="month"></label>
+            <div class="row">
+              <button id="exportPdfBtn" class="primary">Exportar PDF</button>
+              <button id="exportXlsxBtn" class="ghost">Exportar Excel</button>
+            </div>
+          </article>
+          <article class="panel">
+            <h2>Resumen anual</h2>
+            <label>Año<input id="reportYear" type="number" min="2020" max="2100"></label>
+            <div id="annualSummary"></div>
+          </article>
+        </div>
+        <article id="periodPanel" class="panel">
+          <h2>Cierre mensual</h2>
+          <p class="muted">El cierre bloquea nuevos gastos del mes, pero las familias todavía pueden cancelar deudas pendientes.</p>
+          <div class="row">
+            <input id="closeMonth" type="month">
+            <button id="closeMonthBtn" class="danger-btn">Cerrar mes</button>
+          </div>
+          <div id="periodList"></div>
+        </article>
+      </section>
+
+      <section id="view-admin" class="view hidden standard-view">
+        <header class="view-page-header">
+          <button class="view-back-btn" type="button" data-back-view="dashboard" aria-label="Volver al inicio">←</button>
+          <div class="view-page-icon tone-purple" aria-hidden="true">⚙️</div>
+          <div><span class="eyebrow">CONTROL DEL SISTEMA</span><h2>Administración</h2><p class="muted">Gestiona cuentas, pagos y reglas de la casa.</p></div>
+        </header>
+        <div class="grid2">
+          <article class="panel">
+            <h2>Crear usuario</h2>
+            <form id="userForm" class="form">
+              <label>Nombre<input id="newDisplayName" required></label>
+              <label>Usuario<input id="newUsername" required></label>
+              <label>Correo real<input id="newEmail" type="email" required></label>
+              <label>Contraseña inicial<input id="newPassword" type="password" minlength="8" required></label>
+              <label>Rol<select id="newRole"><option value="family">Familia / usuario</option><option value="payer">Encargado de pagos</option><option value="restaurant">Restaurante</option><option value="sysadmin">Ingeniero de Sistemas</option></select></label>
+              <label id="familyAssignmentWrap">Familia principal<select id="newFamily"></select></label>
+              <label id="secondFamilyWrap" class="hidden">Segunda familia del encargado<select id="newSecondFamily"></select></label>
+              <button class="primary" type="submit">Crear cuenta</button>
+            </form>
+          </article>
+          <article class="panel" id="payerFamilyConfigPanel">
+            <h2>Familias del Encargado de Pagos</h2>
+            <p class="muted">Estas dos familias quedan pagadas automáticamente cuando se registra el paquete mensual de servicios básicos.</p>
+            <form id="payerFamiliesForm" class="form">
+              <label>Primera familia<select id="payerFamily1"></select></label>
+              <label>Segunda familia<select id="payerFamily2"></select></label>
+              <button class="primary" type="submit">Guardar las dos familias</button>
+            </form>
+            <div id="payerConfigStatus" class="muted"></div>
+          </article>
+          <article class="panel" id="qrAdminPanel">
+            <h2>QR para pagos</h2>
+            <p class="muted">Este QR será visible para las familias en la sección Pagos.</p>
+            <form id="qrSettingsForm" class="form grid2form">
+              <label>Título<input id="qrTitle" placeholder="Pago por QR"></label>
+              <label class="span2">Instrucciones<textarea id="qrNote" rows="3" placeholder="Ej.: Escanea el QR, realiza el pago y sube la captura del comprobante."></textarea></label>
+              <label class="span2">Imagen del QR<input id="qrImage" type="file" accept="image/*"></label>
+              <div id="currentQrAdminInfo" class="span2 muted"></div>
+              <button class="primary span2" type="submit">Guardar QR</button>
+            </form>
+          </article>
+          <article class="panel" id="utilityBaselinePanel">
+            <h2>Promedio automático según facturas</h2>
+            <p class="muted">El sistema calcula el promedio con las últimas seis facturas históricas sin exceso del restaurante. No tienes que escribir el promedio a mano.</p>
+            <div class="metrics compact-metrics">
+              <article class="metric"><span>Promedio de agua</span><strong id="waterAutoAverage">Sin historial</strong></article>
+              <article class="metric"><span>Promedio de luz</span><strong id="electricityAutoAverage">Sin historial</strong></article>
+            </div>
+            <div id="utilityAverageInfo" class="notice-card">Registra facturas anteriores marcando “factura histórica” para crear la base. Desde la segunda factura normal, el cálculo se actualiza automáticamente.</div>
+          </article>
+          <article class="panel" id="notificationSetupPanel">
+            <h2>Notificaciones por correo y celular</h2>
+            <p class="muted">Cuando una familia sube el comprobante de un pago mensual, todos reciben un aviso dentro de la app. Si cada usuario activa los avisos en su celular, también verá una notificación del sistema mientras la PWA está activa. El correo se envía mediante la función <code>notify-payment-upload</code>.</p>
+            <div class="notice-card"><strong>Correo:</strong> requiere configurar <code>RESEND_API_KEY</code> y <code>NOTIFY_FROM_EMAIL</code> en Supabase Edge Functions.</div>
+            <div class="notice-card"><strong>Celular:</strong> cada usuario debe pulsar “Activar avisos en este celular”. En teléfonos requiere que la app esté publicada por HTTPS.</div>
+          </article>
+          <article class="panel">
+            <h2>Copias de seguridad</h2>
+            <p class="muted">Descarga un respaldo JSON de los datos registrados. Los comprobantes se mantienen aparte en Storage.</p>
+            <button id="backupBtn" class="primary">Descargar respaldo de datos</button>
+            <button id="browserNotifyBtn" class="ghost">Activar notificaciones del navegador</button>
+          </article>
+        </div>
+        <article class="panel"><h2>Usuarios</h2><div class="table-wrap"><table><thead><tr><th>Nombre</th><th>Usuario</th><th>Correo</th><th>Rol</th><th>Familia 1</th><th>Familia 2</th></tr></thead><tbody id="usersBody"></tbody></table></div></article>
+        <article class="panel"><h2>Auditoría</h2><div class="table-wrap"><table><thead><tr><th>Fecha</th><th>Usuario</th><th>Acción</th><th>Entidad</th><th>Detalle</th></tr></thead><tbody id="auditBody"></tbody></table></div></article>
+      </section>
+
+      <section id="view-settings" class="view hidden standard-view settings-view">
+        <header class="view-page-header">
+          <button class="view-back-btn" type="button" data-back-view="dashboard" aria-label="Volver al inicio">←</button>
+          <div class="view-page-icon tone-purple" aria-hidden="true">⚙️</div>
+          <div><span class="eyebrow">MI CUENTA</span><h2>Configuración</h2><p class="muted">Ajusta la aplicación y administra tu acceso.</p></div>
+        </header>
+        <article class="settings-hero panel">
+          <div>
+            <span class="eyebrow">PREFERENCIAS</span>
+            <h2>Configuración de mi cuenta</h2>
+            <p class="muted">Administra tu acceso y adapta la aplicación a la forma en que te resulta más cómoda.</p>
+          </div>
+          <div class="account-summary">
+            <div id="settingsAvatar" class="account-avatar" aria-hidden="true">CF</div>
+            <div><strong id="settingsName">Mi cuenta</strong><span id="settingsRole" class="muted">Usuario</span><span id="settingsEmail" class="muted">-</span></div>
+          </div>
+        </article>
+        <div class="grid2 settings-grid">
+          <article class="panel settings-card">
+            <div class="setting-heading"><div class="setting-icon secure" aria-hidden="true">🔐</div><div><h2>Cambiar contraseña</h2><p class="muted">Usa una contraseña de al menos 8 caracteres.</p></div></div>
+            <form id="passwordForm" class="form">
+              <label>Nueva contraseña<input id="settingsPassword" type="password" minlength="8" autocomplete="new-password" required placeholder="Escribe una nueva contraseña"></label>
+              <label>Repetir contraseña<input id="settingsPasswordConfirm" type="password" minlength="8" autocomplete="new-password" required placeholder="Repite la nueva contraseña"></label>
+              <div id="passwordError" class="error" role="alert"></div>
+              <button class="primary settings-submit" type="submit"><span aria-hidden="true">🔒</span> Guardar nueva contraseña</button>
+            </form>
+          </article>
+          <article class="panel settings-card">
+            <div class="setting-heading"><div class="setting-icon accessibility" aria-hidden="true">Aa</div><div><h2>Tamaño de letra</h2><p class="muted">Elige la opción más cómoda para leer.</p></div></div>
+            <div class="font-options" role="radiogroup" aria-label="Tamaño de letra">
+              <label class="font-option"><input type="radio" name="fontSize" value="normal"><span class="font-option-copy"><strong>Normal</strong><small>Texto estándar</small></span><span class="font-sample">Aa</span></label>
+              <label class="font-option"><input type="radio" name="fontSize" value="large"><span class="font-option-copy"><strong>Grande</strong><small>Más fácil de leer</small></span><span class="font-sample large">Aa</span></label>
+              <label class="font-option"><input type="radio" name="fontSize" value="extra"><span class="font-option-copy"><strong>Muy grande</strong><small>Para lectura cómoda</small></span><span class="font-sample extra">Aa</span></label>
+            </div>
+            <div class="font-preview"><span class="status-dot" aria-hidden="true"></span><span>Vista previa: así se verán los textos y botones.</span></div>
+            <button id="saveFontBtn" class="primary settings-submit" type="button"><span aria-hidden="true">✓</span> Guardar tamaño de letra</button>
+          </article>
+        </div>
+        <article class="panel settings-actions-card">
+          <div class="setting-heading"><div class="setting-icon app" aria-hidden="true">⌂</div><div><h2>Aplicación y sesión</h2><p class="muted">Instala Casa Familias en este dispositivo o cierra tu cuenta.</p></div></div>
+          <div class="settings-action-buttons">
+            <button id="settingsInstallBtn" class="settings-action-btn settings-install-btn" type="button"><span aria-hidden="true">⬇</span><span><strong>Instalar app</strong><small>Acceso rápido desde tu celular o computadora</small></span><span aria-hidden="true">→</span></button>
+            <button id="settingsLogoutBtn" class="settings-action-btn settings-logout-btn" type="button"><span aria-hidden="true">↪</span><span><strong>Cerrar sesión</strong><small>Salir de esta cuenta de forma segura</small></span><span aria-hidden="true">→</span></button>
+          </div>
+        </article>
+        <article class="panel settings-help"><div class="setting-icon help" aria-hidden="true">?</div><div><h2>¿Necesitas ayuda?</h2><p class="muted">Si cambiaste tu contraseña y no puedes ingresar, usa “Olvidé mi contraseña” en la pantalla de inicio o pide apoyo al administrador.</p></div></article>
+      </section>
+
+      <aside id="notificationDrawer" class="drawer hidden">
+        <div class="drawer-head"><h2>Notificaciones</h2><button id="closeNotifBtn" class="ghost">Cerrar</button></div>
+        <div id="notificationList"></div>
+      </aside>
+
+
+      </main>
+    <nav id="bottomNav" class="bottom-nav" aria-label="Accesos principales"></nav>
+    <div id="moreSheetBackdrop" class="more-sheet-backdrop hidden" aria-hidden="true"></div>
+    <section id="moreSheet" class="more-sheet hidden" aria-label="Más opciones">
+      <div class="more-sheet-handle" aria-hidden="true"></div>
+      <div class="more-sheet-head"><h2>Más opciones</h2><button id="closeMoreSheet" class="more-sheet-close" type="button" aria-label="Cerrar">×</button></div>
+      <div id="moreSheetNav" class="more-sheet-nav"></div>
+    </section>
+  </div>
+
+  <script src="vendor/supabase.js"></script>
+  <script src="vendor/tesseract.js"></script>
+  <script src="vendor/jspdf.js"></script>
+  <script src="vendor/autotable.js"></script>
+  <script src="vendor/xlsx.js"></script>
+  <script src="config.js"></script>
+  <script src="mobile.js"></script><script src="app.js"></script>
+<section id="mobileTemplates" class="hidden"><h2>Plantillas de gastos</h2><div id="templateAdminBox"></div></section><div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
+          <div id="modal" class="modal hidden" role="dialog" aria-modal="true" aria-label="Detalle"><div class="modal-card"><div id="modalContent"></div><button id="modalClose" class="ghost">Cerrar</button></div></div>
+</body>
+</html>
