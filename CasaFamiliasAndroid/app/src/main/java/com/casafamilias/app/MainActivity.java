@@ -22,7 +22,7 @@ public class MainActivity extends Activity {
         web=new WebView(this); setContentView(web);
         WebSettings s=web.getSettings(); s.setJavaScriptEnabled(true); s.setDomStorageEnabled(true);
         s.setAllowFileAccess(false); s.setAllowContentAccess(true); s.setMixedContentMode(WebSettings.MIXED_CONTENT_NEVER_ALLOW);
-        web.setBackgroundColor(0xFFFBF6EE);
+        web.setBackgroundColor(0xFFF4F7F4);
         web.setWebViewClient(new WebViewClient() {
             @Override public WebResourceResponse shouldInterceptRequest(WebView v, WebResourceRequest req) {
                 Uri u=req.getUrl(); if(!"appassets.androidplatform.net".equals(u.getHost())) return null;

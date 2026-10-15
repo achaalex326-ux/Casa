@@ -3,10 +3,9 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="theme-color" content="#182746">
+  <meta name="theme-color" content="#F4F7F4">
   <meta name="description" content="Gestión privada de pagos, gastos y limpieza para seis familias.">
   <title>Casa Familias</title>
-  <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="logo.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="logo.svg">
   
@@ -14,7 +13,7 @@
   
   <link rel="stylesheet" href="mobile.css">
 </head>
-<body class="professional"><div id="mobileApp" hidden><header id="mobileHeader"></header><main id="mobileContent"></main><nav id="mobileNav"></nav></div><div id="sourceOverlay" hidden><header><button onclick="Mobile.closeSource()">‹</button><h2 id="sourceTitle"></h2></header><main id="sourceContent"></main><button class="ghost" onclick="Mobile.closeSource()">Volver</button></div>
+<body class="professional"><div id="mobileApp" hidden><header id="mobileHeader"></header><main id="mobileContent"></main><nav id="mobileNav" aria-label="Navegación principal"></nav></div><div id="sourceOverlay" hidden role="dialog" aria-modal="true" aria-labelledby="sourceTitle"><header><button onclick="Mobile.closeSource()" aria-label="Volver">‹</button><h2 id="sourceTitle" tabindex="-1"></h2></header><main id="sourceContent"></main><button class="ghost source-back" onclick="Mobile.closeSource()">Volver al inicio</button></div>
   <section id="setupScreen" class="center-screen hidden">
     <div class="panel narrow">
       <img class="brand-logo" src="logo.svg" alt="Logo de Casa Familias">
@@ -26,21 +25,19 @@
 
   <section id="loginScreen" class="center-screen hidden">
     <div class="panel narrow">
-      <img class="brand-logo" src="logo.svg" alt="Logo de Casa Familias">
-      <h1>Casa Familias</h1>
-      <p class="muted">Las cuentas de la casa, claras y al día</p>
-      <p class="login-note">Ingresa con el correo y la contraseña que te dieron. Si necesitas ayuda, pide apoyo al encargado.</p>
+      <div class="login-brand"><img class="brand-logo" src="logo.svg" alt=""><span>Casa Familias</span><span class="brand-tag">MI HOGAR</span></div>
+      <div class="login-art"><img src="house-scene.svg" alt="Una casa rodeada de árboles"><span class="art-caption">Un hogar. Un equipo.</span></div>
+      <div class="login-intro"><span class="eyebrow">TU ESPACIO FAMILIAR</span><h1>Bienvenido a casa<span>.</span></h1><p class="muted">Pagos claros, tareas compartidas<br>y más tranquilidad para todos.</p></div>
       <form id="loginForm" class="form">
-        <label>Correo
-          <input id="loginEmail" type="email" autocomplete="username" required placeholder="familia@correo.com">
-        </label>
-        <label>Contraseña
-          <input id="loginPassword" type="password" autocomplete="current-password" required>
-        </label>
+        <label for="loginEmail">Correo electrónico</label>
+        <div class="input-shell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="m4 7 8 6 8-6"/></svg><input id="loginEmail" type="email" autocomplete="username" autocapitalize="none" inputmode="email" required placeholder="Tu correo electrónico"></div>
+        <div class="field-heading"><label for="loginPassword">Contraseña</label><button id="forgotBtn" class="link-btn" type="button">¿La olvidaste?</button></div>
+        <div class="input-shell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="3"/><path d="M8 10V6a4 4 0 0 1 8 0v4"/></svg><input id="loginPassword" type="password" autocomplete="current-password" required placeholder="Tu contraseña"><button id="toggleLoginPassword" type="button" aria-label="Mostrar contraseña" aria-pressed="false"></button></div>
         <button class="primary" type="submit">Entrar a mi cuenta</button>
-        <button id="forgotBtn" class="link-btn" type="button">Olvidé mi contraseña</button>
         <div id="loginError" class="error" role="alert"></div>
       </form>
+      <p class="login-support">¿Necesitas una cuenta? <span>Habla con el administrador.</span></p>
+      <div class="login-footer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M12 3 4 6v6c0 5 8 9 8 9s8-4 8-9V6Z"/><path d="m8 12 3 3 5-6"/></svg>Un espacio para tu familia</div>
     </div>
   </section>
 

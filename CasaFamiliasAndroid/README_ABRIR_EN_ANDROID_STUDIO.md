@@ -18,9 +18,9 @@ Se conservan las reglas de cuotas entre seis familias, pagos parciales, crédito
 
 ## Diseño
 
-Fondo crema, tipografía azul oscuro, botones violetas, tarjetas claras, iconos y accesos rápidos pastel, navegación inferior diferenciada por rol. Las tres referencias originales están en `referencias/`.
+Fondo claro, verde profundo, acentos coral y tarjetas con colores suaves. Incluye tipografía Manrope local, una ilustración propia para el acceso, campos con etiquetas visibles, control para mostrar la contraseña y navegación inferior adaptada a cada rol. Los formularios conservan sus campos, datos y manejadores originales. Las referencias anteriores permanecen en `referencias/`.
 
-La reproducción es aproximada: el paisaje y el logo se reconstruyeron en SVG; no son los píxeles originales. Los formularios con reglas adicionales de Drive usan controles del mismo tema y conservan sus campos. No se dibujan marcos de iPhone ni la isla negra en Android.
+El rediseño utiliza `logo.svg` y `house-scene.svg`, creados para esta interfaz. Las ilustraciones y la fuente se incluyen dentro de la aplicación y no requieren descargas externas. La licencia de Manrope se conserva en `app/src/main/assets/web/fonts/OFL.txt`. Los botones, filtros, estados y formularios usan el mismo tema, con navegación por teclado, foco visible y respeto por la preferencia de movimiento reducido.
 
 ## Vista de los tres perfiles sin cuenta
 
