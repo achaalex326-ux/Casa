@@ -92,6 +92,7 @@ small, .muted { color: var(--muted); font-size: .84rem; }
 .badge.pending, .badge.review { background: #fbf0d8; color: #8f681b; }
 .badge.ok, .badge.approved, .badge.paid, .badge.done { background: #e6f3e7; color: #366b48; }
 .badge.rejected, .badge.overdue { background: #fae9e8; color: #a44449; }
+.badge.partial { background: #e7eff8; color: #50769c; }
 .badge.active { background: #edf0fa; color: #5b6a9c; }
 .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 8px; }
 .stats .card { margin: 0; padding: 17px; min-width: 0; display: flex; flex-direction: column; align-items: flex-start; gap: 11px; }

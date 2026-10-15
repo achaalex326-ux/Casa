@@ -1,5 +1,7 @@
 # Casa Familias
 
+Entrega actual: **4.1 para presentar y probar**. Consulta [la guía de entrega](ENTREGA.md).
+
 El proyecto Android está en **CasaFamiliasAndroid/**. Esta carpeta contiene los archivos que se editan y se sincronizan con GitHub.
 
 `CasaFamiliasAndroid.zip` se conserva como archivo original. Los cambios posteriores se guardan en la carpeta del proyecto; ese ZIP no se actualiza automáticamente.

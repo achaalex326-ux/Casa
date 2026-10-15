@@ -7,13 +7,19 @@ else if(!window.supabase){showStartupError();}
 else{boot().catch(showStartupError);}
 function showStartupError(){
  const screen=document.getElementById("setupScreen");
+ document.getElementById("mobileApp").hidden=true;
+ document.getElementById("loginScreen").classList.add("hidden");
+ document.getElementById("resetScreen").classList.add("hidden");
  screen.classList.remove("hidden");
  screen.querySelector("h2").textContent="No se pudo iniciar la aplicación";
- screen.querySelector("p").textContent="Revisa tu conexión a internet y vuelve a intentarlo.";
- const retry=document.createElement("button");retry.className="primary";retry.textContent="Reintentar";retry.onclick=()=>location.reload();screen.querySelector(".panel").append(retry);
+ screen.querySelector("p").textContent=navigator.onLine===false?"No tienes conexión. Conéctate a internet y vuelve a intentarlo.":"Vuelve a abrir la aplicación. Si el problema continúa, instala la versión más reciente.";
+ if(!screen.querySelector("[data-startup-retry]")){
+  const retry=document.createElement("button");retry.className="primary";retry.dataset.startupRetry="true";retry.textContent="Reintentar";retry.onclick=()=>location.reload();screen.querySelector(".panel").append(retry);
+ }
 }
 
 async function boot(){
+  let recoveryMode=new URLSearchParams(location.hash.slice(1)).get("type")==="recovery";
   const sb=window.supabase.createClient(cfg.SUPABASE_URL,cfg.SUPABASE_PUBLISHABLE_KEY);
   const $=id=>document.getElementById(id);
   const money=n=>`${Number(n||0).toFixed(2)} Bs`;
@@ -25,7 +31,8 @@ async function boot(){
   const catName={basic:"Servicio básico",external:"Gasto externo / arreglo"};
   const utilityName={water:"Agua",electricity:"Luz",gas:"Gas",wifi:"WiFi"};
   let session=null,me=null,deferredPrompt=null,realtimeChannel=null,reloadTimer=null,syncTimer=null,reloadInFlight=null,familyDebts=[];
-  let D={families:[],profiles:[],periods:[],templates:[],expenses:[],monthly:[],shares:[],credits:[],payments:[],cleaning:[],swaps:[],proposals:[],votes:[],notices:[],comments:[],notifications:[],audit:[],qr:[],externalDebts:[],utilityBaselines:[],utilityCredits:[]};
+  const emptyData=()=>({families:[],profiles:[],periods:[],templates:[],expenses:[],monthly:[],shares:[],credits:[],payments:[],cleaning:[],swaps:[],proposals:[],votes:[],notices:[],comments:[],notifications:[],audit:[],qr:[],externalDebts:[],utilityBaselines:[],utilityCredits:[]});
+  let D=emptyData();
 
   ["expenseDate","paymentDate","cleaningDate"].forEach(id=>$(id).value=today());
   $("expenseDueDate").value=today();
@@ -36,7 +43,6 @@ async function boot(){
   $("closeMonth").value=monthNow();
   $("reportYear").value=new Date().getFullYear();
 
-  if("serviceWorker" in navigator){navigator.serviceWorker.register("./sw.js").catch(console.warn);}
   window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferredPrompt=e;$("installBtn")?.classList.remove("hidden");$("settingsInstallBtn")?.classList.remove("hidden");});
   async function promptInstall(){
     if(!deferredPrompt){
@@ -230,45 +236,95 @@ async function boot(){
   $("forgotBtn").onclick=async()=>{
     const email=$("loginEmail").value.trim();
     if(!email)return toast("Escribe primero tu correo.");
+    if(!$("loginEmail").checkValidity())return toast("Revisa que el correo esté bien escrito.");
+    const button=$("forgotBtn");
+    if(button.disabled)return;
     const redirectTo=window.AndroidFiles?"casafamilias://auth":location.origin+location.pathname;
-    const {error}=await sb.auth.resetPasswordForEmail(email,{redirectTo});
-    toast(error?error.message:"Te enviamos un enlace de recuperación al correo.");
+    button.disabled=true;
+    try{
+      const {error}=await sb.auth.resetPasswordForEmail(email,{redirectTo});
+      toast(error?"No se pudo solicitar el enlace. Vuelve a intentarlo.":"Si el correo tiene una cuenta, recibirás un enlace de recuperación.");
+    }catch(_){toast("No se pudo conectar. Revisa internet y vuelve a intentar.");}
+    finally{button.disabled=false;}
   };
   $("resetForm").onsubmit=async e=>{
     e.preventDefault();
-    const {error}=await sb.auth.updateUser({password:$("resetPassword").value});
-    if(error)return toast(error.message);
-    toast("Contraseña actualizada.");
-    $("resetScreen").classList.add("hidden");
-    window.CF={state:()=>({me,D,familyDebts}),openCompleteCleaning,openSwap,openComments,loadAll,logout,receiptBtn,receiptURL:async path=>{const {data,error}=await sb.storage.from(cfg.RECEIPTS_BUCKET||"receipts").createSignedUrl(path,300);if(error)throw error;return data.signedUrl;},bindReceiptButtons,showView,renderReports,toast,balanceForFamily,creditForFamily};
-  window.dispatchEvent(new Event("cf:ready"));
-  const {data:{session:s}}=await sb.auth.getSession();
-    if(s){session=s;await enter(s.user);}
+    const button=$("resetForm").querySelector('[type="submit"]');
+    if(button.disabled)return;
+    const password=$("resetPassword").value;
+    $("resetError").textContent="";
+    if(password.length<8)return $("resetError").textContent="Usa una contraseña de al menos 8 caracteres.";
+    if(password!==$("resetPasswordConfirm").value)return $("resetError").textContent="Las contraseñas no coinciden.";
+    button.disabled=true;button.textContent="Guardando…";
+    try{
+      const {error}=await sb.auth.updateUser({password});
+      if(error){$("resetError").textContent="No se pudo guardar la contraseña. Solicita otro enlace si el actual venció.";return;}
+      recoveryMode=false;
+      $("resetForm").reset();
+      const {data,error:sessionError}=await sb.auth.getSession();
+      if(sessionError||!data?.session){showAuthScreen("loginScreen");$("loginError").textContent="Contraseña actualizada. Ingresa con tu nueva contraseña.";return;}
+      session=data.session;
+      await enter(session.user);
+      toast("Contraseña actualizada.");
+    }catch(_){
+      if(recoveryMode)$("resetError").textContent="No se pudo conectar. Revisa internet y vuelve a intentar.";
+      else{showAuthScreen("loginScreen");$("loginError").textContent="Vuelve a ingresar para continuar.";}
+    }finally{button.disabled=false;button.textContent="Guardar contraseña";}
   };
   $("passwordForm")?.addEventListener("submit",async e=>{
     e.preventDefault();
+    const button=$("passwordForm").querySelector('[type="submit"]');
+    if(button.disabled)return;
     const password=$("settingsPassword").value;
     const confirmation=$("settingsPasswordConfirm").value;
     $("passwordError").textContent="";
     if(password.length<8)return $("passwordError").textContent="La contraseña debe tener al menos 8 caracteres.";
     if(password!==confirmation)return $("passwordError").textContent="Las contraseñas no coinciden.";
-    const {error}=await sb.auth.updateUser({password});
-    if(error)return $("passwordError").textContent=error.message||"No se pudo cambiar la contraseña.";
-    $("passwordForm").reset();
-    toast("Contraseña cambiada correctamente.");
+    button.disabled=true;
+    try{
+      const {error}=await sb.auth.updateUser({password});
+      if(error){$("passwordError").textContent="No se pudo cambiar la contraseña. Vuelve a intentarlo.";return;}
+      $("passwordForm").reset();
+      toast("Contraseña cambiada correctamente.");
+    }catch(_){$("passwordError").textContent="No se pudo conectar. Revisa internet y vuelve a intentar.";}
+    finally{button.disabled=false;}
   });
-  sb.auth.onAuthStateChange(async(event,s)=>{
-    if(event==="PASSWORD_RECOVERY"){document.getElementById("mobileApp").hidden=true;
-      $("loginScreen").classList.add("hidden");$("app").classList.add("hidden");$("resetScreen").classList.remove("hidden");
+  function showAuthScreen(id){
+    me=null;
+    D=emptyData();familyDebts=[];
+    window.Mobile?.closeSource(false);
+    $("modal").classList.add("hidden");
+    $("mobileApp").hidden=true;
+    $("app").classList.add("hidden");
+    ["setupScreen","loginScreen","resetScreen"].forEach(screen=>$(screen).classList.toggle("hidden",screen!==id));
+  }
+  sb.auth.onAuthStateChange((event,s)=>{
+    if(event==="PASSWORD_RECOVERY"){
+      recoveryMode=true;session=s;
+      showAuthScreen("resetScreen");
     }
   });
-  async function logout(){await sb.auth.signOut();location.reload();}
+  let loggingOut=false;
+  async function logout(){
+    if(loggingOut)return;
+    loggingOut=true;
+    try{
+      const {error}=await sb.auth.signOut();
+      if(error)return toast("No se pudo cerrar la sesión. Vuelve a intentarlo.");
+      location.reload();
+    }catch(_){toast("No se pudo conectar. Revisa internet y vuelve a intentar.");}
+    finally{loggingOut=false;}
+  }
   $("logoutBtn").onclick=logout;
   $("settingsLogoutBtn")?.addEventListener("click",logout);
 
   async function enter(user){
     const {data:p,error}=await sb.from("profiles").select("*").eq("id",user.id).single();
-    if(error){toast("La cuenta no tiene perfil configurado.");await sb.auth.signOut();return;}
+    if(error||!p){
+      showAuthScreen("loginScreen");
+      $("loginError").textContent="La cuenta no tiene un perfil disponible. Pide ayuda al administrador.";
+      await sb.auth.signOut();return;
+    }
     me=p;
     $("loginScreen").classList.add("hidden");$("resetScreen").classList.add("hidden");$("app").classList.remove("hidden");
     $("app").dataset.role=me.role;
@@ -1673,6 +1729,15 @@ async function boot(){
 
   window.CF={state:()=>({me,D,familyDebts}),openCompleteCleaning,openSwap,openComments,loadAll,logout,receiptBtn,receiptURL:async path=>{const {data,error}=await sb.storage.from(cfg.RECEIPTS_BUCKET||"receipts").createSignedUrl(path,300);if(error)throw error;return data.signedUrl;},bindReceiptButtons,showView,renderReports,toast,balanceForFamily,creditForFamily};
   window.dispatchEvent(new Event("cf:ready"));
-  const {data:{session:s}}=await sb.auth.getSession();
-  if(s){session=s;await enter(s.user);}else $("loginScreen").classList.remove("hidden");
+  const {data,error:sessionError}=await sb.auth.getSession();
+  const s=data?.session;
+  if(recoveryMode&&s&&!sessionError){session=s;showAuthScreen("resetScreen");}
+  else if(s&&!sessionError){
+    session=s;
+    try{await enter(s.user);}catch(_){showAuthScreen("loginScreen");$("loginError").textContent="No se pudo cargar tu cuenta. Revisa internet y vuelve a ingresar.";}
+  }else{
+    showAuthScreen("loginScreen");
+    if(recoveryMode)$("loginError").textContent="El enlace de recuperación no es válido o venció. Solicita uno nuevo.";
+    else if(sessionError)$("loginError").textContent="Tu sesión terminó. Vuelve a ingresar.";
+  }
 }

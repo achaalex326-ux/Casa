@@ -1,1 +1,1 @@
-{"private":true,"scripts":{"test":"node test_startup.cjs && node test_dom.cjs"},"devDependencies":{"jsdom":"^29.0.0"}}
+{"private":true,"scripts":{"test":"node test_startup.cjs && node test_auth.cjs && node test_restaurant.cjs && node test_dom.cjs"},"devDependencies":{"jsdom":"^29.0.0"}}
