@@ -7,6 +7,13 @@ select test.check((select count(*) = 4 from pg_policies where schemaname = 'stor
 set role authenticated;
 select set_config('request.jwt.claim.sub', '00000000-0000-0000-0000-000000000001', false);
 select test.check(public.casa_is_sysadmin(), 'Admin helper works through profile RLS');
+select public.save_payment_qr_settings('qr/code.png', '  Mi QR  ', '  Instrucciones  ');
+reset role;
+select test.check((select qr_image_path = 'qr/code.png' and qr_title = 'Mi QR' and qr_note = 'Instrucciones'
+  and updated_by = '00000000-0000-0000-0000-000000000001' from public.payment_qr_settings where id = 1), 'Admin QR save persists with actor');
+select test.check((select count(*) = 1 from test.qr_audit where entity = 'payment_qr_settings'), 'QR save preserves existing audit');
+set role authenticated;
+select test.expect_error($q$select public.save_payment_qr_settings('', 'QR', null)$q$, '22023');
 select public.casa_admin_rename_family(1, '  Familia García  ');
 select test.check((select name = 'Familia García' from public.families where id = 1), 'Rename trims and persists');
 select test.expect_error($q$select public.casa_admin_rename_family(2, 'familia garcía')$q$, '22023');
@@ -34,6 +41,7 @@ select test.expect_error($q$update storage.objects set bucket_id = 'receipts' wh
 select test.expect_error($q$insert into storage.objects (bucket_id, name) values ('receipts', 'qr/private.png')$q$, '42501');
 select set_config('request.jwt.claim.sub', '00000000-0000-0000-0000-000000000002', false);
 select test.check(not public.casa_is_sysadmin(), 'Family is not admin');
+select test.expect_error($q$select public.save_payment_qr_settings('qr/hack.png', 'Hack', null)$q$, '42501');
 select test.check((select family_id = 3 and second_family_id is null and role = 'family' and contact_email = 'familia@example.test'
   from public.profiles where id = auth.uid()), 'Family assignment persists without altering credentials or role');
 select test.check((select count(*) = 1 from storage.objects), 'Family can read shared QR and cannot read receipts');
@@ -46,18 +54,24 @@ delete from storage.objects;
 select test.check((select count(*) = 1 and min(name) = 'qr/updated.png' from storage.objects), 'Family cannot modify or delete QR');
 select set_config('request.jwt.claim.sub', '00000000-0000-0000-0000-000000000003', false);
 select test.check((select family_id = 2 and second_family_id = 3 from public.profiles where id = auth.uid()), 'Payer has distinct persisted families');
+select test.expect_error($q$select public.save_payment_qr_settings('qr/hack.png', 'Hack', null)$q$, '42501');
 select test.expect_error($q$select public.casa_admin_rename_family(1, 'Hack')$q$, '42501');
 select test.expect_error($q$select public.casa_admin_assign_user_families(auth.uid(), 1, 2)$q$, '42501');
 select test.expect_error($q$insert into storage.objects (bucket_id, name) values ('payment-qr', 'qr/hack.png')$q$, '42501');
 select set_config('request.jwt.claim.sub', '00000000-0000-0000-0000-000000000004', false);
+select test.expect_error($q$select public.save_payment_qr_settings('qr/hack.png', 'Hack', null)$q$, '42501');
 select test.expect_error($q$select public.casa_admin_rename_family(1, 'Hack')$q$, '42501');
 select test.expect_error($q$select public.casa_admin_assign_user_families(auth.uid(), 1, null)$q$, '42501');
 select test.expect_error($q$insert into storage.objects (bucket_id, name) values ('payment-qr', 'qr/hack.png')$q$, '42501');
 select set_config('request.jwt.claim.sub', '', false);
 select test.check(not public.casa_is_sysadmin(), 'No session is not admin');
+select test.expect_error($q$select public.save_payment_qr_settings('qr/hack.png', 'Hack', null)$q$, '42501');
+select set_config('request.jwt.claim.sub', '00000000-0000-0000-0000-999999999999', false);
+select test.expect_error($q$select public.save_payment_qr_settings('qr/hack.png', 'Hack', null)$q$, '42501');
 select test.expect_error($q$select public.casa_admin_rename_family(1, 'Hack')$q$, '42501');
 reset role;
 set role anon;
+select test.expect_error($q$select public.save_payment_qr_settings('qr/hack.png', 'Hack', null)$q$, '42501');
 select test.expect_error($q$select public.casa_is_sysadmin()$q$, '42501');
 select test.expect_error($q$select public.casa_admin_rename_family(1, 'Hack')$q$, '42501');
 select test.expect_error($q$select public.casa_admin_assign_user_families(null, 1, null)$q$, '42501');

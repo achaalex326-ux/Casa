@@ -13,6 +13,13 @@ create table public.families (id bigint primary key, name text not null);
 create table public.profiles (id uuid primary key, role text, family_id bigint references public.families,
   second_family_id bigint references public.families, display_name text, contact_email text);
 create table public.payments (id bigint primary key, family_id bigint references public.families, amount numeric);
+create table public.payment_qr_settings (id smallint primary key, qr_image_path text,
+  qr_title text, qr_note text, updated_by uuid references public.profiles, updated_at timestamptz);
+create table test.qr_audit (action text, entity text, entity_id text, details jsonb);
+create function public.audit(p_action text, p_entity text, p_entity_id text, p_details jsonb)
+returns void language sql as $$
+  insert into test.qr_audit values (p_action, p_entity, p_entity_id, p_details);
+$$;
 create table storage.buckets (id text primary key, name text not null, public boolean,
   file_size_limit bigint, allowed_mime_types text[]);
 create table storage.objects (id bigint generated always as identity primary key,

@@ -2,7 +2,7 @@
 
 Entrega actual: **4.2 para presentar y probar**. Consulta [la guía de entrega](ENTREGA.md).
 
-Para activar el QR y la edición de familias en el servidor, sigue [la configuración de Supabase](supabase/ACTIVAR.md). Esta configuración aún debe aplicarla la persona que administra el proyecto.
+El almacenamiento del QR y la edición de familias ya están activados en el Supabase del proyecto. Consulta [cómo usarlos y la configuración aplicada](supabase/ACTIVAR.md).
 
 El proyecto Android está en **CasaFamiliasAndroid/**. Esta carpeta contiene los archivos que se editan y se sincronizan con GitHub.
 

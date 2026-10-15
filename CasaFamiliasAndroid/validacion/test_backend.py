@@ -35,9 +35,9 @@ try:
     else:
         raise RuntimeError("PostgreSQL no inició: " + run("docker", "logs", CONTAINER))
     sql(HERE / "backend_fixture.sql")
-    migration = ROOT / "supabase/migrations/202610150001_qr_familias.sql"
-    sql(migration)
-    sql(migration)
+    for _ in range(2):
+        for migration in sorted((ROOT / "supabase/migrations").glob("*.sql")):
+            sql(migration)
     output = sql(HERE / "backend_checks.sql")
     print(next(line.strip() for line in output.splitlines() if '"backendChecks"' in line))
 finally:
