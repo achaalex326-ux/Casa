@@ -58,3 +58,20 @@ begin
   raise exception 'Unexpectedly allowed: %', statement;
 end;
 $$;
+
+-- Fixtures de la rotación semanal, sin credenciales ni servicios reales.
+create table public.cleaning_turns (
+  id uuid primary key default gen_random_uuid(), family_id smallint references public.families,
+  turn_date date not null, status text not null default 'pending', checklist jsonb not null default '[]',
+  note text, completion_receipt_path text, completed_at timestamptz, created_by uuid not null references public.profiles, created_at timestamptz not null default now()
+);
+create table test.cleaning_notifications (family_id smallint, turn_id uuid, dedupe_key text);
+create function public.notify_family(p_family smallint,p_kind text,p_title text,p_body text,
+  p_ref_entity text default null,p_ref_id uuid default null,p_dedupe text default null)
+returns void language sql as $$
+  insert into test.cleaning_notifications values(p_family,p_ref_id,p_dedupe);
+$$;
+
+create table test.cleaning_completions (turn_id uuid);
+create function public.notify_all(p_kind text,p_title text,p_body text,p_ref_entity text default null,p_ref_id uuid default null,p_dedupe text default null)
+returns void language sql as $$ insert into test.cleaning_completions values(p_ref_id); $$;

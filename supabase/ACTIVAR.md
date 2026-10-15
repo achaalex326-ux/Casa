@@ -33,3 +33,7 @@ Solo para una instalación nueva o para revisar la configuración con el ingenie
 Las migraciones se pueden ejecutar de nuevo sin borrar datos. Los archivos `backend_fixture.sql` y `backend_checks.sql` son exclusivamente de pruebas locales: nunca deben ejecutarse en el servidor real.
 
 La configuración pasó además **59 comprobaciones en PostgreSQL aislado**, incluida la ejecución repetida de ambas migraciones.
+
+## Limpieza semanal de la versión 4.3
+
+También se instalaron las migraciones 003 y 004 para repetir los turnos. Consulta [las instrucciones de limpieza semanal](LIMPIEZA_SEMANAL.md). El plan se activa desde el botón de la aplicación.

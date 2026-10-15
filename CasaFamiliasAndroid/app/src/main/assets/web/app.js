@@ -33,7 +33,7 @@ async function boot(){
   let session=null,me=null,deferredPrompt=null,realtimeChannel=null,reloadTimer=null,syncTimer=null,reloadInFlight=null,familyDebts=[];
   const emptyData=()=>({families:[],profiles:[],periods:[],templates:[],expenses:[],monthly:[],shares:[],credits:[],payments:[],cleaning:[],swaps:[],proposals:[],votes:[],notices:[],comments:[],notifications:[],audit:[],qr:[],externalDebts:[],utilityBaselines:[],utilityCredits:[]});
   let D=emptyData();
-  let qrDraft=false,familyNameDraft=false,assignmentDraft=false,qrPreviewURL=null;
+  let qrDraft=false,familyNameDraft=false,assignmentDraft=false,rotationDraft=false,qrPreviewURL=null;
 
   ["expenseDate","paymentDate","cleaningDate"].forEach(id=>$(id).value=today());
   $("expenseDueDate").value=today();
@@ -114,6 +114,13 @@ async function boot(){
   }
   function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));}
   function familyName(id){return D.families.find(f=>f.id===id)?.name||`Familia ${id}`;}
+  function cleaningHousehold(id){return D.cleaningAliases?.find(a=>Number(a.family_id)===Number(id))?.household_id||id;}
+  function cleaningFamilies(){return D.families.filter(f=>!D.cleaningAliases?.some(a=>Number(a.family_id)===Number(f.id)));}
+  function canManageCleaning(id){
+    if(me?.role==='sysadmin')return true;
+    if(!['family','payer'].includes(me?.role))return false;
+    return [me.family_id,...(me.role==='payer'?[me.second_family_id]:[])].filter(Boolean).some(own=>cleaningHousehold(own)===cleaningHousehold(id));
+  }
   function currentQr(){return D.qr?.[0]||null;}
   function paymentMethodLabel(v){return v==="cash"?"Efectivo":"QR";}
   function expenseById(id){return D.expenses.find(x=>x.id===id);}
@@ -480,7 +487,7 @@ async function boot(){
     const payerIds=configuredPayers.length?configuredPayers:[5,6];
 
     if(me.role==="family"){
-      const own=turns.filter(t=>t.family_id===me.family_id);
+      const own=turns.filter(t=>cleaningHousehold(t.family_id)===cleaningHousehold(me.family_id));
       const next=own[0];
       $("homeCleaningTitle").textContent="Turno de limpieza";
       $("homeCleaningBadge").textContent="Por semanas";
@@ -529,6 +536,7 @@ async function boot(){
 
     if($("payerFamilyConfigPanel"))$("payerFamilyConfigPanel").classList.toggle("hidden",me.role!=="sysadmin");
     ["familyNamesPanel","userFamiliesPanel"].forEach(id=>$(id).classList.toggle("hidden",me.role!=="sysadmin"));
+    $("cleaningRotationPanel").classList.toggle("hidden",me.role!=="sysadmin");
     if($("notificationBtn"))$("notificationBtn").classList.toggle("hidden",restaurant);
     if($("paymentFormTitle"))$("paymentFormTitle").textContent=family?"Subir comprobante de pago":"Registrar pago";
     if($("paymentHelp"))$("paymentHelp").textContent=family
@@ -575,7 +583,8 @@ async function boot(){
         sb.from("family_credits").select("balance").eq("family_id",me.family_id).maybeSingle(),
         sb.from("proposals").select("*").order("created_at",{ascending:false}),
         sb.from("proposal_votes").select("*"),
-        sb.from("cleaning_swap_requests").select("*").order("created_at",{ascending:false})
+        sb.from("cleaning_swap_requests").select("*").order("created_at",{ascending:false}),
+        sb.from("cleaning_family_aliases").select("*")
       ];
       const r=await Promise.all(calls);
       const bad=r.slice(0,7).find(x=>x.error);
@@ -584,7 +593,7 @@ async function boot(){
       D={
         families:r[0].data||[],profiles:[],periods:[],templates:[],expenses:[],monthly:[],
         shares:[],credits:r[7]?.error||!r[7]?.data?[]:[{family_id:me.family_id,balance:Number(r[7].data.balance||0)}],payments:r[2].data||[],cleaning:r[3].data||[],
-        swaps:r[10]?.data||[],proposals:r[8]?.data||[],votes:r[9]?.data||[],notices:r[4].data||[],comments:[],notifications:r[6].data||[],audit:[],qr:r[5].data||[],externalDebts:[],utilityBaselines:[],utilityCredits:[]
+        swaps:r[10]?.data||[],proposals:r[8]?.data||[],votes:r[9]?.data||[],notices:r[4].data||[],comments:[],notifications:r[6].data||[],audit:[],qr:r[5].data||[],externalDebts:[],utilityBaselines:[],utilityCredits:[],cleaningAliases:r[11]?.data||[]
       };
       familyDebts=r[1].data||[];
       populateFamilyPortal();
@@ -617,7 +626,11 @@ async function boot(){
       sb.from("payment_qr_settings").select("*").limit(1),
       sb.from("utility_credits").select("*").order("created_at",{ascending:false})
     ];
-    if(me.role==="sysadmin")calls.push(sb.from("audit_log").select("*").order("created_at",{ascending:false}).limit(300));
+    if(me.role==="sysadmin"){
+      calls.push(sb.from("audit_log").select("*").order("created_at",{ascending:false}).limit(300));
+      calls.push(sb.from("cleaning_rotation_settings").select("*").limit(1));
+    }
+    calls.push(sb.from("cleaning_family_aliases").select("*"));
 
     const r=await Promise.all(calls);
     const queryNames=[
@@ -625,7 +638,7 @@ async function boot(){
       "monthly_basic_services","external_utility_debts","utility_baselines",
       "expense_shares","family_credits","payments",
       "cleaning_turns","cleaning_swap_requests","proposals","proposal_votes",
-      "notices","expense_comments","notifications","payment_qr_settings","utility_credits","audit_log"
+      "notices","expense_comments","notifications","payment_qr_settings","utility_credits","audit_log","cleaning_rotation_settings"
     ];
     const failures=r.map((x,i)=>x.error?{index:i,error:x.error}:null).filter(Boolean);
     if(failures.length){
@@ -642,6 +655,8 @@ async function boot(){
       D.payments,D.cleaning,D.swaps,D.proposals,D.votes,D.notices,D.comments,D.notifications,D.qr,D.utilityCredits
     ]=rows.slice(1);
     D.audit=me.role==="sysadmin"?(r[20]?.data||[]):[];
+    D.rotation=me.role==="sysadmin"?(r[21]?.data?.[0]||null):null;
+    D.cleaningAliases=r[me.role==="sysadmin"?22:20]?.data||[];
 
     populate();
     renderAll();
@@ -653,7 +668,7 @@ async function boot(){
   }
   async function loadAll(){
     if(reloadInFlight)return reloadInFlight;
-    const selected=[...document.querySelectorAll("select")].filter(el=>!el.closest('#familyNameForm,#userFamiliesForm')&&!el.disabled).map(el=>[el,el.value]);
+    const selected=[...document.querySelectorAll("select")].filter(el=>!el.closest('#familyNameForm,#userFamiliesForm,#cleaningRotationForm')&&!el.disabled).map(el=>[el,el.value]);
     const refresh=$("refreshBtn");refresh.disabled=true;refresh.setAttribute("aria-busy","true");
     reloadInFlight=(async()=>{
       // La asignación también debe actualizarse en cuentas que ya están abiertas.
@@ -707,6 +722,7 @@ async function boot(){
     ["paidByFamily","cleaningFamily","newFamily","newSecondFamily","payerFamily1","payerFamily2"].forEach(id=>{
       if($(id))$(id).innerHTML=(id==="newFamily"?`<option value="">Sin familia</option>`:"")+opts;
     });
+    if($('cleaningFamily'))$('cleaningFamily').innerHTML=cleaningFamilies().map(f=>`<option value="${f.id}">${esc(f.name)}</option>`).join('');
   }
 
   async function loadFamiliesFirst(){
@@ -862,7 +878,7 @@ async function boot(){
     const total=familyDebts.reduce((a,d)=>a+Number(d.balance||0),0);
     const review=familyDebts.reduce((a,d)=>a+Number(d.pending_submitted||0),0);
     const next=[...D.cleaning]
-      .filter(t=>t.family_id===me.family_id&&t.status==="pending")
+      .filter(t=>cleaningHousehold(t.family_id)===cleaningHousehold(me.family_id)&&t.status==="pending")
       .sort((a,b)=>a.turn_date.localeCompare(b.turn_date))[0];
 
     const metrics=document.querySelector("#view-dashboard .metrics");
@@ -930,9 +946,10 @@ async function boot(){
       : `<p class="muted cleaning-empty-tasks">El administrador todavía no registró tareas para esta semana.</p>`;
   }
   function cleaningFamilyIdsForView(){
-    if(me?.role!=="payer")return me?.family_id?[me.family_id]:[];
+    if(me?.role!=="payer")return me?.family_id?D.families.filter(f=>cleaningHousehold(f.id)===cleaningHousehold(me.family_id)).map(f=>f.id):[];
     const ids=payerFamilyIds();
-    return ids.length?ids:[me.family_id,me.second_family_id].filter(Boolean);
+    const assigned=ids.length?ids:[me.family_id,me.second_family_id].filter(Boolean);
+    return D.families.filter(f=>assigned.some(id=>cleaningHousehold(id)===cleaningHousehold(f.id))).map(f=>f.id);
   }
   function renderCleaningFamilyWorkspace(){
     const focus=$("cleaningFocusCard"),tasksPanel=$("cleaningTasksPanel"),upcomingPanel=$("cleaningUpcomingPanel"),admin=$("cleaningAdminWorkspace");
@@ -1443,8 +1460,8 @@ async function boot(){
   }
   function adminError(error){
     const message=error?.message||"No se pudo guardar. Revisa tu conexión y vuelve a intentar.";
-    if(/bucket not found|NoSuchBucket/i.test(message))return "Falta activar el almacenamiento del QR en Supabase. El administrador del proyecto debe aplicar la configuración de la versión 4.2 y volver a intentar.";
-    if(error?.code==="PGRST202"||/could not find the function|function .* does not exist/i.test(message))return "Falta actualizar la configuración de Supabase para esta versión. Aplica la configuración de la versión 4.2 y vuelve a intentar.";
+    if(/bucket not found|NoSuchBucket/i.test(message))return "Falta activar el almacenamiento del QR en Supabase. El administrador del proyecto debe aplicar la configuración de esta versión y volver a intentar.";
+    if(error?.code==="PGRST202"||/could not find the function|function .* does not exist/i.test(message))return "Falta actualizar la configuración de Supabase para esta versión. Aplica la configuración de esta versión y vuelve a intentar.";
     if(/row.level security|permission denied|unauthorized/i.test(message))return "No tienes permiso para guardar este cambio. Ingresa como administrador y comprueba la configuración de Supabase.";
     return message;
   }
@@ -1578,6 +1595,97 @@ async function boot(){
     }).join("");
   }
 
+  function rotationMonday(value){
+    const date=new Date(String(value).slice(0,10)+'T12:00:00Z');
+    if(Number.isNaN(date.getTime()))return null;
+    date.setUTCDate(date.getUTCDate()-((date.getUTCDay()+6)%7));
+    return date.toISOString().slice(0,10);
+  }
+  function defaultRotation(){
+    const turns=[...D.cleaning].sort((a,b)=>a.turn_date.localeCompare(b.turn_date));
+    let chain=[],last=null;
+    for(const turn of turns){
+      const week=rotationMonday(turn.turn_date);if(!week)continue;
+      if(last&&new Date(week)-new Date(last)>7*86400000)chain=[];
+      if(week!==last)chain.push({...turn,week});
+      last=week;
+    }
+    const ids=[...new Set(chain.map(t=>Number(cleaningHousehold(t.family_id))))].filter(id=>D.families.some(f=>Number(f.id)===id));
+    cleaningFamilies().forEach(f=>{if(!ids.includes(Number(f.id)))ids.push(Number(f.id));});
+    return {family_order:ids,anchor_monday:chain[0]?.week||rotationMonday(today()),default_checklist:['Baño','Cocina','Gradas','Basura']};
+  }
+  function rotationValues(){
+    return {p_enabled:true,
+      p_family_order:[...$('cleaningRotationOrder').querySelectorAll('select')].map(el=>Number(el.value)),
+      p_anchor_monday:$('rotationAnchor').value,
+      p_default_checklist:$('rotationTasks').value.split('\n').map(t=>t.trim()).filter(Boolean)
+    };
+  }
+  function previewRotation(){
+    const values=rotationValues(),ids=values.p_family_order,anchor=values.p_anchor_monday;
+    const preview=$('rotationPreview');
+    if(!ids.length||!anchor||rotationMonday(anchor)!==anchor||ids.length!==cleaningFamilies().length||new Set(ids).size!==ids.length){
+      preview.textContent='Elige todas las familias sin repetirlas y una fecha que sea lunes para ver el ciclo.';return;
+    }
+    const first=rotationMonday(today())>anchor?rotationMonday(today()):anchor;
+    const rows=Array.from({length:6},(_,i)=>{
+      const date=new Date(first+'T12:00:00Z');date.setUTCDate(date.getUTCDate()+i*7);
+      const week=date.toISOString().slice(0,10),index=Math.round((new Date(week)-new Date(anchor))/(7*86400000))%ids.length;
+      const existing=D.cleaning.find(t=>rotationMonday(t.turn_date)===week);
+      const name=familyName(cleaningHousehold(existing?.family_id||ids[index]));
+      return `<li><strong>${esc(name)}</strong><br><small>Semana del ${esc(week)}${existing?' · Ya registrada':''}</small></li>`;
+    });
+    preview.innerHTML='<strong>Próximas semanas</strong><ol>'+rows.join('')+'</ol>';
+  }
+  function renderRotation(){
+    if(me?.role!=='sysadmin')return;
+    const cfg=D.rotation;
+    $('cleaningSharedFamilies').textContent=(D.cleaningAliases||[]).map(a=>familyName(a.household_id)+' y '+familyName(a.family_id)+' comparten un solo turno.').join(' ');
+    $('cleaningRotationState').dataset.enabled=String(Boolean(cfg?.enabled));
+    $('cleaningRotationState').textContent=cfg?.enabled
+      ?'Activa: cada lunes se completa esta semana y las 11 siguientes.'
+      :'La repetición está pausada. Los turnos registrados se conservan.';
+    $('rotationPauseBtn').hidden=!cfg?.enabled;
+    if(rotationDraft)return;
+    const values=cfg||defaultRotation();
+    const options=cleaningFamilies().map(f=>`<option value="${f.id}">${esc(f.name)}</option>`).join('');
+    $('cleaningRotationOrder').innerHTML=values.family_order.map((id,i)=>`<div class="rotation-slot"><span aria-hidden="true">${i+1}</span><label>Familia en la posición ${i+1}<select id="rotationFamily${i}" required>${options}</select></label></div>`).join('');
+    values.family_order.forEach((id,i)=>$('rotationFamily'+i).value=String(id));
+    $('rotationAnchor').value=values.anchor_monday;
+    $('rotationTasks').value=(values.default_checklist||[]).join('\n');
+    $('rotationEnableBtn').textContent=cfg?.enabled?'Guardar orden y continuar':'Activar repetición semanal';
+    previewRotation();
+  }
+  $('cleaningRotationForm').addEventListener('input',()=>{rotationDraft=true;previewRotation();});
+  $('cleaningRotationForm').addEventListener('change',()=>{rotationDraft=true;previewRotation();});
+  async function saveRotation(enabled){
+    const form=$('cleaningRotationForm');
+    if(me?.role!=='sysadmin'||form.dataset.saving==='true')return;
+    let values=rotationValues();
+    if(!enabled){
+      const cfg=D.rotation;if(!cfg)return;
+      values={p_enabled:false,p_family_order:cfg.family_order,p_anchor_monday:cfg.anchor_monday,p_default_checklist:cfg.default_checklist};
+    }
+    if(values.p_family_order.length!==cleaningFamilies().length||new Set(values.p_family_order).size!==cleaningFamilies().length){
+      return formFeedback('rotationFeedback','Elige a cada familia una sola vez.','error');
+    }
+    if(!values.p_anchor_monday||rotationMonday(values.p_anchor_monday)!==values.p_anchor_monday){
+      return formFeedback('rotationFeedback','La fecha inicial debe ser un lunes.','error');
+    }
+    busyForm(form,true,enabled?'Guardando repetición…':'Pausando repetición…');
+    $('rotationPauseBtn').disabled=true;
+    try{
+      const {data,error}=await sb.rpc('casa_configure_cleaning_rotation',values);if(error)throw error;
+      rotationDraft=false;await loadAll();
+      formFeedback('rotationFeedback',enabled
+        ?`Repetición activa. Se añadieron ${Number(data?.created_weeks||0)} semanas nuevas. Los turnos anteriores se conservaron.`
+        :'Repetición pausada. Los turnos ya asignados se conservan.');
+    }catch(error){formFeedback('rotationFeedback',adminError(error),'error');}
+    finally{busyForm(form,false);$('rotationPauseBtn').disabled=false;$('rotationEnableBtn').textContent=D.rotation?.enabled?'Guardar orden y continuar':'Activar repetición semanal';}
+  }
+  $('cleaningRotationForm').onsubmit=e=>{e.preventDefault();return saveRotation(true);};
+  $('rotationPauseBtn').onclick=()=>saveRotation(false);
+
   $("cleaningForm").onsubmit=async e=>{
     e.preventDefault();const checklist=$("cleaningChecklist").value.split("\n").map(x=>x.trim()).filter(Boolean);
     const {error}=await sb.rpc("create_cleaning_turn",{p_family_id:Number($("cleaningFamily").value),p_turn_date:$("cleaningDate").value,p_checklist:checklist,p_note:$("cleaningNote").value.trim()||null});
@@ -1595,7 +1703,7 @@ async function boot(){
     if($("cleaningViewTitle"))$("cleaningViewTitle").textContent="Calendario de limpieza";
     if($("cleaningViewSubtitle"))$("cleaningViewSubtitle").textContent="Administra los turnos semanales de la casa";
     $("cleaningBody").innerHTML=D.cleaning.length?D.cleaning.map(t=>{
-      const own=me.role==="sysadmin"||me.family_id===t.family_id;
+      const own=canManageCleaning(t.family_id);
       const tasks=Array.isArray(t.checklist)?t.checklist:[];
       return `<tr><td>${t.turn_date}</td><td>${esc(familyName(t.family_id))}</td><td><span class="badge ${t.status==="done"?"ok":"pending"}">${t.status==="done"?"Realizado":"Pendiente"}</span></td><td><ul class="checklist">${tasks.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></td><td>${esc(t.note||"-")}</td><td>${receiptBtn(t.completion_receipt_path)}</td><td>${own&&t.status==="pending"?`<button class="small-btn complete-clean" data-id="${t.id}">Completar</button> <button class="small-btn swap-clean" data-id="${t.id}">Cambiar turno</button>`:"-"}</td></tr>`;
     }).join(""):`<tr><td colspan="7">No hay turnos.</td></tr>`;
@@ -1843,6 +1951,7 @@ async function boot(){
     userSelect.value=selected;
     if(!familyNameDraft)syncFamilyName();
     if(!assignmentDraft)syncUserAssignment();
+    renderRotation();
   }
 
   $("modalClose").onclick=()=> $("modal").classList.add("hidden");
@@ -1852,7 +1961,7 @@ async function boot(){
     renderDashboard();renderMonthlyServices();renderExternalDebts();renderExpenses();renderExpensesWorkspace();renderPayments();renderBalances();renderCleaning();renderProposals();renderNotices();renderNotifications();renderReports();renderAdmin();renderTemplateAdmin();populate();renderPaymentQr();togglePaymentReceiptRule();updatePendingCreditsInfo();
   }
 
-  window.CF={state:()=>({me,D,familyDebts}),prepareUserAssignment,openCompleteCleaning,openSwap,openComments,loadAll,logout,receiptBtn,receiptURL:async path=>{const {data,error}=await sb.storage.from(cfg.RECEIPTS_BUCKET||"receipts").createSignedUrl(path,300);if(error)throw error;return data.signedUrl;},bindReceiptButtons,showView,renderReports,toast,balanceForFamily,creditForFamily};
+  window.CF={state:()=>({me,D,familyDebts}),cleaningHousehold,canManageCleaning,prepareUserAssignment,openCompleteCleaning,openSwap,openComments,loadAll,logout,receiptBtn,receiptURL:async path=>{const {data,error}=await sb.storage.from(cfg.RECEIPTS_BUCKET||"receipts").createSignedUrl(path,300);if(error)throw error;return data.signedUrl;},bindReceiptButtons,showView,renderReports,toast,balanceForFamily,creditForFamily};
   window.dispatchEvent(new Event("cf:ready"));
   const {data,error:sessionError}=await sb.auth.getSession();
   const s=data?.session;

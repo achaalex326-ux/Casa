@@ -47,6 +47,10 @@ async function setup(role = 'sysadmin') {
       if (rpcError) return { error: rpcError };
       if (name === 'casa_admin_rename_family') tables.families.find(f => f.id === args.p_family_id).name = args.p_name;
       if (name === 'casa_admin_assign_user_families') Object.assign(tables.profiles.find(p => p.id === args.p_user_id), { family_id: args.p_family_id, second_family_id: args.p_second_family_id });
+      if (name === 'casa_configure_cleaning_rotation') {
+        tables.cleaning_rotation_settings = [{ enabled: args.p_enabled, family_order: [...args.p_family_order], anchor_monday: args.p_anchor_monday, default_checklist: [...args.p_default_checklist] }];
+        return { data: { enabled: args.p_enabled, created_weeks: args.p_enabled ? 7 : 0 }, error: null };
+      }
       if (name === 'save_payment_qr_settings') tables.payment_qr_settings = [{ qr_image_path: args.p_qr_image_path, qr_title: args.p_qr_title, qr_note: args.p_qr_note }];
       return { data: [], error: null };
     }
@@ -56,8 +60,8 @@ async function setup(role = 'sysadmin') {
   await tick();
   assert(w.CF.state().me, 'Account entered');
   const $ = id => w.document.getElementById(id);
-  const change = id => $(id).dispatchEvent(new w.Event('change'));
-  const input = (id, value) => { $(id).value = value; $(id).dispatchEvent(new w.Event('input')); };
+  const change = id => $(id).dispatchEvent(new w.Event('change', { bubbles: true }));
+  const input = (id, value) => { $(id).value = value; $(id).dispatchEvent(new w.Event('input', { bubbles: true })); };
   const submit = id => $(id).onsubmit({ preventDefault() {}, currentTarget: $(id) });
   const file = (type = 'image/png', size = 10) => {
     const image = new w.File(['a'.repeat(size)], 'codigo.png', { type });
@@ -68,7 +72,8 @@ async function setup(role = 'sysadmin') {
     hold: () => { hold = true; }, release: () => { hold = false; release(); }
   };
 }
-(async () => {
+if (require.main !== module) module.exports = { setup };
+else (async () => {
   const h = await setup(); const { w, $, change, input, submit } = h;
   try {
     w.Mobile.go('settings');

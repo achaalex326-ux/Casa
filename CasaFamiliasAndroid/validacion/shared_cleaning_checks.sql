@@ -1,0 +1,51 @@
+-- Solo para PostgreSQL desechable: las cuentas 1 y 2 comparten limpieza.
+truncate test.results, test.cleaning_notifications, test.cleaning_completions;
+update public.profiles set family_id=1 where id='00000000-0000-0000-0000-000000000002';
+delete from public.cleaning_turns;
+delete from public.cleaning_rotation_settings;
+insert into public.cleaning_family_aliases(family_id,household_id) values(2,1);
+insert into public.profiles(id,role,family_id,display_name) values
+ ('00000000-0000-0000-0000-000000000005','family',2,'Segunda cuenta de la misma familia'),
+ ('00000000-0000-0000-0000-000000000006','family',3,'Otra familia');
+insert into public.cleaning_turns(id,family_id,turn_date,checklist,created_by) values
+ ('10000000-0000-0000-0000-000000000001',1,date_trunc('week',now() at time zone 'America/La_Paz')::date,'["Baño"]','00000000-0000-0000-0000-000000000001');
+set role authenticated;
+select set_config('request.jwt.claim.sub','00000000-0000-0000-0000-000000000001',false);
+select test.check(public.casa_cleaning_household(2::smallint)=1,'Second account maps to one household');
+select test.expect_error($q$select public.casa_configure_cleaning_rotation(true,array[1,2,3]::smallint[],date_trunc('week',now())::date,'[]')$q$,'22023');
+select test.expect_error($q$select public.casa_configure_cleaning_rotation(true,array[2,3]::smallint[],date_trunc('week',now())::date,'[]')$q$,'22023');
+select test.check((public.casa_configure_cleaning_rotation(true,array[1,3]::smallint[],date_trunc('week',now() at time zone 'America/La_Paz')::date,'["Baño"]')->>'created_weeks')::integer=11,'Two-household cycle accepts three accounting families');
+reset role;
+select test.check((select count(*)=12 and count(distinct turn_date)=12 from public.cleaning_turns),'One turn per household week');
+select test.check((select count(*)=0 from public.cleaning_turns where family_id=2),'Alias never receives a duplicate turn');
+select test.check((select bool_and(family_id=(array[1,3]::smallint[])[mod((turn_date-date_trunc('week',now() at time zone 'America/La_Paz')::date)/7,2)+1]) from public.cleaning_turns),'Cycle repeats household representatives');
+select test.check((select count(*)>0 from test.cleaning_notifications where family_id=2),'Second account receives new-turn notifications');
+select test.check(public.casa_generate_cleaning_weeks()=0,'Shared generator is idempotent');
+insert into storage.objects(bucket_id,name) values ('receipts','00000000-0000-0000-0000-000000000005/cleaning.png');
+set role authenticated;
+select set_config('request.jwt.claim.sub','00000000-0000-0000-0000-000000000005',false);
+select test.check(public.casa_can_manage_cleaning(1::smallint),'Second account can manage shared household');
+select test.check(not public.casa_can_manage_cleaning(3::smallint),'Second account cannot manage another household');
+select test.check((select count(*)=6 from public.cleaning_turns),'Second account sees exactly the shared turns');
+select test.expect_error($q$select public.complete_cleaning_turn('10000000-0000-0000-0000-000000000001','00000000-0000-0000-0000-000000000002/stolen.png',null)$q$,'22023');
+select public.complete_cleaning_turn('10000000-0000-0000-0000-000000000001','00000000-0000-0000-0000-000000000005/cleaning.png','Listo');
+select test.check((select status='done' and completed_at is not null from public.cleaning_turns where id='10000000-0000-0000-0000-000000000001'),'Second account completes shared turn');
+select set_config('request.jwt.claim.sub','00000000-0000-0000-0000-000000000002',false);
+select test.check((select status='done' from public.cleaning_turns where id='10000000-0000-0000-0000-000000000001'),'First account sees the same completion');
+select test.check((select count(*)=1 from storage.objects where name='00000000-0000-0000-0000-000000000005/cleaning.png'),'First account can open shared cleaning photo');
+select test.check((select count(*)=0 from storage.objects where name='private.png'),'Other receipts remain private');
+select test.expect_error($q$select public.complete_cleaning_turn('10000000-0000-0000-0000-000000000001','00000000-0000-0000-0000-000000000005/cleaning.png',null)$q$,'22023');
+select set_config('request.jwt.claim.sub','00000000-0000-0000-0000-000000000006',false);
+select test.check((select count(*)=0 from public.cleaning_turns where id='10000000-0000-0000-0000-000000000001'),'Other household cannot read shared turn');
+select test.check((select count(*)=0 from storage.objects where name='00000000-0000-0000-0000-000000000005/cleaning.png'),'Other household cannot read shared photo');
+select test.expect_error($q$select public.complete_cleaning_turn('10000000-0000-0000-0000-000000000001',null,null)$q$,'42501');
+select set_config('request.jwt.claim.sub','',false);
+select test.check(not public.casa_can_manage_cleaning(1::smallint),'No session cannot manage cleaning');
+reset role;
+set role anon;
+select test.expect_error($q$select public.complete_cleaning_turn(null,null,null)$q$,'42501');
+reset role;
+select test.check((select count(*)=1 from test.cleaning_completions),'One completion event for both accounts');
+select test.check((select count(*)=1 from test.qr_audit where entity='cleaning_turn' and action='complete'),'Completion is audited');
+select test.check((select family_id=1 and amount=123.45 from public.payments where id=1),'Accounting families and payments unchanged');
+select json_build_object('sharedCleaningChecks',count(*),'result','PASS') from test.results;

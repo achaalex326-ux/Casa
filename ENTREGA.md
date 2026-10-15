@@ -1,49 +1,40 @@
-# Casa Familias 4.2 — entrega para presentar y probar
+# Casa Familias 4.3 — interfaz y limpieza semanal
 
-Versión **4.2**, código de versión **3**, Android **8.0 o posterior**. Paquete `com.casafamilias.app`. APK firmado para depuración.
+Versión **4.3**, código **4**, Android **8.0 o posterior**, paquete `com.casafamilias.app`. APK firmado para depuración, destinado a presentar y probar.
 
-## Cambios de esta versión
+## Qué cambia
 
-- Configuración del almacenamiento privado del QR, con permisos para que solo el administrador lo modifique.
-- Vista previa del QR, formatos PNG/JPG/WebP de hasta 5 MB, mensajes de error persistentes y protección contra guardados repetidos. Los datos del formulario se conservan cuando falla la conexión.
-- El administrador puede renombrar familias desde **Mi cuenta → Nombres de familias**.
-- Puede cambiar la familia de cada usuario desde **Más → Usuarios → tocar una cuenta**, o desde **Mi cuenta → Cambiar familia de un usuario**. El encargado admite dos familias diferentes.
-- La cuenta afectada actualiza su asignación al refrescar los datos; también se consulta periódicamente mientras está abierta. Los pagos y deudas anteriores permanecen en su familia original.
-- Se mantienen la interfaz, recuperación de contraseña y consulta de Restaurante de la versión 4.1.
+- Interfaz azul con tarjetas, botones visibles y acciones escritas: Ver comprobante, Ver turno y tareas, Consultar saldo, Cerrar y Activar repetición semanal.
+- Navegación inferior con cuatro botones, encabezados sin flechas y formularios con botón Cerrar. Los filtros de meses usan un selector y botones Mes anterior / Mes siguiente.
+- Textos que se ajustan al espacio, nombres largos y montos grandes que no se enciman, y controles que crecen con la letra ampliada.
+- Calendario de limpieza en orden de fechas. El administrador puede revisar el orden de todas las familias y repetirlo cada semana con un botón.
+- Activación y pausa de la repetición, vista previa de las semanas y conservación de turnos ya asignados. Supabase Cron completa el calendario cada lunes.
+- Se mantienen el QR, los nombres de familias y la reasignación de usuarios de la versión anterior.
 
-## Supabase ya activado
+## Instalar y probar
 
-**La configuración ya se aplicó al proyecto appcasa.** El bucket privado del QR y las funciones de administración están activos. Se verificaron los permisos y se probó el guardado en las tablas reales dentro de una transacción que se deshizo para conservar tus datos. Consulta [la configuración y los pasos de uso](supabase/ACTIVAR.md).
+1. Instala `CasaFamilias-4.3-pruebas.apk` e ingresa con tu cuenta. Si Android informa una firma distinta, compila desde el Android Studio con el que instalaste la versión anterior.
+2. Revisa Inicio, Pagos, Más y Mi cuenta. Los botones de los registros abren el detalle y los formularios se cierran con **Cerrar**. El botón Atrás del teléfono sigue disponible.
+3. Como administrador, abre **Limpieza → Repetir el orden por semana**.
+4. Revisa las posiciones, el lunes inicial y la vista previa; pulsa **Guardar orden y continuar** para guardar ajustes, o **Activar repetición semanal** si estaba pausado. Cada familia de limpieza debe aparecer una vez; las cuentas de una misma familia comparten posición y turno.
+5. Para detener la generación posterior, pulsa **Pausar nuevos turnos automáticos**. Los turnos ya creados se conservan.
+6. Prueba tu QR y los comprobantes desde el teléfono, con letra normal y ampliada.
 
-El paquete de entrega incluye `Activar-QR-y-familias.sql` y `ACTIVAR-SUPABASE.md`, que contienen las dos migraciones y los pasos de uso. Los archivos de pruebas locales nunca deben ejecutarse en el servidor.
+Las migraciones del QR, familias y limpieza ya están instaladas en Supabase. El plan semanal ya quedó activo con el orden confirmado y con las dos cuentas de una misma familia agrupadas solo para limpieza. El botón permite revisar o pausar el plan. Consulta [el funcionamiento semanal](supabase/LIMPIEZA_SEMANAL.md) y [la configuración del QR y familias](supabase/ACTIVAR.md).
 
-## Instalar y comprobar
+## Actualizar la carpeta de tu computadora
 
-1. Abre `CasaFamilias-4.2-pruebas.apk` en el teléfono e instala la actualización. Android puede pedir permiso para instalar desde la aplicación con la que abriste el archivo.
-2. Ingresa con una cuenta existente de administrador. No se crearon usuarios ni contraseñas en el servidor.
-3. Carga tu imagen del QR y comprueba su imagen desde una cuenta de familia.
-4. Cambia el nombre de una familia y revisa que aparezca en los selectores y en la lista de usuarios.
-5. Reasigna una cuenta, actualiza los datos desde ella y comprueba que ve su nueva familia. Revisa que los pagos anteriores sigan en su familia original.
-6. Comprueba también la selección de comprobantes, descargas de PDF/Excel y el botón Atrás en el teléfono.
+En GitHub Desktop: **Fetch origin → Pull origin**. Abre `CasaFamiliasAndroid/` en Android Studio y pulsa Run. El ZIP original del repositorio es histórico; el nuevo `CasaFamilias-4.3-proyecto.zip` contiene el código actualizado y las migraciones.
 
-Si Android rechaza la actualización por una firma diferente, compila el proyecto desde el Android Studio con el que instalaste la versión anterior. No es necesario borrar tus carpetas.
+Para compilar: JDK 17, Android SDK Platform 35 y Gradle Wrapper 8.9. Desde `CasaFamiliasAndroid`, ejecuta `gradlew.bat assembleDebug` en Windows o `./gradlew assembleDebug` en macOS/Linux. El APK queda en `app/build/outputs/apk/debug/app-debug.apk`.
 
-## Actualizar los archivos de tu computadora
+## Comprobaciones
 
-En GitHub Desktop: **Fetch origin → Pull origin**. Abre `CasaFamiliasAndroid/` en Android Studio y pulsa **Run** con el teléfono conectado. Los cambios se descargan a la carpeta del repositorio clonado.
+- Suite de interfaz: primer inicio, 11 comprobaciones de autenticación, Restaurante, 36 de administración, 42 de repetición semanal y 26 vistas en los tres roles principales.
+- Base de datos aislada: 59 comprobaciones previas más 41 de repetición semanal y 26 de cuentas compartidas. Las migraciones de lógica se aplican dos veces; los archivos de fixture son solo locales.
+- Chromium: 270 combinaciones de rol, pantalla, tamaño y letra, a 320/360/390/430/768 píxeles; nombres largos, montos grandes y comprobación de que el texto permanece dentro de los botones.
+- Formularios, letra ampliada y controles de cierre; sin errores de JavaScript en las revisiones visuales.
+- Supabase real: instalación de funciones y Cron, permisos por rol, tarea semanal única y conservación de datos existentes.
+- Compilación Android y firma del APK. No se ha probado este APK en un teléfono físico ni se ha publicado en Google Play.
 
-`CasaFamiliasAndroid.zip` se conserva como archivo histórico. El nuevo `CasaFamilias-4.2-proyecto.zip` contiene el proyecto actual y la configuración SQL, sin cachés ni claves de firma.
-
-Para compilar se requiere JDK 17, Android SDK Platform 35 y Gradle Wrapper 8.9. Desde `CasaFamiliasAndroid`, ejecuta `gradlew.bat assembleDebug` en Windows o `./gradlew assembleDebug` en macOS/Linux. El resultado está en `app/build/outputs/apk/debug/app-debug.apk`.
-
-## Validación
-
-- Primer inicio, 11 comprobaciones de autenticación, consulta de Restaurante y 26 vistas de los tres perfiles principales.
-- 36 comprobaciones nuevas de administración e imágenes con backend simulado: persistencia, errores, reintento, asignaciones, sesiones abiertas y nombres tratados como texto.
-- 59 comprobaciones en PostgreSQL aislado: permisos por rol, bucket privado, lectura del QR, rechazo de escrituras no autorizadas, ejecución repetida de la migración y conservación de pagos.
-- Chromium sin errores de JavaScript: 50 aperturas/restauraciones de formularios en cuatro roles a 320 y 390 píxeles, texto ampliado, teclado y revisión general a cinco anchos.
-- Compilación Android, integridad del contenido del APK y verificación de su firma de depuración.
-
-Estas comprobaciones no sustituyen la prueba del APK en el teléfono y con tus cuentas reales. La activación SQL y el guardado en las tablas reales ya fueron verificados; queda seleccionar tu imagen del QR y comprobar su carga y lectura desde el teléfono. La recuperación de contraseña necesita que `casafamilias://auth` esté permitido en Supabase.
-
-Para ejecutar las pruebas de interfaz, desde `CasaFamiliasAndroid/validacion` con Node.js 24: `npm install --package-lock=false` y `npm test`. Para las pruebas SQL, con Python 3 y Docker disponibles: `python test_backend.py`; este comando crea un PostgreSQL aislado sin puertos publicados y lo elimina al terminar.
+Pruebas de interfaz: con Node.js 24, desde `CasaFamiliasAndroid/validacion`: `npm install --package-lock=false` y `npm test`. Pruebas SQL: con Python 3 y Docker, desde esa misma carpeta: `python test_backend.py`. El validador usa un contenedor desechable sin puertos publicados; pg_cron se valida por separado en Supabase.

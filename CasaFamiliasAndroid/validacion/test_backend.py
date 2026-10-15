@@ -29,16 +29,25 @@ try:
         "-e", "POSTGRES_HOST_AUTH_METHOD=trust", IMAGE)
     for attempt in range(60):
         ready = subprocess.run(["docker", "exec", CONTAINER, "pg_isready", "-U", "postgres"], capture_output=True)
-        if ready.returncode == 0:
+        process = subprocess.run(["docker", "exec", CONTAINER, "cat", "/proc/1/comm"], capture_output=True, text=True)
+        # El servidor temporal de initdb también responde a pg_isready; esperar al proceso final.
+        if ready.returncode == 0 and process.stdout.strip() == "postgres":
             break
         time.sleep(0.5)
     else:
         raise RuntimeError("PostgreSQL no inició: " + run("docker", "logs", CONTAINER))
     sql(HERE / "backend_fixture.sql")
     for _ in range(2):
+        # pg_cron no está incluido en PostgreSQL Alpine; su instalación se verifica en Supabase.
         for migration in sorted((ROOT / "supabase/migrations").glob("*.sql")):
+            if migration.name.endswith("_cron.sql"):
+                continue
             sql(migration)
     output = sql(HERE / "backend_checks.sql")
     print(next(line.strip() for line in output.splitlines() if '"backendChecks"' in line))
+    output = sql(HERE / 'rotation_checks.sql')
+    print(next(line.strip() for line in output.splitlines() if '"rotationChecks"' in line))
+    output = sql(HERE / 'shared_cleaning_checks.sql')
+    print(next(line.strip() for line in output.splitlines() if '"sharedCleaningChecks"' in line))
 finally:
     subprocess.run(["docker", "rm", "-fv", CONTAINER], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="theme-color" content="#F4F7F4">
+  <meta name="theme-color" content="#F5F7FC">
   <meta name="description" content="Gestión privada de pagos, gastos y limpieza para seis familias.">
   <title>Casa Familias</title>
   <link rel="icon" href="logo.svg" type="image/svg+xml">
@@ -13,7 +13,7 @@
   
   <link rel="stylesheet" href="mobile.css">
 </head>
-<body class="professional"><div id="mobileApp" hidden><header id="mobileHeader"></header><main id="mobileContent"></main><nav id="mobileNav" aria-label="Navegación principal"></nav></div><div id="sourceOverlay" hidden role="dialog" aria-modal="true" aria-labelledby="sourceTitle"><header><button onclick="Mobile.closeSource()" aria-label="Volver">‹</button><h2 id="sourceTitle" tabindex="-1"></h2></header><main id="sourceContent"></main><button class="ghost source-back" onclick="Mobile.closeSource()">Volver al inicio</button></div>
+<body class="professional"><div id="mobileApp" hidden><header id="mobileHeader"></header><main id="mobileContent"></main><nav id="mobileNav" aria-label="Navegación principal"></nav></div><div id="sourceOverlay" hidden role="dialog" aria-modal="true" aria-labelledby="sourceTitle"><header><h2 id="sourceTitle" tabindex="-1"></h2><button type="button" onclick="Mobile.closeSource()" aria-label="Cerrar formulario">Cerrar</button></header><main id="sourceContent"></main><button class="ghost source-back" onclick="Mobile.closeSource()">Cerrar formulario</button></div>
   <section id="setupScreen" class="center-screen hidden">
     <div class="panel narrow">
       <img class="brand-logo" src="logo.svg" alt="Logo de Casa Familias">
@@ -118,8 +118,8 @@
           </div>
           <div id="payerCommandMetrics" class="payer-command-metrics"></div>
           <div class="payer-command-actions" aria-label="Acciones principales">
-            <button class="payer-command-btn payer-command-btn-primary" type="button" data-command-view="payments"><span aria-hidden="true">✓</span><span><strong>Aprobar pagos</strong><small>Revisar comprobantes pendientes</small></span><span aria-hidden="true">→</span></button>
-            <button class="payer-command-btn" type="button" data-command-view="balances"><span aria-hidden="true">👥</span><span><strong>Deudas por familia</strong><small>Ver cuánto debe cada familia</small></span><span aria-hidden="true">→</span></button>
+            <button class="payer-command-btn payer-command-btn-primary" type="button" data-command-view="payments"><span aria-hidden="true">✓</span><span><strong>Aprobar pagos</strong><small>Revisar comprobantes pendientes</small></span></button>
+            <button class="payer-command-btn" type="button" data-command-view="balances"><span aria-hidden="true">👥</span><span><strong>Deudas por familia</strong><small>Ver cuánto debe cada familia</small></span></button>
           </div>
         </article>
         <article class="dashboard-hero">
@@ -155,7 +155,7 @@
 
       <section id="view-restaurant" class="view hidden standard-view">
         <header class="view-page-header">
-          <button class="view-back-btn" type="button" data-back-view="dashboard" aria-label="Volver al inicio">←</button>
+          <button class="view-back-btn" type="button" data-back-view="dashboard" aria-label="Volver al inicio">Inicio</button>
           <div class="view-page-icon tone-blue" aria-hidden="true">🏪</div>
           <div><span class="eyebrow">SERVICIOS</span><h2>Mis deudas</h2><p class="muted">Consulta los importes de servicios asignados.</p></div>
         </header>
@@ -177,7 +177,7 @@
       <section id="view-expenses" class="view hidden expenses-view">
 
         <header class="expenses-page-header">
-          <button id="expensesBackBtn" class="expenses-back-btn" type="button" aria-label="Volver al inicio">←</button>
+          <button id="expensesBackBtn" class="expenses-back-btn" type="button" aria-label="Volver al inicio">Inicio</button>
           <div class="expenses-page-icon" aria-hidden="true">🧾</div>
           <div>
             <span class="eyebrow">CONTROL DE LA CASA</span>
@@ -199,7 +199,7 @@
             <span class="expenses-section-icon" aria-hidden="true">↗</span>
           </div>
           <div id="expensesRecentBody" class="expenses-recent-list"></div>
-          <a class="expenses-secondary-link" href="#expenseHistoryPanel">Ver todos los gastos <span aria-hidden="true">→</span></a>
+          <a class="expenses-secondary-link" href="#expenseHistoryPanel">Ver todos los gastos </a>
         </article>
 
         <details id="monthlyServicesPanel" class="panel form-disclosure">
@@ -389,7 +389,7 @@
 
       <section id="view-payments" class="view hidden payment-view">
         <header class="payment-page-header">
-          <button id="paymentBackBtn" class="payment-back-btn" type="button" aria-label="Volver al inicio">←</button>
+          <button id="paymentBackBtn" class="payment-back-btn" type="button" aria-label="Volver al inicio">Inicio</button>
           <div class="payment-page-icon" aria-hidden="true">💳</div>
           <div>
             <span class="eyebrow">GESTIÓN DE PAGOS</span>
@@ -485,7 +485,7 @@
               </div>
             </details>
 
-            <button class="primary pay-submit" type="submit"><span aria-hidden="true">↑</span> Enviar comprobante</button>
+            <button class="primary pay-submit" type="submit">Enviar comprobante</button>
           </form>
         </article>
         <article class="panel payment-history-panel">
@@ -501,7 +501,7 @@
 
       <section id="view-balances" class="view hidden standard-view">
         <header class="view-page-header">
-          <button class="view-back-btn" type="button" data-back-view="dashboard" aria-label="Volver al inicio">←</button>
+          <button class="view-back-btn" type="button" data-back-view="dashboard" aria-label="Volver al inicio">Inicio</button>
           <div class="view-page-icon tone-coral" aria-hidden="true">👥</div>
           <div><span class="eyebrow">CONTROL DE LA CASA</span><h2>Deudas por familia</h2><p class="muted">Revisa cuánto debe cada familia.</p></div>
         </header>
@@ -510,7 +510,7 @@
 
       <section id="view-cleaning" class="view hidden cleaning-view">
         <header class="cleaning-page-header">
-          <button id="cleaningBackBtn" class="cleaning-back-btn" type="button" aria-label="Volver al inicio">←</button>
+          <button id="cleaningBackBtn" class="cleaning-back-btn" type="button" aria-label="Volver al inicio">Inicio</button>
           <div class="cleaning-page-icon" aria-hidden="true">🧹</div>
           <div>
             <span class="eyebrow">ORGANIZACIÓN DE LA CASA</span>
@@ -542,6 +542,22 @@
         </article>
 
         <section id="cleaningAdminWorkspace" class="cleaning-admin-workspace">
+          <article id="cleaningRotationPanel" class="panel">
+            <div class="form-intro"><span class="eyebrow">PLAN DE LIMPIEZA</span><h2>El mismo orden, cada semana</h2><p class="muted">Cada familia ocupa una semana. Al terminar la lista, el ciclo vuelve a empezar. Los turnos ya registrados se conservan.</p></div>
+            <div id="cleaningRotationState" class="rotation-state" role="status"></div>
+            <form id="cleaningRotationForm" class="form">
+              <fieldset class="rotation-fieldset"><legend>Orden de las familias</legend><p id="cleaningSharedFamilies" class="form-hint"></p><p class="form-hint">Selecciona una familia en cada posición, sin repetirla.</p><div id="cleaningRotationOrder" class="rotation-order"></div></fieldset>
+              <label>Primer lunes de este orden<input id="rotationAnchor" type="date" required><small class="form-hint">Esta fecha indica a qué semana corresponde la primera familia.</small></label>
+              <label>Tareas para familias sin una lista anterior<textarea id="rotationTasks" rows="4">Baño
+Cocina
+Gradas
+Basura</textarea><small class="form-hint">Se conservarán las tareas más recientes de las demás familias.</small></label>
+              <div id="rotationPreview" class="rotation-preview"></div>
+              <p id="rotationFeedback" class="form-feedback" role="status" aria-live="polite" hidden></p>
+              <button class="primary" type="submit" id="rotationEnableBtn">Activar repetición semanal</button>
+              <button class="ghost" type="button" id="rotationPauseBtn" hidden>Pausar nuevos turnos automáticos</button>
+            </form>
+          </article>
           <details id="cleaningCreatePanel" class="panel form-disclosure">
             <summary>Crear turno</summary>
             <div class="disclosure-body"><form id="cleaningForm" class="form grid2form">
@@ -566,7 +582,7 @@ Basurero"></textarea></label>
 
       <section id="view-proposals" class="view hidden standard-view">
         <header class="view-page-header">
-          <button class="view-back-btn" type="button" data-back-view="dashboard" aria-label="Volver al inicio">←</button>
+          <button class="view-back-btn" type="button" data-back-view="dashboard" aria-label="Volver al inicio">Inicio</button>
           <div class="view-page-icon tone-purple" aria-hidden="true">🗳️</div>
           <div><span class="eyebrow">PARTICIPACIÓN</span><h2>Propuestas</h2><p class="muted">Presenta y revisa mejoras para la casa.</p></div>
         </header>
@@ -585,7 +601,7 @@ Basurero"></textarea></label>
 
       <section id="view-notices" class="view hidden standard-view">
         <header class="view-page-header">
-          <button class="view-back-btn" type="button" data-back-view="dashboard" aria-label="Volver al inicio">←</button>
+          <button class="view-back-btn" type="button" data-back-view="dashboard" aria-label="Volver al inicio">Inicio</button>
           <div class="view-page-icon tone-amber" aria-hidden="true">📣</div>
           <div><span class="eyebrow">COMUNICACIÓN</span><h2>Comunicados</h2><p class="muted">Información importante para toda la casa.</p></div>
         </header>
@@ -603,7 +619,7 @@ Basurero"></textarea></label>
 
       <section id="view-reports" class="view hidden standard-view">
         <header class="view-page-header">
-          <button class="view-back-btn" type="button" data-back-view="dashboard" aria-label="Volver al inicio">←</button>
+          <button class="view-back-btn" type="button" data-back-view="dashboard" aria-label="Volver al inicio">Inicio</button>
           <div class="view-page-icon tone-green" aria-hidden="true">📊</div>
           <div><span class="eyebrow">CONTROL</span><h2>Reportes</h2><p class="muted">Consulta y descarga los movimientos de la casa.</p></div>
         </header>
@@ -635,7 +651,7 @@ Basurero"></textarea></label>
 
       <section id="view-admin" class="view hidden standard-view">
         <header class="view-page-header">
-          <button class="view-back-btn" type="button" data-back-view="dashboard" aria-label="Volver al inicio">←</button>
+          <button class="view-back-btn" type="button" data-back-view="dashboard" aria-label="Volver al inicio">Inicio</button>
           <div class="view-page-icon tone-purple" aria-hidden="true">⚙️</div>
           <div><span class="eyebrow">CONTROL DEL SISTEMA</span><h2>Administración</h2><p class="muted">Gestiona cuentas, pagos y reglas de la casa.</p></div>
         </header>
@@ -728,7 +744,7 @@ Basurero"></textarea></label>
 
       <section id="view-settings" class="view hidden standard-view settings-view">
         <header class="view-page-header">
-          <button class="view-back-btn" type="button" data-back-view="dashboard" aria-label="Volver al inicio">←</button>
+          <button class="view-back-btn" type="button" data-back-view="dashboard" aria-label="Volver al inicio">Inicio</button>
           <div class="view-page-icon tone-purple" aria-hidden="true">⚙️</div>
           <div><span class="eyebrow">MI CUENTA</span><h2>Configuración</h2><p class="muted">Ajusta la aplicación y administra tu acceso.</p></div>
         </header>
@@ -767,8 +783,8 @@ Basurero"></textarea></label>
         <article class="panel settings-actions-card">
           <div class="setting-heading"><div class="setting-icon app" aria-hidden="true">⌂</div><div><h2>Aplicación y sesión</h2><p class="muted">Instala Casa Familias en este dispositivo o cierra tu cuenta.</p></div></div>
           <div class="settings-action-buttons">
-            <button id="settingsInstallBtn" class="settings-action-btn settings-install-btn" type="button"><span aria-hidden="true">⬇</span><span><strong>Instalar app</strong><small>Acceso rápido desde tu celular o computadora</small></span><span aria-hidden="true">→</span></button>
-            <button id="settingsLogoutBtn" class="settings-action-btn settings-logout-btn" type="button"><span aria-hidden="true">↪</span><span><strong>Cerrar sesión</strong><small>Salir de esta cuenta de forma segura</small></span><span aria-hidden="true">→</span></button>
+            <button id="settingsInstallBtn" class="settings-action-btn settings-install-btn" type="button"><span aria-hidden="true">⬇</span><span><strong>Instalar app</strong><small>Acceso rápido desde tu celular o computadora</small></span></button>
+            <button id="settingsLogoutBtn" class="settings-action-btn settings-logout-btn" type="button"><span aria-hidden="true">↪</span><span><strong>Cerrar sesión</strong><small>Salir de esta cuenta de forma segura</small></span></button>
           </div>
         </article>
         <article class="panel settings-help"><div class="setting-icon help" aria-hidden="true">?</div><div><h2>¿Necesitas ayuda?</h2><p class="muted">Si cambiaste tu contraseña y no puedes ingresar, usa “Olvidé mi contraseña” en la pantalla de inicio o pide apoyo al administrador.</p></div></article>
