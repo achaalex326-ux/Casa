@@ -56,7 +56,7 @@ async function setup(role = 'sysadmin') {
     }
   };
   w.supabase = { createClient: () => client };
-  for (const file of ['mobile.js', 'config.js', 'app.js']) w.eval(fs.readFileSync(path.join(web, file), 'utf8'));
+  for (const file of ['startup.js', 'mobile.js', 'config.js', 'app.js']) w.eval(fs.readFileSync(path.join(web, file), 'utf8'));
   await tick();
   assert(w.CF.state().me, 'Account entered');
   const $ = id => w.document.getElementById(id);

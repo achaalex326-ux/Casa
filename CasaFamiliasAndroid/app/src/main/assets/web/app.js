@@ -2,10 +2,11 @@
 const cfg=window.APP_CONFIG||{};
 const configured=cfg.SUPABASE_URL&&cfg.SUPABASE_PUBLISHABLE_KEY&&!cfg.SUPABASE_URL.includes("PEGA_AQUI")&&!cfg.SUPABASE_PUBLISHABLE_KEY.includes("PEGA_AQUI");
 if(window.Mobile?.isDemo()){}
-else if(!configured){document.getElementById("setupScreen").classList.remove("hidden");}
-else if(!window.supabase){showStartupError();}
+else if(!configured){document.getElementById("setupScreen").classList.remove("hidden");window.CasaStartup?.ready();}
+else if(!window.supabase||!window.Mobile){showStartupError();}
 else{boot().catch(showStartupError);}
 function showStartupError(){
+ if(window.CasaStartup){window.CasaStartup.fail();return;}
  const screen=document.getElementById("setupScreen");
  document.getElementById("mobileApp").hidden=true;
  document.getElementById("loginScreen").classList.add("hidden");
@@ -305,6 +306,7 @@ async function boot(){
     $("mobileApp").hidden=true;
     $("app").classList.add("hidden");
     ["setupScreen","loginScreen","resetScreen"].forEach(screen=>$(screen).classList.toggle("hidden",screen!==id));
+    window.CasaStartup?.ready();
   }
   sb.auth.onAuthStateChange((event,s)=>{
     if(event==="PASSWORD_RECOVERY"){

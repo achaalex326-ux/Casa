@@ -26,7 +26,7 @@ w.supabase = { createClient: () => ({ from, auth: {
   onAuthStateChange() {},
   getSession: async () => ({ data: { session: { user: { id: 'restaurant-test' } } } })
 }, channel: () => ({ on() { return this; }, subscribe() { return this; } }) }) };
-for (const name of ['mobile.js', 'config.js', 'app.js']) w.eval(fs.readFileSync(path.join(web, name), 'utf8'));
+for (const name of ['startup.js', 'mobile.js', 'config.js', 'app.js']) w.eval(fs.readFileSync(path.join(web, name), 'utf8'));
 setTimeout(() => {
   try {
     const doc = w.document;

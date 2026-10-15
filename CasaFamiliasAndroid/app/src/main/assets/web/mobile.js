@@ -108,13 +108,12 @@ window.Mobile=(()=>{
  const titles={home:'',payments:'Mis pagos',expenses:'Gastos de la casa',dues:'Mis cuotas',balances:'Deudas por familia',cleaning:'Turnos de limpieza',notices:'Avisos de la casa',users:'Usuarios',reports:'Reportes',settings:'Mi cuenta',more:'Tu espacio'};
  const descriptions={payments:'Tu historial, comprobantes y estados de pago.',expenses:'Cada gasto del hogar, en un solo lugar.',dues:'Consulta tus cuotas y el detalle de tus pagos.',balances:'Un resumen claro para cada familia.',cleaning:'Un hogar cuidado entre todos.',notices:'Lo que pasa en casa, siempre a mano.',users:'Las personas que hacen de esta casa un hogar.',reports:'Entiende cómo se distribuyen los gastos.',settings:'Tu perfil, tus preferencias y la administración del hogar.',more:'Todo lo que necesitas, a un toque.'};
  function render(){
+  try{
   const s=state();
   if(!s?.me)return;
   if(s.me.role==='restaurant'&&!['home','settings','more'].includes(view))view='home';
   if(s.me.role==='family'&&['expenses','users','balances','reports'].includes(view))view='home';
   if(s.me.role!=='sysadmin'&&view==='users')view='home';
-  document.querySelectorAll('.center-screen').forEach(x=>x.classList.add('hidden'));
-  $('mobileApp').hidden=false;
   const unread=s.D.notifications.some(n=>!n.read_at);
   $('mobileHeader').innerHTML=`<div class="header-brand"><img src="logo.svg" alt=""><div><strong>Casa Familias</strong><small>MI HOGAR, AL DÍA</small></div></div><div class="header-actions"><button data-go="settings" class="account-button" aria-label="Abrir mi cuenta"><span class="avatar">${esc(initials(s.me.display_name))}</span><span>Mi cuenta</span></button></div>`;
 
@@ -126,6 +125,10 @@ window.Mobile=(()=>{
   const active=nav.some(([v])=>v===view)?view:'more';
   $('mobileNav').innerHTML=nav.map(([v,t,k])=>`<button data-go="${v}" class="${active===v?'active':''}" ${active===v?'aria-current="page"':''}>${icon(k)}<span>${t}</span></button>`).join('');
   bind();
+  document.querySelectorAll('.center-screen').forEach(x=>x.classList.add('hidden'));
+  $('mobileApp').hidden=false;
+  window.CasaStartup?.ready();
+  }catch(error){if(window.CasaStartup)window.CasaStartup.fail();else throw error;}
  }
  function go(v){closeSource(false);const s=state();if(!s?.me)return;if(s.me.role==='restaurant'&&!['home','settings','more'].includes(v))return;if(v==='newPayment'){if(demo){showDemoForm('Registrar pago');return;}openSource('paymentForm','Registrar pago');return;}if(v==='newExpense'){if(demo){showDemoForm('Registrar gasto');return;}openSource('expenseCreatePanel','Registrar gasto');return;}if(v==='proposals'){if(demo){modal('<h2>Propuestas y votación</h2><p>No hay propuestas abiertas.</p>');return;}openSource('view-proposals','Propuestas y votación');return;}
  if(s.me.role==='family'&&['expenses','users','balances','reports'].includes(v))return;if(s.me.role!=='sysadmin'&&v==='users')return;view=v;filter=['users','expenses'].includes(v)?'all':'pending';render();window.scrollTo(0,0);}

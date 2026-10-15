@@ -1,8 +1,8 @@
 # Casa Familias
 
-Entrega actual: **4.3 para presentar y probar**. Consulta [la guía de entrega](ENTREGA.md).
+Entrega actual: **4.3.1 para presentar y probar**. Consulta [la guía de entrega](ENTREGA.md).
 
-La versión 4.3 incluye botones con texto, una interfaz adaptable y [repetición semanal de limpieza](supabase/LIMPIEZA_SEMANAL.md). El servidor ya tiene instaladas las funciones y la tarea semanal; el plan semanal está activo y el administrador puede revisarlo o pausarlo desde la aplicación.
+La versión 4.3.1 corrige el arranque que podía dejar la pantalla en blanco, muestra una recuperación con Reintentar y evita cargar scripts antiguos desde la caché. Incluye botones con texto, una interfaz adaptable y [repetición semanal de limpieza](supabase/LIMPIEZA_SEMANAL.md). El servidor ya tiene instaladas las funciones y la tarea semanal; el plan semanal está activo y el administrador puede revisarlo o pausarlo desde la aplicación.
 
 El almacenamiento del QR y la edición de familias ya están activados en el Supabase del proyecto. Consulta [cómo usarlos y la configuración aplicada](supabase/ACTIVAR.md).
 
