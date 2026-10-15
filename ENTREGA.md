@@ -1,61 +1,49 @@
-# Casa Familias 4.1 — entrega para presentar y probar
+# Casa Familias 4.2 — entrega para presentar y probar
 
-Aplicación Android para revisar con el ingeniero. Versión **4.1**, código de versión **2**, Android **8.0 o posterior**. El paquete es `com.casafamilias.app`.
+Versión **4.2**, código de versión **3**, Android **8.0 o posterior**. Paquete `com.casafamilias.app`. APK firmado para depuración.
 
-## Qué incluye
+## Cambios de esta versión
 
-- Acceso con ilustración propia, fuente local, etiquetas visibles y control para mostrar la contraseña.
-- Paneles de Familia, Encargado y Administrador con tarjetas, filtros, formularios y navegación por rol.
-- Consulta de servicios para la cuenta Restaurante, sin controles para registrar gastos ni administrar usuarios.
-- Recuperación de contraseña con confirmación, control de envíos repetidos y mensajes de reintento.
-- Formularios que conservan sus datos cuando falla la conexión y navegación con texto ampliado y teclado.
+- Configuración del almacenamiento privado del QR, con permisos para que solo el administrador lo modifique.
+- Vista previa del QR, formatos PNG/JPG/WebP de hasta 5 MB, mensajes de error persistentes y protección contra guardados repetidos. Los datos del formulario se conservan cuando falla la conexión.
+- El administrador puede renombrar familias desde **Mi cuenta → Nombres de familias**.
+- Puede cambiar la familia de cada usuario desde **Más → Usuarios → tocar una cuenta**, o desde **Mi cuenta → Cambiar familia de un usuario**. El encargado admite dos familias diferentes.
+- La cuenta afectada actualiza su asignación al refrescar los datos; también se consulta periódicamente mientras está abierta. Los pagos y deudas anteriores permanecen en su familia original.
+- Se mantienen la interfaz, recuperación de contraseña y consulta de Restaurante de la versión 4.1.
 
-## Probar el APK
+## Antes de probar: activar Supabase
 
-1. Copia `CasaFamilias-4.1-pruebas.apk` a tu teléfono y ábrelo. Android puede pedirte autorización para instalar desde la aplicación con la que abriste el archivo.
-2. Ingresa con una cuenta existente de Casa Familias. No se crearon usuarios ni contraseñas nuevos en el servidor.
-3. Revisa el inicio, el menú y las pantallas de tu perfil. Para registrar movimientos, utiliza las cuentas y los datos de prueba acordados con el ingeniero.
-4. Comprueba la selección de una imagen de comprobante, el guardado de PDF/Excel y el botón Atrás en el teléfono.
+**El APK por sí solo no resuelve el bucket ausente.** La persona que administra Supabase debe ejecutar una vez [la configuración SQL y sus pasos](supabase/ACTIVAR.md). Este entorno no tiene credenciales administrativas y no la ha aplicado al servidor real.
 
-El APK está firmado para depuración. Si Android rechaza una actualización por una firma diferente, genera e instala el APK desde el Android Studio con el que instalaste tu versión anterior. No es necesario borrar tus carpetas del proyecto.
+El paquete de entrega incluye `Activar-QR-y-familias.sql` y `ACTIVAR-SUPABASE.md`, que contienen esa misma configuración. Los archivos de pruebas locales nunca deben ejecutarse en el servidor.
 
-## Abrir el proyecto actualizado
+## Instalar y comprobar
 
-En GitHub Desktop: **Fetch origin → Pull origin**. Abre **CasaFamiliasAndroid/** en Android Studio y pulsa **Run** con el teléfono conectado.
+1. Abre `CasaFamilias-4.2-pruebas.apk` en el teléfono e instala la actualización. Android puede pedir permiso para instalar desde la aplicación con la que abriste el archivo.
+2. Ingresa con una cuenta existente de administrador. No se crearon usuarios ni contraseñas en el servidor.
+3. Una vez aplicada la configuración de Supabase, carga un QR y comprueba su imagen desde una cuenta de familia.
+4. Cambia el nombre de una familia y revisa que aparezca en los selectores y en la lista de usuarios.
+5. Reasigna una cuenta, actualiza los datos desde ella y comprueba que ve su nueva familia. Revisa que los pagos anteriores sigan en su familia original.
+6. Comprueba también la selección de comprobantes, descargas de PDF/Excel y el botón Atrás en el teléfono.
 
-El ZIP original del repositorio se conserva como archivo histórico. La carpeta `CasaFamiliasAndroid` contiene la versión actual. El paquete de entrega `CasaFamilias-4.1-proyecto.zip` contiene el código actual sin cachés, claves de firma ni carpetas de compilación.
+Si Android rechaza la actualización por una firma diferente, compila el proyecto desde el Android Studio con el que instalaste la versión anterior. No es necesario borrar tus carpetas.
 
-Requisitos para compilar: JDK 17, Android SDK Platform 35 y las dependencias descargadas por Gradle Wrapper 8.9. El APK queda en `CasaFamiliasAndroid/app/build/outputs/apk/debug/app-debug.apk`.
+## Actualizar los archivos de tu computadora
 
-## Revisar el diseño sin cuenta
+En GitHub Desktop: **Fetch origin → Pull origin**. Abre `CasaFamiliasAndroid/` en Android Studio y pulsa **Run** con el teléfono conectado. Los cambios se descargan a la carpeta del repositorio clonado.
 
-Dentro de `CasaFamiliasAndroid/app/src/main/assets/web/`, sirve los archivos con `python -m http.server 5500` y abre `demo.html` desde ese servidor en tu navegador. La demostración ofrece Familia, Encargado y Administrador con datos de ejemplo; no guarda cambios en Supabase.
+`CasaFamiliasAndroid.zip` se conserva como archivo histórico. El nuevo `CasaFamilias-4.2-proyecto.zip` contiene el proyecto actual y la configuración SQL, sin cachés ni claves de firma.
 
-## Comprobaciones realizadas
+Para compilar se requiere JDK 17, Android SDK Platform 35 y Gradle Wrapper 8.9. Desde `CasaFamiliasAndroid`, ejecuta `gradlew.bat assembleDebug` en Windows o `./gradlew assembleDebug` en macOS/Linux. El resultado está en `app/build/outputs/apk/debug/app-debug.apk`.
 
-- Primer inicio y formulario de acceso.
-- Once comprobaciones de autenticación con backend simulado: recuperación, enlace vencido, confirmación, envíos repetidos, perfil ausente y errores de conexión.
-- Consulta de Restaurante: saldo parcial, servicio pagado, acceso al historial y navegación de solo consulta.
-- Veintiséis vistas en los tres perfiles principales.
-- Cuarenta y seis aperturas/restauraciones de formularios en cuatro perfiles a 320 y 390 píxeles.
-- Revisión en Chromium a 320, 360, 390, 430 y 768 píxeles, texto ampliado, contraseña visible/oculta, diálogos y teclado.
-- Compilación Android y firma del APK de depuración.
+## Validación
 
-Las pruebas automatizadas usan datos simulados. La validación en el teléfono y con cuentas reales, el correo de recuperación y las funciones del servidor quedan para la prueba conjunta. La URL `casafamilias://auth` debe estar permitida en la configuración de recuperación de Supabase. No se hicieron escrituras ni despliegues en el servidor durante esta entrega.
+- Primer inicio, 11 comprobaciones de autenticación, consulta de Restaurante y 26 vistas de los tres perfiles principales.
+- 36 comprobaciones nuevas de administración e imágenes con backend simulado: persistencia, errores, reintento, asignaciones, sesiones abiertas y nombres tratados como texto.
+- 50 comprobaciones en PostgreSQL aislado: permisos por rol, bucket privado, lectura del QR, rechazo de escrituras no autorizadas, ejecución repetida de la migración y conservación de pagos.
+- Chromium sin errores de JavaScript: 50 aperturas/restauraciones de formularios en cuatro roles a 320 y 390 píxeles, texto ampliado, teclado y revisión general a cinco anchos.
+- Compilación Android, integridad del contenido del APK y verificación de su firma de depuración.
 
-## Ejecutar las pruebas de código
+Estas comprobaciones no sustituyen la prueba del APK en el teléfono y con tus cuentas reales. Quedan pendientes la activación SQL y la comprobación del guardado real. La recuperación de contraseña necesita que `casafamilias://auth` esté permitido en Supabase.
 
-Con Node.js 24, desde `CasaFamiliasAndroid/validacion`:
-
-```bash
-npm install --package-lock=false
-npm test
-```
-
-En el entorno de Codex, las dependencias ya están preparadas:
-
-```bash
-source /workspace/casa-environment/activate.sh
-cd "$CASA_PROJECT/validacion"
-npm test
-```
+Para ejecutar las pruebas de interfaz, desde `CasaFamiliasAndroid/validacion` con Node.js 24: `npm install --package-lock=false` y `npm test`. Para las pruebas SQL, con Python 3 y Docker disponibles: `python test_backend.py`; este comando crea un PostgreSQL aislado sin puertos publicados y lo elimina al terminar.

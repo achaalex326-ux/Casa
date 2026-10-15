@@ -167,6 +167,11 @@ textarea { min-height: 100px; resize: vertical; }
 .source-host > header, .source-host .view-page-header { display: none; }
 .source-host > h2 { display: none; }
 .source-host h3 { font-size: 1rem; }
+.form-feedback { margin: 0; padding: 12px 14px; border-radius: 14px; background: #edf4ef; color: #245444; overflow-wrap: anywhere; }
+.form-feedback[data-tone="error"] { background: #fff0ea; color: #8c3826; }
+.qr-upload-preview { padding: 14px; border: 1px dashed var(--line); border-radius: 18px; text-align: center; }
+.qr-upload-preview img { display: block; width: auto; max-width: 100%; max-height: 260px; margin: auto; object-fit: contain; border-radius: 10px; }
+.qr-upload-preview small { display: block; margin-top: 8px; overflow-wrap: anywhere; }
 .source-host .grid2, .source-host .form-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; }
 .source-back { display: block; width: 100%; max-width: 636px; margin: 18px auto 0; }
 details > summary { padding: 15px 0; font-weight: 800; cursor: pointer; font-size: .92rem; }

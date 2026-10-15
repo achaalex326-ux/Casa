@@ -653,6 +653,29 @@ Basurero"></textarea></label>
               <button class="primary" type="submit">Crear cuenta</button>
             </form>
           </article>
+          <article class="panel" id="familyNamesPanel">
+            <h2>Nombres de las familias</h2>
+            <p class="muted">Elige una familia y ponle un nombre fácil de reconocer. Sus pagos, saldos y turnos se conservan.</p>
+            <form id="familyNameForm" class="form">
+              <label>Familia<select id="renameFamily" required></select></label>
+              <label>Nombre de la familia<input id="familyNameInput" maxlength="80" required placeholder="Ej.: Familia García"></label>
+              <p id="familyNameStatus" class="form-feedback" role="status" aria-live="polite" hidden></p>
+              <button class="primary" type="submit">Guardar nombre</button>
+            </form>
+          </article>
+          <article class="panel" id="userFamiliesPanel">
+            <h2>Cambiar familia de un usuario</h2>
+            <p class="muted">La cuenta verá los datos de la familia que elijas. Los pagos y las deudas anteriores permanecen en su familia original.</p>
+            <form id="userFamiliesForm" class="form">
+              <label>Usuario<select id="assignUser" required></select></label>
+              <p id="assignmentRole" class="muted"></p>
+              <label>Familia principal<select id="assignFamily" required></select></label>
+              <label id="assignSecondFamilyWrap" hidden>Segunda familia del encargado<select id="assignSecondFamily"></select></label>
+              <p id="assignmentHelp" class="notice-card"></p>
+              <p id="userFamiliesStatus" class="form-feedback" role="status" aria-live="polite" hidden></p>
+              <button class="primary" type="submit">Guardar asignación</button>
+            </form>
+          </article>
           <article class="panel" id="payerFamilyConfigPanel">
             <h2>Familias del Encargado de Pagos</h2>
             <p class="muted">Estas dos familias quedan pagadas automáticamente cuando se registra el paquete mensual de servicios básicos.</p>
@@ -669,8 +692,11 @@ Basurero"></textarea></label>
             <form id="qrSettingsForm" class="form grid2form">
               <label>Título<input id="qrTitle" placeholder="Pago por QR"></label>
               <label class="span2">Instrucciones<textarea id="qrNote" rows="3" placeholder="Ej.: Escanea el QR, realiza el pago y sube la captura del comprobante."></textarea></label>
-              <label class="span2">Imagen del QR<input id="qrImage" type="file" accept="image/*"></label>
+              <label class="span2">Imagen del QR<input id="qrImage" type="file" accept="image/png,image/jpeg,image/webp" aria-describedby="qrImageHelp"></label>
+              <small id="qrImageHelp" class="span2 muted">PNG, JPG o WebP. Máximo 5 MB. Revisa que el código se vea completo y nítido.</small>
+              <div id="qrPreview" class="span2 qr-upload-preview" hidden></div>
               <div id="currentQrAdminInfo" class="span2 muted"></div>
+              <p id="qrSaveStatus" class="span2 form-feedback" role="status" aria-live="polite" hidden></p>
               <button class="primary span2" type="submit">Guardar QR</button>
             </form>
           </article>

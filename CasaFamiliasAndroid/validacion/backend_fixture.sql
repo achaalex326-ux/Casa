@@ -1,0 +1,53 @@
+-- Solo para PostgreSQL desechable de test_backend.py; nunca ejecutar en Supabase.
+create role anon;
+create role authenticated;
+create schema auth;
+create schema storage;
+create schema test;
+create function auth.uid() returns uuid language sql stable as $$
+  select nullif(current_setting('request.jwt.claim.sub', true), '')::uuid;
+$$;
+grant usage on schema auth, storage, test to anon, authenticated;
+grant execute on function auth.uid() to anon, authenticated;
+create table public.families (id bigint primary key, name text not null);
+create table public.profiles (id uuid primary key, role text, family_id bigint references public.families,
+  second_family_id bigint references public.families, display_name text, contact_email text);
+create table public.payments (id bigint primary key, family_id bigint references public.families, amount numeric);
+create table storage.buckets (id text primary key, name text not null, public boolean,
+  file_size_limit bigint, allowed_mime_types text[]);
+create table storage.objects (id bigint generated always as identity primary key,
+  bucket_id text references storage.buckets, name text);
+alter table public.profiles enable row level security;
+create policy own_profile on public.profiles for select to authenticated using (id = auth.uid());
+alter table storage.objects enable row level security;
+grant select on public.profiles, public.families to authenticated;
+grant select, insert, update, delete on storage.objects to anon, authenticated;
+grant usage on all sequences in schema storage to anon, authenticated;
+insert into public.families values (1, 'Familia Uno'), (2, 'Familia Dos'), (3, 'Familia Tres');
+insert into public.profiles values
+ ('00000000-0000-0000-0000-000000000001', 'sysadmin', null, null, 'Admin', 'admin@example.test'),
+ ('00000000-0000-0000-0000-000000000002', 'family', 1, null, 'Familia', 'familia@example.test'),
+ ('00000000-0000-0000-0000-000000000003', 'payer', 1, 2, 'Encargado', 'encargado@example.test'),
+ ('00000000-0000-0000-0000-000000000004', 'restaurant', null, null, 'Restaurante', 'restaurante@example.test');
+insert into public.payments values (1, 1, 123.45);
+insert into storage.buckets values ('receipts', 'receipts', false, null, null);
+insert into storage.objects (bucket_id, name) values ('receipts', 'private.png');
+create table test.results (label text);
+grant insert, select on test.results to anon, authenticated;
+create function test.check(ok boolean, label text) returns void language plpgsql as $$
+begin
+  if ok is distinct from true then raise exception 'FAIL: %', label; end if;
+  insert into test.results values (label);
+end;
+$$;
+create function test.expect_error(statement text, expected text) returns void language plpgsql as $$
+begin
+  begin
+    execute statement;
+  exception when others then
+    if sqlstate <> expected then raise exception 'Wrong SQLSTATE: %, expected %: %', sqlstate, expected, sqlerrm; end if;
+    insert into test.results values ('Denied: ' || statement); return;
+  end;
+  raise exception 'Unexpectedly allowed: %', statement;
+end;
+$$;

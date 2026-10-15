@@ -33,6 +33,7 @@ async function boot(){
   let session=null,me=null,deferredPrompt=null,realtimeChannel=null,reloadTimer=null,syncTimer=null,reloadInFlight=null,familyDebts=[];
   const emptyData=()=>({families:[],profiles:[],periods:[],templates:[],expenses:[],monthly:[],shares:[],credits:[],payments:[],cleaning:[],swaps:[],proposals:[],votes:[],notices:[],comments:[],notifications:[],audit:[],qr:[],externalDebts:[],utilityBaselines:[],utilityCredits:[]});
   let D=emptyData();
+  let qrDraft=false,familyNameDraft=false,assignmentDraft=false,qrPreviewURL=null;
 
   ["expenseDate","paymentDate","cleaningDate"].forEach(id=>$(id).value=today());
   $("expenseDueDate").value=today();
@@ -493,7 +494,7 @@ async function boot(){
     if(me.role==="payer"){
       const own=turns.filter(t=>payerIds.includes(t.family_id));
       const next=own[0];
-      const timeline=turns.slice(0,5).map((t,i)=>`<div class="cleaning-week-item ${i===0?"current":""}"><span class="cleaning-week-dot"></span><div><strong>${i===0?cleaningWeekLabel(t.turn_date):`Semana ${i+1}`}</strong><small>${familyName(t.family_id)}</small></div></div>`).join("");
+      const timeline=turns.slice(0,5).map((t,i)=>`<div class="cleaning-week-item ${i===0?"current":""}"><span class="cleaning-week-dot"></span><div><strong>${i===0?cleaningWeekLabel(t.turn_date):`Semana ${i+1}`}</strong><small>${esc(familyName(t.family_id))}</small></div></div>`).join("");
       $("homeCleaningTitle").textContent="Limpieza de la familia pagadora";
       $("homeCleaningBadge").textContent="También le toca";
       body.innerHTML=`<div class="home-cleaning-payer"><div class="home-cleaning-payer-top"><div class="home-cleaning-icon" aria-hidden="true">🧹</div><div><strong>${next?`${cleaningWeekLabel(next.turn_date)}: le toca a la familia pagadora`:"Turno pendiente de configurar"}</strong><span>${next?cleaningDateText(next.turn_date):"El administrador todavía no asignó una semana."}</span></div></div><div class="cleaning-week-line">${timeline||`<span class="muted">Todavía no hay turnos asignados.</span>`}</div></div>`;
@@ -502,7 +503,7 @@ async function boot(){
 
     $("homeCleaningTitle").textContent="Calendario de limpieza";
     $("homeCleaningBadge").textContent="Administración semanal";
-    const schedule=turns.slice(0,5).map((t,i)=>`<div class="cleaning-admin-row"><div class="home-cleaning-icon small" aria-hidden="true">🧹</div><div><strong>${i===0?cleaningWeekLabel(t.turn_date):i===1?"Próxima semana":`En ${i} semanas`}</strong><span>${familyName(t.family_id)} · ${cleaningDateText(t.turn_date)}</span></div></div>`).join("");
+    const schedule=turns.slice(0,5).map((t,i)=>`<div class="cleaning-admin-row"><div class="home-cleaning-icon small" aria-hidden="true">🧹</div><div><strong>${i===0?cleaningWeekLabel(t.turn_date):i===1?"Próxima semana":`En ${i} semanas`}</strong><span>${esc(familyName(t.family_id))} · ${cleaningDateText(t.turn_date)}</span></div></div>`).join("");
     body.innerHTML=`<div class="home-cleaning-admin"><div>${schedule||`<p class="muted">Todavía no hay turnos asignados.</p>`}</div><button class="small-btn home-cleaning-config" type="button">Configurar turnos</button></div>`;
     $("homeCleaningBody").querySelector(".home-cleaning-config")?.addEventListener("click",()=>{
       const navButton=[...document.querySelectorAll(".nav-btn")].find(x=>x.dataset.view==="cleaning");
@@ -527,6 +528,7 @@ async function boot(){
     if($("familyAssignmentWrap"))$("familyAssignmentWrap").classList.toggle("hidden",restaurant||me.role==="sysadmin");
 
     if($("payerFamilyConfigPanel"))$("payerFamilyConfigPanel").classList.toggle("hidden",me.role!=="sysadmin");
+    ["familyNamesPanel","userFamiliesPanel"].forEach(id=>$(id).classList.toggle("hidden",me.role!=="sysadmin"));
     if($("notificationBtn"))$("notificationBtn").classList.toggle("hidden",restaurant);
     if($("paymentFormTitle"))$("paymentFormTitle").textContent=family?"Subir comprobante de pago":"Registrar pago";
     if($("paymentHelp"))$("paymentHelp").textContent=family
@@ -651,9 +653,23 @@ async function boot(){
   }
   async function loadAll(){
     if(reloadInFlight)return reloadInFlight;
-    const selected=[...document.querySelectorAll("select")].map(el=>[el,el.value]);
+    const selected=[...document.querySelectorAll("select")].filter(el=>!el.closest('#familyNameForm,#userFamiliesForm')&&!el.disabled).map(el=>[el,el.value]);
     const refresh=$("refreshBtn");refresh.disabled=true;refresh.setAttribute("aria-busy","true");
-    reloadInFlight=loadAllData().catch(error=>{console.error(error);toast("No se pudo actualizar. Revisa tu conexión e inténtalo de nuevo.");}).finally(()=>{
+    reloadInFlight=(async()=>{
+      // La asignación también debe actualizarse en cuentas que ya están abiertas.
+      if(session?.user&&me){
+        const {data:profile,error}=await sb.from("profiles").select("*").eq("id",session.user.id).single();
+        if(error||!profile)throw error||new Error("Perfil no disponible");
+        if(profile.role!==me.role){
+          // El cambio de rol necesita reconstruir toda la navegación y sus permisos.
+          location.reload();return;
+        }
+        const changed=profile.family_id!==me.family_id||profile.second_family_id!==me.second_family_id;
+        me=profile;
+        if(changed){D=emptyData();familyDebts=[];applyRoleUI();}
+      }
+      await loadAllData();
+    })().catch(error=>{console.error(error);toast("No se pudo actualizar. Revisa tu conexión e inténtalo de nuevo.");}).finally(()=>{
       selected.forEach(([el,value])=>{if(value&&[...el.options].some(o=>o.value===value))el.value=value;});
       renderPaymentSelectionCard();renderPaymentAllocationInfo();
       refresh.disabled=false;refresh.removeAttribute("aria-busy");reloadInFlight=null;window.dispatchEvent(new Event("cf:update"));
@@ -720,14 +736,14 @@ async function boot(){
     let shares=D.shares.filter(s=>shareBalance(s)>0.005);
     $("paymentShare").innerHTML=shares.length?shares.map(s=>{
       const e=expenseById(s.expense_id),st=statusForShare(s)[0];
-      return `<option value="${s.id}">${familyName(s.family_id)} · ${esc(e?.concept)} · saldo ${money(shareBalance(s))} · ${st}</option>`;
+      return `<option value="${s.id}">${esc(familyName(s.family_id))} · ${esc(e?.concept)} · saldo ${money(shareBalance(s))} · ${st}</option>`;
     }).join(""):`<option value="">No hay deudas pendientes</option>`;
     renderPaymentSelectionCard();
 
     const payer=D.profiles.find(p=>p.role==="payer");
     if(payer){
       if($("payerFamiliesInfo")){
-        $("payerFamiliesInfo").innerHTML=`<div class="notice-card"><strong>Familias cubiertas automáticamente:</strong> ${familyName(payer.family_id)} y ${payer.second_family_id?familyName(payer.second_family_id):"FALTA CONFIGURAR"}</div>`;
+        $("payerFamiliesInfo").innerHTML=`<div class="notice-card"><strong>Familias cubiertas automáticamente:</strong> ${esc(familyName(payer.family_id))} y ${payer.second_family_id?esc(familyName(payer.second_family_id)):"FALTA CONFIGURAR"}</div>`;
       }
       if($("payerFamily1"))$("payerFamily1").value=String(payer.family_id||1);
       if($("payerFamily2"))$("payerFamily2").value=String(payer.second_family_id||2);
@@ -954,7 +970,7 @@ async function boot(){
     $("paymentsBody").innerHTML=ownPayments.length?ownPayments.map(p=>`
       <tr>
         <td>${p.paid_at}</td>
-        <td>${familyName(p.family_id)}</td>
+        <td>${esc(familyName(p.family_id))}</td>
         <td>${money(p.amount)}</td>
         <td>${money(p.applied_amount)}</td>
         <td>${money(p.credit_amount)}</td>
@@ -986,7 +1002,7 @@ async function boot(){
     $("noticeList").innerHTML=activeNotices.length?activeNotices.map(n=>`<div class="notice-card"><h3>${esc(n.title)}</h3><p>${esc(n.body)}</p>${n.visible_until?`<small class="muted">Visible hasta ${n.visible_until}</small>`:""}</div>`).join(""):`<p class="muted">No hay avisos activos.</p>`;
 
     const recentPayments=me.role==="family"?D.payments.filter(p=>p.family_id===me.family_id):D.payments;
-    $("recentActivity").innerHTML=recentPayments.slice(0,7).map(p=>`<div class="activity-row"><div><strong>${familyName(p.family_id)}</strong><div class="muted">${p.paid_at} · ${p.kind}</div></div><div><strong>${money(p.amount)}</strong><br><span class="badge ${p.status==="approved"?"ok":p.status==="rejected"?"rejected":"review"}">${({approved:"Aprobado",rejected:"Rechazado",pending:"En revisión"})[p.status]||esc(p.status)}</span></div></div>`).join("")||`<p class="muted">Sin movimientos.</p>`;
+    $("recentActivity").innerHTML=recentPayments.slice(0,7).map(p=>`<div class="activity-row"><div><strong>${esc(familyName(p.family_id))}</strong><div class="muted">${p.paid_at} · ${p.kind}</div></div><div><strong>${money(p.amount)}</strong><br><span class="badge ${p.status==="approved"?"ok":p.status==="rejected"?"rejected":"review"}">${({approved:"Aprobado",rejected:"Rechazado",pending:"En revisión"})[p.status]||esc(p.status)}</span></div></div>`).join("")||`<p class="muted">Sin movimientos.</p>`;
     renderComparison();
   }
   function renderPayerCommandPanel(){
@@ -1410,12 +1426,102 @@ async function boot(){
 
   async function uploadPaymentQr(file){
     if(!file)return currentQr()?.qr_image_path||null;
+    validateQrFile(file);
     const safe=file.name.replace(/[^a-zA-Z0-9._-]/g,"_");
     const path=`qr/${Date.now()}-${safe}`;
     const {error}=await sb.storage.from("payment-qr").upload(path,file,{upsert:false,contentType:file.type||"image/jpeg"});
     if(error)throw error;
     return path;
   }
+
+  function validateQrFile(file){
+    if(!["image/png","image/jpeg","image/webp"].includes(file.type))throw new Error("Elige una imagen PNG, JPG o WebP del QR.");
+    if(!file.size||file.size>5*1024*1024)throw new Error("La imagen debe pesar entre 1 byte y 5 MB.");
+  }
+  function formFeedback(id,message,tone="success"){
+    const box=$(id);box.textContent=message;box.dataset.tone=tone;box.hidden=!message;
+  }
+  function adminError(error){
+    const message=error?.message||"No se pudo guardar. Revisa tu conexión y vuelve a intentar.";
+    if(/bucket not found|NoSuchBucket/i.test(message))return "Falta activar el almacenamiento del QR en Supabase. El administrador del proyecto debe aplicar la configuración de la versión 4.2 y volver a intentar.";
+    if(error?.code==="PGRST202"||/could not find the function|function .* does not exist/i.test(message))return "Falta actualizar la configuración de Supabase para esta versión. Aplica la configuración de la versión 4.2 y vuelve a intentar.";
+    if(/row.level security|permission denied|unauthorized/i.test(message))return "No tienes permiso para guardar este cambio. Ingresa como administrador y comprueba la configuración de Supabase.";
+    return message;
+  }
+  function busyForm(form,busy,label){
+    const button=form.querySelector('button[type="submit"]');
+    if(busy){button.dataset.label=button.textContent;button.textContent=label;}
+    else button.textContent=button.dataset.label||button.textContent;
+    button.disabled=busy;form.dataset.saving=String(busy);form.setAttribute("aria-busy",String(busy));
+  }
+  function familyOptions(id,placeholder="Selecciona una familia"){
+    const select=$(id),value=select.value;
+    select.innerHTML=`<option value="">${placeholder}</option>`+D.families.map(f=>`<option value="${f.id}">${esc(f.name)}</option>`).join("");
+    select.value=value;
+  }
+  function syncFamilyName(){
+    const family=D.families.find(f=>String(f.id)===$("renameFamily").value);
+    $("familyNameInput").value=family?.name||"";familyNameDraft=false;
+  }
+  function syncUserAssignment(){
+    const user=D.profiles.find(p=>p.id===$("assignUser").value);
+    const payer=user?.role==="payer";
+    $("assignmentRole").textContent=user?roleName[user.role]:"Selecciona la cuenta que deseas actualizar.";
+    $("assignFamily").value=user?.family_id?String(user.family_id):"";
+    $("assignSecondFamily").value=payer&&user.second_family_id?String(user.second_family_id):"";
+    $("assignSecondFamilyWrap").hidden=!payer;
+    $("assignSecondFamily").required=payer;
+    $("assignSecondFamily").disabled=!payer;
+    $("assignmentHelp").textContent=payer?"El encargado necesita dos familias diferentes. La asignación se utilizará en los próximos registros de servicios básicos; no modifica pagos anteriores.":"El usuario verá la familia seleccionada al actualizar sus datos. Sus credenciales y su rol se conservan.";
+    assignmentDraft=false;
+  }
+  function prepareUserAssignment(userId){
+    if(me?.role!=="sysadmin")return false;
+    const user=D.profiles.find(p=>p.id===userId);
+    if(!user||!["family","payer"].includes(user.role))return false;
+    $("assignUser").value=userId;syncUserAssignment();formFeedback("userFamiliesStatus","");return true;
+  }
+  $("renameFamily").onchange=()=>{syncFamilyName();formFeedback("familyNameStatus","");};
+  $("familyNameInput").oninput=()=>{familyNameDraft=true;};
+  $("assignUser").onchange=()=>{syncUserAssignment();formFeedback("userFamiliesStatus","");};
+  ["assignFamily","assignSecondFamily"].forEach(id=>$(id).onchange=()=>{assignmentDraft=true;});
+  ["qrTitle","qrNote"].forEach(id=>$(id).oninput=()=>{qrDraft=true;});
+  $("qrImage").onchange=()=>{
+    qrDraft=true;formFeedback("qrSaveStatus","");
+    if(qrPreviewURL){URL.revokeObjectURL(qrPreviewURL);qrPreviewURL=null;}
+    const box=$("qrPreview");box.replaceChildren();box.hidden=true;
+    const file=$("qrImage").files[0];if(!file)return;
+    try{
+      validateQrFile(file);qrPreviewURL=URL.createObjectURL(file);
+      const image=document.createElement("img");image.src=qrPreviewURL;image.alt="Vista previa del QR seleccionado";
+      const caption=document.createElement("small");caption.textContent=file.name;
+      box.append(image,caption);box.hidden=false;
+    }catch(error){$("qrImage").value="";formFeedback("qrSaveStatus",error.message,"error");}
+  };
+  $("familyNameForm").onsubmit=async e=>{
+    e.preventDefault();const form=e.currentTarget;
+    if(me?.role!=="sysadmin"||form.dataset.saving==="true")return;
+    const id=Number($("renameFamily").value),name=$("familyNameInput").value.trim();
+    if(!id||!name)return formFeedback("familyNameStatus","Selecciona una familia y escribe su nombre.","error");
+    busyForm(form,true,"Guardando nombre…");
+    try{
+      const {error}=await sb.rpc("casa_admin_rename_family",{p_family_id:id,p_name:name});if(error)throw error;
+      familyNameDraft=false;await loadAll();formFeedback("familyNameStatus","Nombre guardado. Los datos de la familia se conservan.");
+    }catch(error){formFeedback("familyNameStatus",adminError(error),"error");}
+    finally{busyForm(form,false);}
+  };
+  $("userFamiliesForm").onsubmit=async e=>{
+    e.preventDefault();const form=e.currentTarget;
+    if(me?.role!=="sysadmin"||form.dataset.saving==="true")return;
+    const user=D.profiles.find(p=>p.id===$("assignUser").value),first=Number($("assignFamily").value),second=user?.role==="payer"?Number($("assignSecondFamily").value):null;
+    if(!user||!first||(user.role==="payer"&&(!second||first===second)))return formFeedback("userFamiliesStatus","Selecciona un usuario y sus familias. El encargado necesita dos familias diferentes.","error");
+    busyForm(form,true,"Guardando asignación…");
+    try{
+      const {error}=await sb.rpc("casa_admin_assign_user_families",{p_user_id:user.id,p_family_id:first,p_second_family_id:second});if(error)throw error;
+      assignmentDraft=false;await loadAll();formFeedback("userFamiliesStatus","Asignación guardada. El usuario puede pulsar Actualizar para ver su familia.");
+    }catch(error){formFeedback("userFamiliesStatus",adminError(error),"error");}
+    finally{busyForm(form,false);}
+  };
 
   $("paymentForm").onsubmit=async e=>{
     e.preventDefault();
@@ -1456,7 +1562,7 @@ async function boot(){
     }catch(err){toast(err.message);}
   };
   function renderPayments(){
-    $("paymentsBody").innerHTML=D.payments.length?D.payments.map(p=>`<tr><td>${p.paid_at}</td><td>${familyName(p.family_id)}</td><td>${money(p.amount)}</td><td>${money(p.applied_amount)}</td><td>${money(p.credit_amount)}</td><td><span class="badge ${p.status==="approved"?"ok":p.status==="rejected"?"rejected":"review"}">${p.status==="approved"?"Aprobado":p.status==="rejected"?"Rechazado":"En revisión"}</span></td><td>${esc(p.note||"-")}</td><td>${receiptBtn(p.receipt_path)}</td><td>${p.status==="pending"&&["sysadmin","payer"].includes(me.role)?`<button class="small-btn review-pay" data-id="${p.id}" data-ok="1">Aprobar</button> <button class="small-btn review-pay" data-id="${p.id}" data-ok="0">Rechazar</button>`:"-"}</td></tr>`).join(""):`<tr><td colspan="9">No hay pagos.</td></tr>`;
+    $("paymentsBody").innerHTML=D.payments.length?D.payments.map(p=>`<tr><td>${p.paid_at}</td><td>${esc(familyName(p.family_id))}</td><td>${money(p.amount)}</td><td>${money(p.applied_amount)}</td><td>${money(p.credit_amount)}</td><td><span class="badge ${p.status==="approved"?"ok":p.status==="rejected"?"rejected":"review"}">${p.status==="approved"?"Aprobado":p.status==="rejected"?"Rechazado":"En revisión"}</span></td><td>${esc(p.note||"-")}</td><td>${receiptBtn(p.receipt_path)}</td><td>${p.status==="pending"&&["sysadmin","payer"].includes(me.role)?`<button class="small-btn review-pay" data-id="${p.id}" data-ok="1">Aprobar</button> <button class="small-btn review-pay" data-id="${p.id}" data-ok="0">Rechazar</button>`:"-"}</td></tr>`).join(""):`<tr><td colspan="9">No hay pagos.</td></tr>`;
     bindReceiptButtons();document.querySelectorAll(".review-pay").forEach(b=>b.onclick=async()=>{const {error}=await sb.rpc("review_payment",{p_payment_id:b.dataset.id,p_approve:b.dataset.ok==="1"});if(error)return toast(error.message);toast("Pago revisado.");await loadAll();});
   }
 
@@ -1465,7 +1571,7 @@ async function boot(){
     const payerIds=payerFamilyIds();
     const visibleFamilies=D.families.filter(f=>!payerIds.includes(f.id));
     const payerDebt=payerIds.reduce((sum,id)=>sum+balanceForFamily(id),0);
-    const payerCard=payerIds.length?`<div class="family-card payer-family-card"><h3>Familia pagadora · ${payerIds.map(id=>familyName(id)).join(" + ")}</h3><div class="muted">Una sola familia con dos cuartos</div><div class="big-number ${payerDebt>0.005?"danger":"success"}">${payerDebt>0.005?money(payerDebt):"Al día"}</div><div class="muted">Deuda propia: ${money(payerDebt)}</div><div class="muted">Sus gastos registrados aparecen en el resumen mensual.</div></div>`:"";
+    const payerCard=payerIds.length?`<div class="family-card payer-family-card"><h3>Familia pagadora · ${esc(payerIds.map(id=>familyName(id)).join(" + "))}</h3><div class="muted">Una sola familia con dos cuartos</div><div class="big-number ${payerDebt>0.005?"danger":"success"}">${payerDebt>0.005?money(payerDebt):"Al día"}</div><div class="muted">Deuda propia: ${money(payerDebt)}</div><div class="muted">Sus gastos registrados aparecen en el resumen mensual.</div></div>`:"";
     $("balancesCards").innerHTML=payerCard+visibleFamilies.map(f=>{
       const sh=D.shares.filter(s=>s.family_id===f.id),assigned=sh.reduce((a,s)=>a+Number(s.amount_due),0),paid=sh.reduce((a,s)=>a+approvedPaid(s.id),0),bal=Math.max(assigned-paid,0),credit=creditForFamily(f.id);
       return `<div class="family-card"><h3>${esc(f.name)}</h3><div class="muted">Asignado: ${money(assigned)}</div><div class="muted">Aplicado: ${money(paid)}</div><div class="big-number ${bal>0?"danger":"success"}">${bal>0?money(bal):"Al día"}</div><div class="success">Saldo a favor: ${money(credit)}</div>${credit>0.005?`<div class="muted credit-explanation">Se descontará en el siguiente gasto de esta familia.</div>`:""}</div>`;
@@ -1491,7 +1597,7 @@ async function boot(){
     $("cleaningBody").innerHTML=D.cleaning.length?D.cleaning.map(t=>{
       const own=me.role==="sysadmin"||me.family_id===t.family_id;
       const tasks=Array.isArray(t.checklist)?t.checklist:[];
-      return `<tr><td>${t.turn_date}</td><td>${familyName(t.family_id)}</td><td><span class="badge ${t.status==="done"?"ok":"pending"}">${t.status==="done"?"Realizado":"Pendiente"}</span></td><td><ul class="checklist">${tasks.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></td><td>${esc(t.note||"-")}</td><td>${receiptBtn(t.completion_receipt_path)}</td><td>${own&&t.status==="pending"?`<button class="small-btn complete-clean" data-id="${t.id}">Completar</button> <button class="small-btn swap-clean" data-id="${t.id}">Cambiar turno</button>`:"-"}</td></tr>`;
+      return `<tr><td>${t.turn_date}</td><td>${esc(familyName(t.family_id))}</td><td><span class="badge ${t.status==="done"?"ok":"pending"}">${t.status==="done"?"Realizado":"Pendiente"}</span></td><td><ul class="checklist">${tasks.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></td><td>${esc(t.note||"-")}</td><td>${receiptBtn(t.completion_receipt_path)}</td><td>${own&&t.status==="pending"?`<button class="small-btn complete-clean" data-id="${t.id}">Completar</button> <button class="small-btn swap-clean" data-id="${t.id}">Cambiar turno</button>`:"-"}</td></tr>`;
     }).join(""):`<tr><td colspan="7">No hay turnos.</td></tr>`;
     document.querySelectorAll(".complete-clean").forEach(b=>b.onclick=()=>openCompleteCleaning(b.dataset.id));
     document.querySelectorAll(".swap-clean").forEach(b=>b.onclick=()=>openSwap(b.dataset.id));
@@ -1555,13 +1661,13 @@ async function boot(){
   }
   function openSwap(id){
     const own=D.cleaning.find(t=>t.id===id),targets=D.cleaning.filter(t=>t.status==="pending"&&t.id!==id&&t.family_id!==own.family_id);
-    $("modalContent").innerHTML=`<h2>Solicitar cambio de turno</h2>${targets.length?`<form id="swapForm" class="form"><label>Intercambiar con<select id="targetTurn">${targets.map(t=>`<option value="${t.id}">${familyName(t.family_id)} · ${t.turn_date}</option>`).join("")}</select></label><button class="primary">Enviar solicitud</button></form>`:`<p>No hay otro turno pendiente disponible.</p>`}`;$("modal").classList.remove("hidden");
+    $("modalContent").innerHTML=`<h2>Solicitar cambio de turno</h2>${targets.length?`<form id="swapForm" class="form"><label>Intercambiar con<select id="targetTurn">${targets.map(t=>`<option value="${t.id}">${esc(familyName(t.family_id))} · ${t.turn_date}</option>`).join("")}</select></label><button class="primary">Enviar solicitud</button></form>`:`<p>No hay otro turno pendiente disponible.</p>`}`;$("modal").classList.remove("hidden");
     if(targets.length)$("swapForm").onsubmit=async e=>{e.preventDefault();const {error}=await sb.rpc("request_cleaning_swap",{p_requester_turn:id,p_target_turn:$("targetTurn").value});if(error)return toast(error.message);$("modal").classList.add("hidden");toast("Solicitud enviada.");await loadAll();};
   }
   function renderSwaps(){
     $("swapList").innerHTML=D.swaps.length?D.swaps.map(s=>{
       const canReview=s.status==="pending"&&(me.role==="sysadmin"||me.family_id===s.target_family_id);
-      return `<div class="swap-row"><div><strong>${familyName(s.requester_family_id)} ↔ ${familyName(s.target_family_id)}</strong><div class="muted">${s.status}</div></div>${canReview?`<div><button class="small-btn review-swap" data-id="${s.id}" data-ok="1">Aceptar</button> <button class="small-btn review-swap" data-id="${s.id}" data-ok="0">Rechazar</button></div>`:""}</div>`;
+      return `<div class="swap-row"><div><strong>${esc(familyName(s.requester_family_id))} ↔ ${esc(familyName(s.target_family_id))}</strong><div class="muted">${s.status}</div></div>${canReview?`<div><button class="small-btn review-swap" data-id="${s.id}" data-ok="1">Aceptar</button> <button class="small-btn review-swap" data-id="${s.id}" data-ok="0">Rechazar</button></div>`:""}</div>`;
     }).join(""):`<p class="muted">No hay solicitudes.</p>`;
     document.querySelectorAll(".review-swap").forEach(b=>b.onclick=async()=>{const {error}=await sb.rpc("review_cleaning_swap",{p_request:b.dataset.id,p_accept:b.dataset.ok==="1"});if(error)return toast(error.message);await loadAll();});
   }
@@ -1688,20 +1794,34 @@ async function boot(){
 
   if($("qrSettingsForm"))$("qrSettingsForm").onsubmit=async e=>{
     e.preventDefault();
-    if(me.role!=="sysadmin")return;
+    const form=e.currentTarget;
+    if(me?.role!=="sysadmin"||form.dataset.saving==="true")return;
+    const file=$("qrImage").files[0];let uploadedPath=null,saved=false;
+    formFeedback("qrSaveStatus","");busyForm(form,true,"Guardando QR…");
     try{
-      const qrPath=await uploadPaymentQr($("qrImage").files[0]);
-      if(!qrPath)return toast("Selecciona una imagen del QR.");
+      const qrPath=await uploadPaymentQr(file);
+      if(!qrPath)throw new Error("Selecciona una imagen del QR.");
+      if(file)uploadedPath=qrPath;
       const {error}=await sb.rpc("save_payment_qr_settings",{
         p_qr_image_path:qrPath,
         p_qr_title:$("qrTitle").value.trim()||"Pago por QR",
         p_qr_note:$("qrNote").value.trim()||null
       });
       if(error)throw error;
-      toast("QR guardado correctamente.");
+      saved=true;qrDraft=false;
       $("qrImage").value="";
+      if(qrPreviewURL){URL.revokeObjectURL(qrPreviewURL);qrPreviewURL=null;}
+      $("qrPreview").replaceChildren();$("qrPreview").hidden=true;
       await loadAll();
-    }catch(err){toast(err.message||"No se pudo guardar el QR.");}
+      formFeedback("qrSaveStatus","QR guardado. Las familias ya pueden verlo en Pagos.");
+    }catch(err){
+      // Limpia solo rechazos confirmados del servidor. Si se perdió la respuesta,
+      // la referencia podría haberse guardado: conservar su imagen evita romperla.
+      if(uploadedPath&&!saved&&["PGRST202","42501","22023"].includes(err?.code)){
+        try{await sb.storage.from("payment-qr").remove([uploadedPath]);}catch(_){}
+      }
+      formFeedback("qrSaveStatus",adminError(err),"error");
+    }finally{busyForm(form,false);}
   };
 
   $("backupBtn").onclick=()=>{
@@ -1710,14 +1830,19 @@ async function boot(){
   };
   function renderAdmin(){
     if(me.role!=="sysadmin")return;
-    $("usersBody").innerHTML=D.profiles.map(p=>`<tr><td>${esc(p.display_name)}</td><td>${esc(p.username)}</td><td>${esc(p.contact_email)}</td><td>${roleName[p.role]}</td><td>${p.family_id?familyName(p.family_id):"-"}</td><td>${p.second_family_id?familyName(p.second_family_id):"-"}</td></tr>`).join("");
+    $("usersBody").innerHTML=D.profiles.map(p=>`<tr><td>${esc(p.display_name)}</td><td>${esc(p.username)}</td><td>${esc(p.contact_email)}</td><td>${roleName[p.role]}</td><td>${p.family_id?esc(familyName(p.family_id)):"-"}</td><td>${p.second_family_id?esc(familyName(p.second_family_id)):"-"}</td></tr>`).join("");
     $("auditBody").innerHTML=D.audit.map(a=>`<tr><td>${new Date(a.created_at).toLocaleString("es-BO")}</td><td>${a.user_id||"-"}</td><td>${esc(a.action)}</td><td>${esc(a.entity)}</td><td>${esc(JSON.stringify(a.details||{}))}</td></tr>`).join("")||`<tr><td colspan="5">Sin registros.</td></tr>`;
     const qr=currentQr();
-    if($("qrTitle"))$("qrTitle").value=qr?.qr_title||"Pago por QR";
-    if($("qrNote"))$("qrNote").value=qr?.qr_note||"";
+    if(!qrDraft){$("qrTitle").value=qr?.qr_title||"Pago por QR";$("qrNote").value=qr?.qr_note||"";}
     if($("currentQrAdminInfo"))$("currentQrAdminInfo").textContent=qr?.qr_image_path
       ?"Ya existe un QR cargado. Si no eliges otra imagen, se conservará el actual."
       :"Aún no hay un QR cargado.";
+    ["renameFamily","assignFamily","assignSecondFamily"].forEach(id=>familyOptions(id));
+    const userSelect=$("assignUser"),selected=userSelect.value;
+    userSelect.innerHTML='<option value="">Selecciona un usuario</option>'+D.profiles.filter(p=>["family","payer"].includes(p.role)).map(p=>`<option value="${esc(p.id)}">${esc(p.display_name||p.username)} · ${roleName[p.role]}</option>`).join("");
+    userSelect.value=selected;
+    if(!familyNameDraft)syncFamilyName();
+    if(!assignmentDraft)syncUserAssignment();
   }
 
   $("modalClose").onclick=()=> $("modal").classList.add("hidden");
@@ -1727,7 +1852,7 @@ async function boot(){
     renderDashboard();renderMonthlyServices();renderExternalDebts();renderExpenses();renderExpensesWorkspace();renderPayments();renderBalances();renderCleaning();renderProposals();renderNotices();renderNotifications();renderReports();renderAdmin();renderTemplateAdmin();populate();renderPaymentQr();togglePaymentReceiptRule();updatePendingCreditsInfo();
   }
 
-  window.CF={state:()=>({me,D,familyDebts}),openCompleteCleaning,openSwap,openComments,loadAll,logout,receiptBtn,receiptURL:async path=>{const {data,error}=await sb.storage.from(cfg.RECEIPTS_BUCKET||"receipts").createSignedUrl(path,300);if(error)throw error;return data.signedUrl;},bindReceiptButtons,showView,renderReports,toast,balanceForFamily,creditForFamily};
+  window.CF={state:()=>({me,D,familyDebts}),prepareUserAssignment,openCompleteCleaning,openSwap,openComments,loadAll,logout,receiptBtn,receiptURL:async path=>{const {data,error}=await sb.storage.from(cfg.RECEIPTS_BUCKET||"receipts").createSignedUrl(path,300);if(error)throw error;return data.signedUrl;},bindReceiptButtons,showView,renderReports,toast,balanceForFamily,creditForFamily};
   window.dispatchEvent(new Event("cf:ready"));
   const {data,error:sessionError}=await sb.auth.getSession();
   const s=data?.session;
