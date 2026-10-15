@@ -1,14 +1,14 @@
 # Casa Familias
 
-Entrega actual: **4.3.1 para presentar y probar**. Consulta [la guía de entrega](ENTREGA.md).
+Entrega actual: **5.0 nativa, para presentar y probar**. Consulta [la entrega y las pruebas](ENTREGA.md).
 
-La versión 4.3.1 corrige el arranque que podía dejar la pantalla en blanco, muestra una recuperación con Reintentar y evita cargar scripts antiguos desde la caché. Incluye botones con texto, una interfaz adaptable y [repetición semanal de limpieza](supabase/LIMPIEZA_SEMANAL.md). El servidor ya tiene instaladas las funciones y la tarea semanal; el plan semanal está activo y el administrador puede revisarlo o pausarlo desde la aplicación.
+La interfaz utiliza Kotlin, Jetpack Compose, Material 3, Navigation Compose y MVVM. Incluye Inter, tema claro y oscuro, texto ampliable, formularios por pasos y navegación según el rol. Administrador: Inicio, Gastos, Pagos, Familias y Más. Las nueve propuestas visuales están en [diseno/nativo-v5/propuestas](diseno/nativo-v5/propuestas); la [auditoría de funciones](diseno/nativo-v5/AUDITORIA.md) explica su ubicación.
 
-El almacenamiento del QR y la edición de familias ya están activados en el Supabase del proyecto. Consulta [cómo usarlos y la configuración aplicada](supabase/ACTIVAR.md).
+Conserva Supabase, cuentas, cuotas, pagos parciales, crédito, comprobantes, QR privado, nombres y asignaciones de familias, limpieza semanal, propuestas, avisos, cierre de meses, auditoría y reportes PDF/Excel. Fondo Común no aparece en las consultas ni en las rutas activas. Los datos históricos no se eliminan.
 
-El proyecto Android está en **CasaFamiliasAndroid/**. Esta carpeta contiene los archivos que se editan y se sincronizan con GitHub.
+El ciclo semanal sigue siendo **Choque → Galarza → Salinas → David → Acha**. Salinas y Salinas2 comparten limpieza; sus registros contables permanecen separados. Las funciones familiares de propuestas, votación e intercambio tienen comprobaciones de propiedad en Supabase.
 
-`CasaFamiliasAndroid.zip` se conserva como archivo original. Los cambios posteriores se guardan en la carpeta del proyecto; ese ZIP no se actualiza automáticamente.
+El código actual está en **CasaFamiliasAndroid/**. `CasaFamiliasAndroid.zip` y las fichas de la versión anterior se conservan como archivos históricos. El APK de entrega es una compilación optimizada firmada con el certificado de pruebas, para Android 8 o posterior; no es una publicación de Google Play.
 
 ## Tener el proyecto en tu computadora
 
@@ -52,17 +52,19 @@ En Windows:
 gradlew.bat assembleDebug
 ```
 
-La validación DOM está en `CasaFamiliasAndroid/validacion`. Con Node.js 24 o posterior, desde esa carpeta:
+Pruebas nativas, desde `CasaFamiliasAndroid`:
 
 ```bash
-npm install --package-lock=false
-npm test
+./gradlew testDebugUnitTest lintDebug assembleRelease
+./gradlew connectedDebugAndroidTest
 ```
+
+La segunda orden necesita un dispositivo o emulador Android. Pruebas SQL con Python 3 y Docker, desde `CasaFamiliasAndroid/validacion`: `python test_backend.py`. Usan PostgreSQL desechable; los fixtures nunca se ejecutan en Supabase real. Las pruebas DOM conservadas corresponden a los recursos web de compatibilidad de 4.3.1 y no validan la nueva interfaz Compose.
 
 En el entorno de Codex, las herramientas y las dependencias ya preparadas se activan así:
 
 ```bash
 source /workspace/casa-environment/activate.sh
 cd "$CASA_PROJECT"
-gradle --no-daemon --max-workers=2 --console=plain assembleDebug
+gradle --no-daemon --max-workers=2 --console=plain testDebugUnitTest assembleDebug
 ```

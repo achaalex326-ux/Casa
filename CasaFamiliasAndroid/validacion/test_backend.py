@@ -49,5 +49,7 @@ try:
     print(next(line.strip() for line in output.splitlines() if '"rotationChecks"' in line))
     output = sql(HERE / 'shared_cleaning_checks.sql')
     print(next(line.strip() for line in output.splitlines() if '"sharedCleaningChecks"' in line))
+    output = sql(HERE / 'native_community_checks.sql')
+    print(next(line.strip() for line in output.splitlines() if '"nativeCommunityChecks"' in line))
 finally:
     subprocess.run(["docker", "rm", "-fv", CONTAINER], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)

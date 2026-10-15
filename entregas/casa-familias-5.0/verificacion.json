@@ -1,0 +1,71 @@
+{
+  "version": "5.0",
+  "versionCode": 6,
+  "date": "2026-10-15",
+  "unitTests": [
+    {
+      "name": "com.casafamilias.app.RepositoryContractTest",
+      "tests": "9",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "timestamp": "2026-10-15T16:12:39"
+    },
+    {
+      "name": "com.casafamilias.app.NativeRulesTest",
+      "tests": "21",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "timestamp": "2026-10-15T16:12:39"
+    }
+  ],
+  "androidTests": {
+    "passed": 8,
+    "failed": 0,
+    "ignored": 0,
+    "device": "Android11 API30 x86_64, emulador software, 320x800",
+    "fixtures": "PreviewRepository ficticio de solo lectura",
+    "bottomLabelSingleLineAndNoOverflow": "PASS with large text",
+    "systemFontScale": 1.3,
+    "appFontScaleInDarkTest": 1.3,
+    "combinedScaleInDarkTest": 1.69,
+    "virtualizedLists": "Scrolled through LazyColumn to actual target items"
+  },
+  "sqlChecks": {
+    "backend": 59,
+    "rotation": 41,
+    "sharedCleaning": 26,
+    "nativeCommunity": 43,
+    "total": 169,
+    "database": "PostgreSQL17 aislado",
+    "cron": "No ejecutado por la imagen local; instalación real verificada previamente"
+  },
+  "liveDeployment": {
+    "migration": "202610150006_native_community_permissions.sql",
+    "availableFunctions": [
+      {
+        "available_functions": 3
+      }
+    ],
+    "dataFingerprintsUnchanged": true,
+    "tablesChecked": 15,
+    "localSqlChecks": 169,
+    "businessRowsInserted": 0
+  },
+  "lint": {
+    "errors": 0,
+    "warnings": 13
+  },
+  "physicalPhoneTested": false,
+  "realUserPasswordLoginTested": false,
+  "realQrUploadTested": false,
+  "publishedToPlay": false,
+  "apkCertificateSha256": "be231e4d4f51af408cdc3728c18aacd76b1f3758b2fe452674294df4cbad2b5c",
+  "releaseSmoke": {
+    "updateInstall": "PASS",
+    "nativeLoginRendered": true,
+    "releaseIgnoresPreviewExtras": true,
+    "authenticatedUserLoginTested": false
+  }
+}

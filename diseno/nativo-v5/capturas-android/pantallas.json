@@ -1,0 +1,128 @@
+[
+  {
+    "file": "01-inicio.png",
+    "width": 320,
+    "height": 800,
+    "sha256": "6af31a86ee12461d2ba63cd82b77504bc08c14a6a823d28fc19c8853cf9c366d",
+    "sampleData": true
+  },
+  {
+    "file": "02-gastos.png",
+    "width": 320,
+    "height": 800,
+    "sha256": "cd526cfcb16c116730524c838564e985b816b9a844e1bd1cf692e539c130538f",
+    "sampleData": true
+  },
+  {
+    "file": "03-pagos.png",
+    "width": 320,
+    "height": 800,
+    "sha256": "5798bc12fd1bed9df5cea75a65cae8acd35b08846633fd2471f087d219eccaf2",
+    "sampleData": true
+  },
+  {
+    "file": "04-familias.png",
+    "width": 320,
+    "height": 800,
+    "sha256": "b2362f0a4050ace00f3b1d626d1162b015b5eb65f9b07c2ee5059d71a2b29920",
+    "sampleData": true
+  },
+  {
+    "file": "05-limpieza.png",
+    "width": 320,
+    "height": 800,
+    "sha256": "1ff9a27e58b0f9a02dcfe0df9dc76b8974431de6ae0d19379eebd5b41c5ab440",
+    "sampleData": true
+  },
+  {
+    "file": "06-usuarios.png",
+    "width": 320,
+    "height": 800,
+    "sha256": "bb366fe2cfab0657bf887318811cb4835e4430793558aed67c05580061729628",
+    "sampleData": true
+  },
+  {
+    "file": "07-reportes.png",
+    "width": 320,
+    "height": 800,
+    "sha256": "b4ee4b8d497a7b90d202b5170a07c0dc44ef5ddd7f22c3cf2acaa73fb9ed774f",
+    "sampleData": true
+  },
+  {
+    "file": "08-administracion.png",
+    "width": 320,
+    "height": 800,
+    "sha256": "9bd2d8c8674cde1e3b79c420d6152e5e75a02b9a2232d109d060ffbb9b8767b8",
+    "sampleData": true
+  },
+  {
+    "file": "09-mas.png",
+    "width": 320,
+    "height": 800,
+    "sha256": "bc0faddda739c4b75aea34b7f3b4312518c4a211bc82fed771cd15d42eb3418e",
+    "sampleData": true
+  },
+  {
+    "file": "10-familia-inicio.png",
+    "width": 320,
+    "height": 800,
+    "sha256": "a704b971d50434aa2fd4a8b5b721832aa58f4fa80c1f879148747328e192018d",
+    "sampleData": true
+  },
+  {
+    "file": "11-familia-turno.png",
+    "width": 320,
+    "height": 800,
+    "sha256": "e60edb0c282fd16acc9c3202fed2162addd17f7e23a58cd38022607f09f04aa6",
+    "sampleData": true
+  },
+  {
+    "file": "12-perfil-oscuro-texto-grande.png",
+    "width": 320,
+    "height": 800,
+    "sha256": "2c7463b4a5421d1e479252338c3d86fd7f904f8ea833b619f11ed88730f21c67",
+    "sampleData": true
+  },
+  {
+    "file": "13-familia-oscuro-texto-grande.png",
+    "width": 320,
+    "height": 800,
+    "sha256": "6f8b60902c2b334b60eb399f8fdd1fc7cb78b21642bd10ce2213b20896f0848b",
+    "sampleData": true
+  },
+  {
+    "file": "16-320-familia-inicio.png",
+    "width": 320,
+    "height": 800,
+    "sha256": "a704b971d50434aa2fd4a8b5b721832aa58f4fa80c1f879148747328e192018d",
+    "sampleData": true
+  },
+  {
+    "file": "17-320-familia-turno.png",
+    "width": 320,
+    "height": 800,
+    "sha256": "e60edb0c282fd16acc9c3202fed2162addd17f7e23a58cd38022607f09f04aa6",
+    "sampleData": true
+  },
+  {
+    "file": "18-320-perfil-oscuro-texto-grande.png",
+    "width": 320,
+    "height": 800,
+    "sha256": "2c7463b4a5421d1e479252338c3d86fd7f904f8ea833b619f11ed88730f21c67",
+    "sampleData": true
+  },
+  {
+    "file": "19-320-familia-oscuro-texto-grande.png",
+    "width": 320,
+    "height": 800,
+    "sha256": "6f8b60902c2b334b60eb399f8fdd1fc7cb78b21642bd10ce2213b20896f0848b",
+    "sampleData": true
+  },
+  {
+    "file": "20-acceso-apk-release.png",
+    "width": 390,
+    "height": 844,
+    "sha256": "bc33625ac54ba516f49d059fb4cff31922926a75b0c93bccfe5c5bd9929e65d6",
+    "sampleData": false
+  }
+]

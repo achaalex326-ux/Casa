@@ -75,3 +75,12 @@ $$;
 create table test.cleaning_completions (turn_id uuid);
 create function public.notify_all(p_kind text,p_title text,p_body text,p_ref_entity text default null,p_ref_id uuid default null,p_dedupe text default null)
 returns void language sql as $$ insert into test.cleaning_completions values(p_ref_id); $$;
+
+-- Native family community interactions; all data stays in the disposable container.
+create table public.proposals(id uuid primary key default gen_random_uuid(),concept text,estimated_amount numeric,justification text,receipt_path text,status text not null default 'open',created_by uuid,created_at timestamptz default now());
+create table public.proposal_votes(id uuid primary key default gen_random_uuid(),proposal_id uuid references public.proposals,family_id smallint references public.families,vote boolean,created_by uuid,created_at timestamptz default now(),unique(proposal_id,family_id));
+create table public.cleaning_swap_requests(id uuid primary key default gen_random_uuid(),requester_turn_id uuid references public.cleaning_turns,target_turn_id uuid references public.cleaning_turns,requester_family_id smallint,target_family_id smallint,status text not null default 'pending',created_by uuid,reviewed_by uuid,reviewed_at timestamptz,created_at timestamptz default now());
+alter table public.proposals enable row level security;
+alter table public.proposal_votes enable row level security;
+alter table public.cleaning_swap_requests enable row level security;
+grant select on public.proposals,public.proposal_votes,public.cleaning_swap_requests to authenticated;

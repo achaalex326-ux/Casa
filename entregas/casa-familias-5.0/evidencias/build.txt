@@ -1,0 +1,5 @@
+Native application: BUILD SUCCESSFUL in 1m23s
+Tasks: testDebugUnitTest assembleDebug assembleDebugAndroidTest lintDebug assembleRelease
+124 actionable tasks: 23 executed, 101 up-to-date
+Latest AndroidTest harness: BUILD SUCCESSFUL in 7s
+Lint: 0 errors, 13 warnings

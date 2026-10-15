@@ -1,0 +1,38 @@
+[
+  {
+    "id": "inicio",
+    "file": "01-inicio.png"
+  },
+  {
+    "id": "gastos",
+    "file": "02-gastos.png"
+  },
+  {
+    "id": "pagos",
+    "file": "03-pagos.png"
+  },
+  {
+    "id": "familias",
+    "file": "04-familias.png"
+  },
+  {
+    "id": "limpieza",
+    "file": "05-limpieza.png"
+  },
+  {
+    "id": "usuarios",
+    "file": "06-usuarios.png"
+  },
+  {
+    "id": "reportes",
+    "file": "07-reportes.png"
+  },
+  {
+    "id": "administracion",
+    "file": "08-administracion.png"
+  },
+  {
+    "id": "mas",
+    "file": "09-mas.png"
+  }
+]
