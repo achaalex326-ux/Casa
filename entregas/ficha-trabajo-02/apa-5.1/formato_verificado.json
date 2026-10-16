@@ -1,0 +1,21 @@
+{
+  "formato": "APA 7, trabajo estudiantil",
+  "versionAplicacion": "5.1",
+  "paginasPDF": 15,
+  "tablas": 14,
+  "referencias": 8,
+  "papel": "Carta 8,5 × 11 pulgadas",
+  "margenes": "2,54 cm",
+  "fuenteCuerpo": "Times New Roman 12",
+  "interlineado": 2,
+  "sangriaPrimeraLinea": "1,27 cm",
+  "sangriaFrancesaReferencias": "1,27 cm",
+  "numeracion": "Superior derecha desde la portada",
+  "nombresYFecha": "En blanco",
+  "evidencia": "Resultados existentes del 16 de octubre de 2026. No se ejecutaron nuevas pruebas de aplicación para cambiar el formato.",
+  "pendientes": "Observación de participantes, mediciones de usabilidad, estrés y persistencia de registros tras cierre completo.",
+  "archivos": {
+    ".docx": "546e736fc94d1abf35497d28db6372bf08b8867b30c023c106ba4a74409349c6",
+    ".pdf": "bbf24154cbafd345136ad8ce2ffd21625b88df45153de8f5e20c72dfbc14636e"
+  }
+}
