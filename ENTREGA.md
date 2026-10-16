@@ -1,10 +1,12 @@
-# Casa Familias 5.0 — entrega Android nativa
+# Casa Familias 5.1 — entrega Android nativa
 
-Versión **5.0**, código **6**, paquete com.casafamilias.app, Android 8.0 o posterior. Compilación optimizada con firma de pruebas, para presentar y probar.
+Versión **5.1**, código **7**, paquete com.casafamilias.app, Android 8.0 o posterior. Compilación optimizada con firma de pruebas, para presentar y probar.
 
 ## Cambios principales
 
-Interfaz hecha en Kotlin con Jetpack Compose, Material3, Navigation Compose y MVVM. Paleta violeta, Inter incluida, iconos lineales, tarjetas, modos claro/oscuro, texto ampliable y filtros que pasan a otra fila cuando falta espacio. Las pantallas tienen carga, estados vacíos, mensajes de error y formularios largos divididos en pasos. Los detalles y formularios usan retroceso jerárquico.
+La actualización 5.1 renueva la presentación: resumen con degradado azul/turquesa, marca de la casa, accesos con indicación Ver, botones más grandes con iconos, contraste reforzado y tarjetas de inicio que abren las mismas secciones de Pagos y Familias. Los estados conservan sus nombres y colores. No incluye cambios de reglas, cuentas, permisos, datos ni servidor.
+
+Interfaz hecha en Kotlin con Jetpack Compose, Material3, Navigation Compose y MVVM. Azul eléctrico con acentos coral y turquesa, Inter incluida, iconos lineales, tarjetas, modos claro/oscuro, texto ampliable y filtros que pasan a otra fila cuando falta espacio. Las pantallas tienen carga, estados vacíos, mensajes de error y formularios largos divididos en pasos. Los detalles y formularios usan retroceso jerárquico.
 
 Administrador y encargado: Inicio, Gastos, Pagos, Familias y Más. Las opciones cambian según el rol; Usuarios y Administración son solo para administrador. Cada acción tiene una ubicación principal. Historial y revisión se concentran en Pagos; las deudas detalladas están en Familias/Mis cuotas. Fondo Común está ausente de la navegación y consultas activas, sin eliminar datos históricos.
 
@@ -16,7 +18,7 @@ El ciclo semanal sigue **Choque → Galarza → Salinas → David → Acha**. Sa
 
 ## Descargar e instalar
 
-Los archivos actuales están en [entregas/casa-familias-5.0](entregas/casa-familias-5.0). Instala CasaFamilias-5.0-pruebas.apk sobre la versión anterior, sin desinstalarla ni borrar datos. Usa internet para sincronizar. Si es necesario, ingresa con tu cuenta habitual.
+Los archivos actuales están en [entregas/casa-familias-5.1](entregas/casa-familias-5.1). Instala CasaFamilias-5.1-pruebas.apk sobre la versión anterior, sin desinstalarla ni borrar datos. Usa internet para sincronizar. Si es necesario, ingresa con tu cuenta habitual.
 
 El certificado de la entrega coincide con el APK 4.3.1 generado aquí. Se verificó la instalación como actualización en un emulador; no se probó la transferencia de una sesión real autenticada. La aplicación intenta recuperar la sesión anterior una vez y almacena las nuevas sesiones cifradas con Android Keystore. Las contraseñas no se guardan.
 
@@ -24,7 +26,7 @@ Para actualizar tu carpeta de trabajo: GitHub Desktop → Fetch origin → Pull 
 
 ## Validación y límites
 
-Las pruebas y su evidencia están en VERIFICACION.md de la entrega. Se comprueban dinero decimal, roles, formularios, paginación, renovación de sesión, contratos HTTP, exportaciones y navegación Android con datos ficticios. Las 169 comprobaciones SQL usan PostgreSQL desechable. La migración006 se instaló en el Supabase real conservando huellas y conteos de 15 tablas, sin insertar registros comerciales.
+Las pruebas y su evidencia están en VERIFICACION.md de la entrega. Se comprueban dinero decimal, roles, formularios, paginación, renovación de sesión, contratos HTTP, exportaciones y navegación Android con datos ficticios. Las 169 comprobaciones SQL usan PostgreSQL desechable. En la base 5.0, la migración006 se instaló en el Supabase real conservando huellas y conteos de 15 tablas, sin insertar registros comerciales.
 
 Las imágenes de propuestas se generaron antes de implementar. Las capturas Android se obtienen ejecutando Compose en un emulador con PreviewRepository: están identificadas como datos ficticios y no demuestran operaciones reales de Supabase. Los recursos web antiguos conservados no presentan la interfaz del APK nuevo; solo hay un WebView temporal invisible para intentar migrar la sesión.
 

@@ -1,0 +1,107 @@
+[
+  {
+    "file": "01-inicio.png",
+    "width": 320,
+    "height": 800,
+    "sampleData": true,
+    "sha256": "32c078dee972e7ce388f8867ebb0808d53733ba27902feb8e82ab5a1916f47d2"
+  },
+  {
+    "file": "02-gastos.png",
+    "width": 320,
+    "height": 800,
+    "sampleData": true,
+    "sha256": "57c3fce4968a0006046ee8f8f7ce189b324eb73c79f32b27fd26bcdd328d3922"
+  },
+  {
+    "file": "03-pagos.png",
+    "width": 320,
+    "height": 800,
+    "sampleData": true,
+    "sha256": "97315cdd96ca02cf97e7cdac81c86711f9195739d9ed9ef03bd25e6ce365ad17"
+  },
+  {
+    "file": "04-familias.png",
+    "width": 320,
+    "height": 800,
+    "sampleData": true,
+    "sha256": "8c22fee48928540862e30ca4c4424af63bf20435973ed7830ce27a826f45fb56"
+  },
+  {
+    "file": "05-limpieza.png",
+    "width": 320,
+    "height": 800,
+    "sampleData": true,
+    "sha256": "8e00420ee0bdd0cb2f9d921edae20a78724ce426421da60281d7190e8809aa9f"
+  },
+  {
+    "file": "06-usuarios.png",
+    "width": 320,
+    "height": 800,
+    "sampleData": true,
+    "sha256": "8d1c6df219fc7d57bfb8e3eceec06f2760592ae9bfd98649632ad762e381f25e"
+  },
+  {
+    "file": "07-reportes.png",
+    "width": 320,
+    "height": 800,
+    "sampleData": true,
+    "sha256": "535dec5272fc39b71c6d445f6b58718bf5e8f1a7289bbf5d7ba86142fab0f662"
+  },
+  {
+    "file": "08-administracion.png",
+    "width": 320,
+    "height": 800,
+    "sampleData": true,
+    "sha256": "e1a992da0e2f67ea08765cb1913040adff32a453c8c241e739e4501f45de487f"
+  },
+  {
+    "file": "09-mas.png",
+    "width": 320,
+    "height": 800,
+    "sampleData": true,
+    "sha256": "3b745e2a15a6d925e39f402a7915988aa5a8ef1bce1890343264197f20abdffa"
+  },
+  {
+    "file": "10-familia-inicio.png",
+    "width": 320,
+    "height": 800,
+    "sampleData": true,
+    "sha256": "19665e5109524038efd4ae87d428fc91c8f471e3f28fd049d47a9a73ce744f20"
+  },
+  {
+    "file": "11-familia-turno.png",
+    "width": 320,
+    "height": 800,
+    "sampleData": true,
+    "sha256": "9e1128fb51c195ab30f1fdef90a432b3a762d2ac863173c01864da6be6d870f1"
+  },
+  {
+    "file": "12-perfil-oscuro-texto-grande.png",
+    "width": 320,
+    "height": 800,
+    "sampleData": true,
+    "sha256": "da784ea039041500ce10f086386b14a76e2c8e4fef06405fc0c2dfe798443b8c"
+  },
+  {
+    "file": "13-familia-oscuro-texto-grande.png",
+    "width": 320,
+    "height": 800,
+    "sampleData": true,
+    "sha256": "783df46ee6defbeffba5623899379e8f9ce2167e54d744dd563323de831ea522"
+  },
+  {
+    "file": "14-inicio-administrador-390.png",
+    "width": 390,
+    "height": 844,
+    "sampleData": true,
+    "sha256": "8fc38dffe5526230a17fbd5019df7c8b62eae8a2e8c00de00959de09ae1e540f"
+  },
+  {
+    "file": "15-acceso-apk-release.png",
+    "width": 390,
+    "height": 844,
+    "sampleData": false,
+    "sha256": "fbd33b526b50e1fe60814a204e29b46c1e9e19112511219b298f7fd2ad12b9ff"
+  }
+]

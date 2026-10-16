@@ -1,0 +1,4 @@
+BUILD SUCCESSFUL in 1m27s
+testDebugUnitTest assembleDebug assembleDebugAndroidTest lintDebug assembleRelease
+124 actionable tasks: 23 executed, 101 up-to-date
+Android Lint: 0 errors, 13 warnings

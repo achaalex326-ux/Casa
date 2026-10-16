@@ -1,0 +1,49 @@
+{
+  "date": "2026-10-16",
+  "version": "5.1",
+  "versionCode": 7,
+  "unitTests": [
+    {
+      "name": "com.casafamilias.app.RepositoryContractTest",
+      "tests": "9",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "timestamp": "2026-10-16T12:08:50"
+    },
+    {
+      "name": "com.casafamilias.app.NativeRulesTest",
+      "tests": "21",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "timestamp": "2026-10-16T12:08:49"
+    }
+  ],
+  "androidTests": {
+    "passed": 8,
+    "failures": 0,
+    "device": "Android11 API30 emulator",
+    "resolution": "320x800",
+    "systemFontScale": 1.3,
+    "largeAppFontScale": 1.3,
+    "combinedDarkFontScale": 1.69,
+    "data": "read-only fictional PreviewRepository"
+  },
+  "lint": {
+    "errors": 0,
+    "warnings": 13
+  },
+  "apkCertificateSha256": "be231e4d4f51af408cdc3728c18aacd76b1f3758b2fe452674294df4cbad2b5c",
+  "releaseSmoke": {
+    "updateInstall": "PASS",
+    "versionName": "5.1",
+    "versionCode": 7,
+    "nativeLoginRendered": true,
+    "releaseIgnoresPreviewExtras": true,
+    "physicalPhoneTested": false
+  },
+  "databaseChanged": false,
+  "businessRulesChanged": false,
+  "physicalPhoneTested": false
+}

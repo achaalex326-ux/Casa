@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.casafamilias.app.RepositoryContractTest" tests="9" skipped="0" failures="0" errors="0" timestamp="2026-10-16T12:08:50" hostname="ab0e39a34c03" time="0.61">
+  <properties/>
+  <testcase name="failedSignOutKeepsSessionForRetry" classname="com.casafamilias.app.RepositoryContractTest" time="0.157"/>
+  <testcase name="loginUsesExistingAuthContract" classname="com.casafamilias.app.RepositoryContractTest" time="0.006"/>
+  <testcase name="legacyMissingUserIdKeepsRefreshedTokensDuringLoad" classname="com.casafamilias.app.RepositoryContractTest" time="0.147"/>
+  <testcase name="familyLoadNeverRequestsOtherFamilyFinancialTables" classname="com.casafamilias.app.RepositoryContractTest" time="0.189"/>
+  <testcase name="selectFetchesEveryPageWithoutDroppingRows" classname="com.casafamilias.app.RepositoryContractTest" time="0.055"/>
+  <testcase name="recoveryUsesRegisteredAndroidDeepLink" classname="com.casafamilias.app.RepositoryContractTest" time="0.003"/>
+  <testcase name="rpcPreservesArgumentsAndUserAuthorization" classname="com.casafamilias.app.RepositoryContractTest" time="0.003"/>
+  <testcase name="rejectedRefreshClearsSession" classname="com.casafamilias.app.RepositoryContractTest" time="0.003"/>
+  <testcase name="expiredSessionsRefreshBeforeBusinessCall" classname="com.casafamilias.app.RepositoryContractTest" time="0.047"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

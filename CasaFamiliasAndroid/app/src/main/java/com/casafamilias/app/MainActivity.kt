@@ -24,7 +24,7 @@ class MainActivity: ComponentActivity() {
     private lateinit var vm: CasaViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge(statusBarStyle=SystemBarStyle.auto(0x00FAF9F7,0x0014141B),navigationBarStyle=SystemBarStyle.auto(0xFFFAF9F7.toInt(),0xFF14141B.toInt()))
+        enableEdgeToEdge(statusBarStyle=SystemBarStyle.auto(0x00F3F7FF,0x000D1728),navigationBarStyle=SystemBarStyle.auto(0xFFF3F7FF.toInt(),0xFF0D1728.toInt()))
         val preview=(applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE)!=0 && intent.getBooleanExtra("design_preview",false)
         val source: CasaDataSource by lazy {if(preview)PreviewRepository(Role.from(intent.getStringExtra("preview_role") ?: "sysadmin")) else CasaRepository(applicationContext,ApiConfig.load(applicationContext),SecureSessionStore(applicationContext))}
         vm=ViewModelProvider(this,object: ViewModelProvider.Factory {

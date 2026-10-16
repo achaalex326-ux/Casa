@@ -37,12 +37,12 @@ import kotlinx.coroutines.*
     val state by vm.state.collectAsStateWithLifecycle()
     val density=LocalDensity.current
     val activity=LocalContext.current as? Activity
-    SideEffect {activity?.window?.let {window->val bars=WindowCompat.getInsetsController(window,window.decorView);bars.isAppearanceLightStatusBars=!state.dark;bars.isAppearanceLightNavigationBars=!state.dark;window.navigationBarColor=if(state.dark)0xFF14141B.toInt() else 0xFFFAF9F7.toInt()}}
+    SideEffect {activity?.window?.let {window->val bars=WindowCompat.getInsetsController(window,window.decorView);bars.isAppearanceLightStatusBars=!state.dark;bars.isAppearanceLightNavigationBars=!state.dark;window.navigationBarColor=if(state.dark)0xFF0D1728.toInt() else 0xFFF3F7FF.toInt()}}
     CasaTheme(state.dark) {
         CompositionLocalProvider(LocalDensity provides Density(density.density,density.fontScale*state.textScale)) {
             Surface(Modifier.fillMaxSize(),color=MaterialTheme.colorScheme.background) {
                 when {
-                    state.starting -> Column(Modifier.fillMaxSize().padding(28.dp),verticalArrangement=Arrangement.Center,horizontalAlignment=Alignment.CenterHorizontally){Glyph("home",modifier=Modifier.size(64.dp),tint=MaterialTheme.colorScheme.primary);Spacer(Modifier.height(20.dp));Text("Casa Familias",style=MaterialTheme.typography.headlineMedium);Spacer(Modifier.height(18.dp));CircularProgressIndicator();Spacer(Modifier.height(18.dp));Text("Conectando con tu hogar…",textAlign=TextAlign.Center);Text("Necesitas conexión a internet.",style=MaterialTheme.typography.bodySmall)}
+                    state.starting -> Column(Modifier.fillMaxSize().padding(28.dp),verticalArrangement=Arrangement.Center,horizontalAlignment=Alignment.CenterHorizontally){BrandMark(72.dp);Spacer(Modifier.height(20.dp));Text("Casa Familias",style=MaterialTheme.typography.headlineMedium);Spacer(Modifier.height(18.dp));CircularProgressIndicator();Spacer(Modifier.height(18.dp));Text("Conectando con tu hogar…",textAlign=TextAlign.Center);Text("Necesitas conexión a internet.",style=MaterialTheme.typography.bodySmall)}
                     state.recovery -> RecoveryScreen(vm,state)
                     state.data==null -> LoginScreen(vm,state)
                     else -> key(state.data!!.profile.id,state.data!!.profile.role,state.data!!.profile.familyId,state.data!!.profile.secondFamilyId){SignedApp(vm,state.data!!)}
@@ -54,7 +54,7 @@ import kotlinx.coroutines.*
 @Composable fun LoginScreen(vm: CasaViewModel,state: CasaState) {
     var email by rememberSaveable {mutableStateOf("")};var password by remember {mutableStateOf("")};var reveal by remember {mutableStateOf(false)}
     Column(Modifier.fillMaxSize().safeDrawingPadding().imePadding().verticalScroll(rememberScrollState()).padding(horizontal=26.dp,vertical=38.dp),verticalArrangement=Arrangement.spacedBy(18.dp)) {
-        Spacer(Modifier.height(28.dp));Glyph("home",modifier=Modifier.size(64.dp),tint=MaterialTheme.colorScheme.primary)
+        Spacer(Modifier.height(28.dp));BrandMark(72.dp)
         Text("Casa Familias",style=MaterialTheme.typography.titleLarge)
         Text("Bienvenido a casa.",style=MaterialTheme.typography.headlineLarge)
         Text("Pagos claros y un hogar organizado, entre todos.",color=MaterialTheme.colorScheme.onSurfaceVariant)
@@ -108,14 +108,14 @@ import kotlinx.coroutines.*
     CompositionLocalProvider(ReceiptViewer provides {path,qr->viewing=path to qr},PageHeadingInBar provides (root in setOf("cleaning","users","reports","admin","notices","notifications","proposals","profile","audit","periods","templates","swaps"))) {
         Scaffold(containerColor=MaterialTheme.colorScheme.background,snackbarHost={SnackbarHost(snackbar)},topBar={
             Column {
-                TopAppBar(colors=TopAppBarDefaults.topAppBarColors(containerColor=MaterialTheme.colorScheme.background),title={if(root in tabs || root.isBlank())Row(verticalAlignment=Alignment.CenterVertically,horizontalArrangement=Arrangement.spacedBy(8.dp)){Glyph("home",tint=MaterialTheme.colorScheme.primary);Text("Casa Familias",style=MaterialTheme.typography.titleMedium)}else Text(when(root){"form"->"Formulario";"payments-family"->"Historial";else->routeTitle(root)},style=MaterialTheme.typography.titleMedium)},navigationIcon={if(root !in tabs && root.isNotBlank())IconButton(onClick={back()}){Glyph("back","Volver")}},actions={
+                TopAppBar(colors=TopAppBarDefaults.topAppBarColors(containerColor=MaterialTheme.colorScheme.background),title={if(root in tabs || root.isBlank())Row(verticalAlignment=Alignment.CenterVertically,horizontalArrangement=Arrangement.spacedBy(8.dp)){BrandMark(32.dp);Text("Casa Familias",style=MaterialTheme.typography.titleMedium)}else Text(when(root){"form"->"Formulario";"payments-family"->"Historial";else->routeTitle(root)},style=MaterialTheme.typography.titleMedium)},navigationIcon={if(root !in tabs && root.isNotBlank())IconButton(onClick={back()}){Glyph("back","Volver")}},actions={
                     if(s.profile.role!=Role.RESTAURANT)IconButton(onClick={go("notifications")}){BadgedBox(badge={if(s.rows("notifications").any {it.text("read_at").isBlank()})Badge()}){Glyph("notifications","Abrir notificaciones")}}
                     if(root!="profile" && root!="form")IconButton(onClick={go("profile")},modifier=Modifier.semantics{contentDescription="Abrir mi perfil"}){Surface(shape=CircleShape,color=MaterialTheme.colorScheme.primaryContainer,modifier=Modifier.size(36.dp)){Box(contentAlignment=Alignment.Center){Text(s.profile.name.split(' ').take(2).mapNotNull{it.firstOrNull()}.joinToString("").uppercase(),style=MaterialTheme.typography.labelLarge)}}}
                 })
                 if(s.preview)Surface(color=MaterialTheme.colorScheme.primaryContainer,modifier=Modifier.fillMaxWidth()){Text("Vista de diseño · Datos de ejemplo",Modifier.padding(8.dp),style=MaterialTheme.typography.labelMedium,textAlign=TextAlign.Center)}
                 if(state.busy || exporting)LinearProgressIndicator(Modifier.fillMaxWidth())
             }
-        },bottomBar={if(showBottom)NavigationBar(containerColor=MaterialTheme.colorScheme.surface,tonalElevation=0.dp){tabs.forEach {tab->NavigationBarItem(selected=active==tab,onClick={go(tab)},icon={Glyph(if(tab=="dues")"expenses" else if(tab=="profile")"profile" else tab)},label={BottomLabel(if(s.profile.role==Role.RESTAURANT && tab=="home")"Servicios" else routeTitle(tab),LocalConfiguration.current.screenWidthDp.dp/tabs.size-6.dp)})}}}) {padding ->
+        },bottomBar={if(showBottom)NavigationBar(containerColor=MaterialTheme.colorScheme.surface,tonalElevation=0.dp){tabs.forEach {tab->NavigationBarItem(selected=active==tab,onClick={go(tab)},icon={Glyph(if(tab=="dues")"expenses" else if(tab=="profile")"profile" else tab)},colors=NavigationBarItemDefaults.colors(selectedIconColor=MaterialTheme.colorScheme.primary,selectedTextColor=MaterialTheme.colorScheme.primary,indicatorColor=MaterialTheme.colorScheme.primaryContainer),label={BottomLabel(if(s.profile.role==Role.RESTAURANT && tab=="home")"Servicios" else routeTitle(tab),LocalConfiguration.current.screenWidthDp.dp/tabs.size-6.dp)})}}}) {padding ->
             Column(Modifier.fillMaxSize().padding(padding)) {
                 if(state.error!=null)Surface(color=MaterialTheme.colorScheme.errorContainer,modifier=Modifier.fillMaxWidth()){Row(Modifier.padding(12.dp),verticalAlignment=Alignment.CenterVertically){Text(state.error!!,Modifier.weight(1f),style=MaterialTheme.typography.bodySmall);TextButton(onClick={vm.clearError()}){Text("Cerrar")}}}
                 NavHost(navController=nav,startDestination="home",modifier=Modifier.weight(1f)) {

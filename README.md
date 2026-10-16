@@ -1,8 +1,8 @@
 # Casa Familias
 
-Entrega actual: **5.0 nativa, para presentar y probar**. Consulta [la entrega y las pruebas](ENTREGA.md).
+Entrega actual: **5.1 nativa, para presentar y probar**. Consulta [la entrega y las pruebas](ENTREGA.md).
 
-La interfaz utiliza Kotlin, Jetpack Compose, Material 3, Navigation Compose y MVVM. Incluye Inter, tema claro y oscuro, texto ampliable, formularios por pasos y navegación según el rol. Administrador: Inicio, Gastos, Pagos, Familias y Más. Las nueve propuestas visuales están en [diseno/nativo-v5/propuestas](diseno/nativo-v5/propuestas); la [auditoría de funciones](diseno/nativo-v5/AUDITORIA.md) explica su ubicación.
+La interfaz utiliza Kotlin, Jetpack Compose, Material 3, Navigation Compose y MVVM. Incluye azul eléctrico con acentos coral y turquesa, botones con iconos, accesos con texto, Inter, tema claro y oscuro, texto ampliable, formularios por pasos y navegación según el rol. Administrador: Inicio, Gastos, Pagos, Familias y Más. Las capturas de la actualización visual están en [diseno/nativo-v5.1](diseno/nativo-v5.1); las propuestas de la versión anterior se conservan en diseno/nativo-v5/propuestas; la [auditoría de funciones](diseno/nativo-v5/AUDITORIA.md) explica su ubicación.
 
 Conserva Supabase, cuentas, cuotas, pagos parciales, crédito, comprobantes, QR privado, nombres y asignaciones de familias, limpieza semanal, propuestas, avisos, cierre de meses, auditoría y reportes PDF/Excel. Fondo Común no aparece en las consultas ni en las rutas activas. Los datos históricos no se eliminan.
 
