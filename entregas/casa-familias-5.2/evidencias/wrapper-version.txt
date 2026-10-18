@@ -15,4 +15,3 @@ Ant:           Apache Ant(TM) version 1.10.14 compiled on August 16 2023
 Launcher JVM:  17.0.20.1 (Eclipse Adoptium 17.0.20.1+1)
 Daemon JVM:    /workspace/casa-environment/tools/jdk-17.0.20.1+1 (no JDK specified, using current Java home)
 OS:            Linux 6.18.55 amd64
-
