@@ -1,0 +1,4 @@
+{
+  "bothPayerFamiliesHaveZeroServiceBalance": true,
+  "monthlyRegistrationNoLongerUsesMissingPaymentColumn": true
+}

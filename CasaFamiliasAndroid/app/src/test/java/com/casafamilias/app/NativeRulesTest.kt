@@ -44,4 +44,24 @@ class NativeRulesTest {
         assertTrue(files.getValue("xl/worksheets/sheet3.xml").contains("Saldo a favor"))
     }
 
+    @Test fun payerBillCoverageKeepsBothFamiliesAtZeroWithoutErasingOtherDebt() {
+        val shares=(1..3).map {row("id" to "s$it","family_id" to it,"amount_due" to "100.00")}
+        val coverage=(1..2).map {row("share_id" to "s$it","family_id" to it,"applied_amount" to "100.00","kind" to "auto","status" to "approved")}
+        val snapshot=data(Role.PAYER).copy(tables=mapOf("expense_shares" to shares,"payments" to coverage))
+        assertEquals(0,BigDecimal.ZERO.compareTo(snapshot.balance(1)))
+        assertEquals(0,BigDecimal.ZERO.compareTo(snapshot.balance(2)))
+        assertEquals(0,BigDecimal("100.00").compareTo(snapshot.balance(3)))
+        val withExtra=snapshot.copy(tables=snapshot.tables+("expense_shares" to (shares+row("id" to "extra","family_id" to 1,"amount_due" to "10.00"))))
+        assertEquals(0,BigDecimal("10.00").compareTo(withExtra.balance(1)))
+    }
+    @Test fun automaticCoverageIsNotShownAsAnotherQrOrCashPayment() {
+        assertEquals("Cuota cubierta automáticamente",row("kind" to "auto").paymentMethodLabel())
+        assertEquals("Aplicación de saldo a favor",row("kind" to "credit").paymentMethodLabel())
+    }
+    @Test fun legacyMethodsUseStoredNotesAndNeverGuessQr() {
+        assertEquals("Efectivo",row("kind" to "manual","note" to "Método: Efectivo · Entregado").paymentMethodLabel())
+        assertEquals("QR",row("kind" to "manual","note" to "Método: QR · Comprobante").paymentMethodLabel())
+        assertEquals("No especificada",row("kind" to "manual").paymentMethodLabel())
+    }
+
 }

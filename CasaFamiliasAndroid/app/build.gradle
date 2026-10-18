@@ -1,13 +1,40 @@
 plugins { id 'com.android.application'; id 'org.jetbrains.kotlin.android'; id 'org.jetbrains.kotlin.plugin.compose' }
+// La clave definitiva pertenece al propietario y se mantiene fuera de Git.
+def uploadProperties = new Properties()
+def uploadPropertiesFile = rootProject.file('casa-upload.properties')
+if (uploadPropertiesFile.exists()) {
+ uploadPropertiesFile.withInputStream { uploadProperties.load(it) }
+ ['storeFile', 'storePassword', 'keyAlias', 'keyPassword'].each { key ->
+  if (!uploadProperties.getProperty(key)?.trim()) throw new GradleException("Falta ${key} en casa-upload.properties")
+ }
+ if (uploadProperties.getProperty('keyAlias') == 'androiddebugkey') throw new GradleException('Usa una clave de subida propia para Google Play, no la clave debug.')
+}
 android {
  namespace 'com.casafamilias.app'
- compileSdk 35
- defaultConfig { applicationId 'com.casafamilias.app'; minSdk 26; targetSdk 35; versionCode 7; versionName '5.1'; testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner' }
+ compileSdk 36
+ defaultConfig { applicationId 'com.casafamilias.app'; minSdk 26; targetSdk 36; versionCode 8; versionName '5.2'; testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner' }
  compileOptions { sourceCompatibility JavaVersion.VERSION_17; targetCompatibility JavaVersion.VERSION_17 }
  kotlinOptions { jvmTarget = '17' }
- buildFeatures { compose true }
- buildTypes { release { minifyEnabled true; shrinkResources true; signingConfig signingConfigs.debug; proguardFiles getDefaultProguardFile('proguard-android-optimize.txt') } }
- packaging { jniLibs { useLegacyPackaging true } }
+ buildFeatures { compose true; buildConfig true }
+ signingConfigs {
+  if (uploadPropertiesFile.exists()) {
+   upload {
+    storeFile rootProject.file(uploadProperties.getProperty('storeFile'))
+    storePassword uploadProperties.getProperty('storePassword')
+    keyAlias uploadProperties.getProperty('keyAlias')
+    keyPassword uploadProperties.getProperty('keyPassword')
+   }
+  }
+ }
+ buildTypes {
+  release {
+   minifyEnabled true; shrinkResources true
+   if (uploadPropertiesFile.exists()) signingConfig signingConfigs.upload
+   proguardFiles getDefaultProguardFile('proguard-android-optimize.txt')
+  }
+  // APK compatible con las entregas anteriores; no se usa para publicar.
+  presentation { initWith release; signingConfig signingConfigs.debug; matchingFallbacks=['release'] }
+ }
 }
 dependencies {
  implementation platform('androidx.compose:compose-bom:2024.12.01')

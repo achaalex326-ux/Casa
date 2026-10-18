@@ -1,5 +1,6 @@
 package com.casafamilias.app.data
 
+import com.casafamilias.app.BuildConfig
 import android.graphics.Paint
 import android.graphics.Typeface
 import android.graphics.pdf.PdfDocument
@@ -13,7 +14,7 @@ import java.util.zip.ZipOutputStream
 
 object ExportFiles {
     fun backup(s: Snapshot)=JSONObject().apply {
-        put("exported_at",java.time.Instant.now().toString());put("application","Casa Familias 5.1")
+        put("exported_at",java.time.Instant.now().toString());put("application","Casa Familias ${BuildConfig.VERSION_NAME}")
         put("description","Registros y referencias de imágenes; no incluye los archivos binarios de Storage.")
         s.tables.forEach {(name,rows)->put(name,JSONArray(rows.map {it.json}))}
     }.toString(2).toByteArray()

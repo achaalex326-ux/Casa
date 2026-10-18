@@ -38,9 +38,10 @@ try:
         raise RuntimeError("PostgreSQL no inició: " + run("docker", "logs", CONTAINER))
     sql(HERE / "backend_fixture.sql")
     for _ in range(2):
-        # pg_cron no está incluido en PostgreSQL Alpine; su instalación se verifica en Supabase.
+        # pg_cron se comprueba en Supabase; el conjunto financiero se ejecuta
+        # con su propio esquema más abajo, en test_payer_services.py.
         for migration in sorted((ROOT / "supabase/migrations").glob("*.sql")):
-            if migration.name.endswith("_cron.sql"):
+            if migration.name.endswith(("_cron.sql", "_payer_services.sql")):
                 continue
             sql(migration)
     output = sql(HERE / "backend_checks.sql")
@@ -53,3 +54,8 @@ try:
     print(next(line.strip() for line in output.splitlines() if '"nativeCommunityChecks"' in line))
 finally:
     subprocess.run(["docker", "rm", "-fv", CONTAINER], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
+# Las cuotas de servicios necesitan su propio esquema contractual financiero.
+# Este conjunto se ejecuta aparte en otro contenedor y no se omite.
+import sys
+subprocess.run([sys.executable, str(HERE / "test_payer_services.py")], check=True)

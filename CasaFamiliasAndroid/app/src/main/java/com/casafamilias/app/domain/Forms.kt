@@ -62,7 +62,7 @@ object Forms {
             "services" -> {title="Registrar servicios del mes";val list=mutableListOf(f("month","Mes de las facturas",InputType.MONTH,true,Dates.month()),f("due","Vencimiento",InputType.DATE,true,Dates.today()),f("reference","Solo referencia histórica",InputType.CHECK,initial="false"))
                 services.forEach { v -> list+=f(v.value,v.label+" (Bs)",InputType.MONEY,true,"0",1,zero=true);list+=f(v.value+"_receipt","Factura de "+v.label.lowercase(),InputType.IMAGE,page=1) }
                 list+=f("other_water","Otros aportes de agua (Bs)",InputType.MONEY,initial="0",page=2,zero=true);list+=f("other_electricity","Otros aportes de luz (Bs)",InputType.MONEY,initial="0",page=2,zero=true)
-                fields=list;help="El servidor calcula aportes, promedios y cuotas. La referencia histórica actualiza promedios sin crear deuda. Verifica los importes leídos de las fotos."
+                fields=list;help="Las dos familias configuradas para el encargado cubren su cuota al pagar las facturas: no se les cobra otra vez. El servidor calcula los aportes de las demás familias. La referencia histórica actualiza promedios sin crear deuda. Verifica los importes leídos de las fotos."
             }
             "family-name" -> {title="Nombre de la familia";fields=listOf(f("name","Nombre",required=true,initial=s.find("families",id)?.text("name").orEmpty(),max=80))}
             "assignment" -> {title="Asignar familia";val u=s.find("profiles",id) ?: error("Cuenta no disponible.");val payer=u.text("role")=="payer"

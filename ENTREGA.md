@@ -1,33 +1,29 @@
-# Casa Familias 5.1 — entrega Android nativa
+# Casa Familias 5.2 — pruebas y preparación para Google Play
 
-Versión **5.1**, código **7**, paquete com.casafamilias.app, Android 8.0 o posterior. Compilación optimizada con firma de pruebas, para presentar y probar.
+Versión **5.2**, código **8**, paquete `com.casafamilias.app`. Compatible con Android 8 o posterior, con destino Android 16/API 36. Mantiene la interfaz de 5.1 y las cuentas de la casa actual; el registro de comunidades independientes queda para otra etapa.
 
-## Cambios principales
+## Descargar y revisar
 
-La actualización 5.1 renueva la presentación: resumen con degradado azul/turquesa, marca de la casa, accesos con indicación Ver, botones más grandes con iconos, contraste reforzado y tarjetas de inicio que abren las mismas secciones de Pagos y Familias. Los estados conservan sus nombres y colores. No incluye cambios de reglas, cuentas, permisos, datos ni servidor.
+Los archivos están en [entregas/casa-familias-5.2](entregas/casa-familias-5.2): APK optimizado de pruebas, AAB sin firmar, código fuente, capturas, huellas y comprobaciones. Para publicar, sigue [la guía de Google Play](entregas/google-play/GUIA_GOOGLE_PLAY.md). No se ha publicado la aplicación ni creado una cuenta de desarrollador.
 
-Interfaz hecha en Kotlin con Jetpack Compose, Material3, Navigation Compose y MVVM. Azul eléctrico con acentos coral y turquesa, Inter incluida, iconos lineales, tarjetas, modos claro/oscuro, texto ampliable y filtros que pasan a otra fila cuando falta espacio. Las pantallas tienen carga, estados vacíos, mensajes de error y formularios largos divididos en pasos. Los detalles y formularios usan retroceso jerárquico.
+El APK usa la variante `presentation`, con la firma de pruebas de este entorno. La variante `release` deja de utilizar esa firma automáticamente y admite una clave de subida propia mediante Android Studio o un archivo local ignorado `casa-upload.properties`. Sin esa clave, el AAB se genera sin firmar y **no se puede enviar a Play Console**.
 
-Administrador y encargado: Inicio, Gastos, Pagos, Familias y Más. Las opciones cambian según el rol; Usuarios y Administración son solo para administrador. Cada acción tiene una ubicación principal. Historial y revisión se concentran en Pagos; las deudas detalladas están en Familias/Mis cuotas. Fondo Común está ausente de la navegación y consultas activas, sin eliminar datos históricos.
+## Cuotas de las familias del encargado
 
-Se conserva la integración real con Supabase: autenticación y recuperación, QR privado, pagos parciales/efectivo/comprobante, gastos y servicios, crédito, aportes de restaurante, nombres y asignaciones familiares, turnos, avisos, propuestas, cierre de meses, auditoría y respaldo. PDF se genera en Android y Excel contiene Gastos, Pagos y Familias para el período elegido. El servidor sigue calculando repartos; no se sustituyeron por divisiones del cliente. ML Kit lee fotos sin descargar un modelo y pide revisar el importe.
+La familia que paga las facturas no debe pagar otra vez su cuota de servicios. Las dos familias contables configuradas para el encargado tienen esa cuota cubierta automáticamente. Se regularizaron 22 cuotas históricas sin duplicar pagos previos, sin consumir créditos y sin alterar los gastos ni las cuotas de otras familias. El saldo se calcula en el servidor; no se ocultan deudas cambiando solo la pantalla.
 
-Las familias pueden publicar propuestas, votar y solicitar intercambios desde sus propios turnos. El servidor valida propiedad y hogar receptor; la consulta de turnos para intercambio no expone fotografías ni notas privadas. Los conteos de propuestas no revelan los otros votantes. Se mantiene un voto por identidad contable y el umbral de cuatro votos.
+Se corrigió el registro de servicios futuros que usaba una columna de pago inexistente. Los gastos extraordinarios mantienen su propia regla de pago y no se cancelan por tener rol de encargado. La app distingue coberturas automáticas, aplicación de crédito, efectivo y QR, y utiliza el número de versión configurado en el proyecto para el perfil y la exportación.
 
-El ciclo semanal sigue **Choque → Galarza → Salinas → David → Acha**. Salinas y Salinas2 comparten únicamente limpieza; sus cuentas, pagos y saldos siguen separados. Ubicación: Más → Limpieza → Repetición semanal. El plan ya está activo; guardar cambios conserva turnos asignados. Pausar detiene la creación de semanas nuevas.
+## Funciones e interfaz conservadas
 
-## Descargar e instalar
+Kotlin, Jetpack Compose Material 3, Navigation Compose y MVVM; azul eléctrico, coral y turquesa; tema claro/oscuro y texto ampliable. Se conservan Supabase, sesiones cifradas con Android Keystore, pagos parciales, QR privado, comprobantes, familias, asignaciones, propuestas, avisos, auditoría y reportes PDF/Excel. El WebView invisible y temporal solo intenta recuperar una sesión antigua; no presenta la interfaz.
 
-Los archivos actuales están en [entregas/casa-familias-5.1](entregas/casa-familias-5.1). Instala CasaFamilias-5.1-pruebas.apk sobre la versión anterior, sin desinstalarla ni borrar datos. Usa internet para sincronizar. Si es necesario, ingresa con tu cuenta habitual.
+El ciclo semanal sigue **Choque → Galarza → Salinas → David → Acha**. Salinas y Salinas2 comparten limpieza y conservan sus identidades contables separadas. No se modificaron la rotación ni las funciones de permisos de la comunidad.
 
-El certificado de la entrega coincide con el APK 4.3.1 generado aquí. Se verificó la instalación como actualización en un emulador; no se probó la transferencia de una sesión real autenticada. La aplicación intenta recuperar la sesión anterior una vez y almacena las nuevas sesiones cifradas con Android Keystore. Las contraseñas no se guardan.
+## Verificación y pendientes
 
-Para actualizar tu carpeta de trabajo: GitHub Desktop → Fetch origin → Pull origin. Abre CasaFamiliasAndroid en Android Studio. El ZIP original del repositorio es histórico y no se actualiza automáticamente.
+Consulta [VERIFICACION.md](entregas/casa-familias-5.2/VERIFICACION.md): 33 pruebas unitarias, 198 comprobaciones SQL aisladas, 8 pruebas Android con datos ficticios, 0 errores de Lint y 17 avisos, bundle validado y comprobaciones de alineación de 16 KB. La firma del APK se compara con 5.1. Los resultados detallados y el ensayo de instalación figuran en la entrega.
 
-## Validación y límites
+No se ha probado esta versión en un teléfono físico ni ejecutado en Android 16 o en un dispositivo de páginas de 16 KB. Las capturas usan datos ficticios; no demuestran pagos reales. Antes de publicar faltan tu clave de subida, la cuenta de Google Play, privacidad y eliminación de cuentas, recursos de tienda y las pruebas/revisión correspondientes. Las guías y borradores señalan esos pendientes expresamente.
 
-Las pruebas y su evidencia están en VERIFICACION.md de la entrega. Se comprueban dinero decimal, roles, formularios, paginación, renovación de sesión, contratos HTTP, exportaciones y navegación Android con datos ficticios. Las 169 comprobaciones SQL usan PostgreSQL desechable. En la base 5.0, la migración006 se instaló en el Supabase real conservando huellas y conteos de 15 tablas, sin insertar registros comerciales.
-
-Las imágenes de propuestas se generaron antes de implementar. Las capturas Android se obtienen ejecutando Compose en un emulador con PreviewRepository: están identificadas como datos ficticios y no demuestran operaciones reales de Supabase. Los recursos web antiguos conservados no presentan la interfaz del APK nuevo; solo hay un WebView temporal invisible para intentar migrar la sesión.
-
-No se ha probado el APK en un teléfono físico, con credenciales de una persona real, seleccionando su QR bancario ni enviando un pago real. La guía PRUEBAS-EN-TU-CELULAR.md enumera esas comprobaciones. No se publicó en Google Play.
+Actualiza tu carpeta en GitHub Desktop con **Fetch origin → Pull origin**, y abre `CasaFamiliasAndroid` en Android Studio. El ZIP de la raíz del repositorio y las entregas antiguas son históricos.

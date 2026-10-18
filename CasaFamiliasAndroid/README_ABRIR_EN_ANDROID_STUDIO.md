@@ -1,12 +1,12 @@
-# Abrir Casa Familias 5.1 en Android Studio
+# Abrir Casa Familias 5.2 en Android Studio
 
 1. Actualiza el repositorio desde GitHub Desktop: Fetch origin → Pull origin.
 2. Abre la carpeta **CasaFamiliasAndroid**, que contiene settings.gradle. No abras el ZIP histórico.
-3. Usa JDK 17, Android SDK Platform 35 y conexión para descargar dependencias. El Wrapper fija Gradle 8.9; AGP 8.7.3 y Kotlin 2.0.21 están declarados en el proyecto.
+3. Usa JDK 17, Android SDK Platform 36 y conexión para descargar dependencias. El Wrapper fija Gradle 8.11.1; AGP 8.10.1 y Kotlin 2.0.21 están declarados en el proyecto.
 4. Espera Gradle Sync. Selecciona un dispositivo Android 8.0 o posterior y pulsa Run.
 5. Inicia sesión con una cuenta existente. No se crean cuentas de demostración en Supabase.
 
-En Windows: `gradlew.bat testDebugUnitTest assembleDebug`. En Linux/macOS: `./gradlew testDebugUnitTest assembleDebug`. Salida: app/build/outputs/apk/debug/app-debug.apk. Para la entrega optimizada: assembleRelease; salida app/build/outputs/apk/release/app-release.apk. La entrega actual usa firma de pruebas compatible con los APK entregados previamente desde este entorno; una compilación hecha en otro equipo puede tener un certificado diferente.
+En Windows: `gradlew.bat testDebugUnitTest assembleDebug`. En Linux/macOS: `./gradlew testDebugUnitTest assembleDebug`. Salida: app/build/outputs/apk/debug/app-debug.apk. Para la entrega optimizada de pruebas: assemblePresentation; salida app/build/outputs/apk/presentation/app-presentation.apk. La entrega actual usa firma de pruebas compatible con los APK entregados previamente desde este entorno; una compilación hecha en otro equipo puede tener un certificado diferente.
 
 ## Organización
 
@@ -26,3 +26,9 @@ Todas las pantallas son nativas. Solo existe un WebView invisible y temporal par
 Solo en compilación debug se puede iniciar MainActivity con extras design_preview=true y preview_role=sysadmin, family, payer o restaurant. Utiliza PreviewRepository de solo lectura y muestra un aviso de datos ficticios. La entrega release ignora esos extras y abre la autenticación real. No uses capturas de ejemplo como evidencia de operaciones reales.
 
 La aplicación necesita internet para autenticarse y sincronizar registros. ML Kit está incluido para leer comprobantes sin descargar un modelo; la lectura requiere revisión humana. El selector de documentos de Android proporciona acceso a imágenes sin pedir permiso general de archivos. La campana muestra notificaciones guardadas en Supabase, no se implementa un servicio nuevo de notificaciones push.
+
+## Preparación para Google Play (5.2)
+
+Conserva la interfaz y las cuentas de la casa actual. Usa SDK 36/AGP 8.10.1 y Gradle 8.11.1. `assemblePresentation` genera el APK de pruebas firmado con la clave de pruebas anterior. `bundleRelease` genera el AAB: queda sin firmar hasta configurar una clave de subida propia en Android Studio o en el archivo local ignorado `casa-upload.properties`. No subir claves ni contraseñas a GitHub.
+
+Sigue [la guía de Google Play](../entregas/google-play/GUIA_GOOGLE_PLAY.md). La publicación requiere además completar privacidad, eliminación de cuenta, datos de la tienda, pruebas y revisión de Google.

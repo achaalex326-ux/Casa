@@ -19,6 +19,13 @@ data class Record(val json: JSONObject) {
     fun number(key: String) = text(key).toLongOrNull()
     fun flag(key: String) = json.optBoolean(key, false)
     fun list(key: String): List<String> = json.optJSONArray(key)?.let { a -> (0 until a.length()).map { a.optString(it) } } ?: emptyList()
+    fun paymentMethodLabel(): String = when {
+        text("kind")=="auto" -> "Cuota cubierta automáticamente"
+        text("kind")=="credit" -> "Aplicación de saldo a favor"
+        text("method")=="cash" || text("payment_method")=="cash" || text("note").startsWith("Método: Efectivo") -> "Efectivo"
+        text("method")=="qr" || text("payment_method")=="qr" || text("note").startsWith("Método: QR") -> "QR"
+        else -> "No especificada"
+    }
 }
 enum class Role(val code: String, val label: String) {
     FAMILY("family", "Familia"), PAYER("payer", "Encargado de pagos"), ADMIN("sysadmin", "Administrador"), RESTAURANT("restaurant", "Restaurante");

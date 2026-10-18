@@ -1,0 +1,12 @@
+{
+  "updateInstall": "PASS",
+  "versionName": "5.2",
+  "versionCode": 8,
+  "nativeLoginRendered": true,
+  "presentationIgnoresPreviewExtras": true,
+  "physicalPhoneTested": false,
+  "android16RuntimeTested": false,
+  "emulatorSystemUiAnrDuringSmoke": true,
+  "recoveredAfterSystemWait": true,
+  "appCrashBufferEmpty": true
+}

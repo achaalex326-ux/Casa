@@ -1,0 +1,6 @@
+# Copia a casa-upload.properties SOLO en tu computadora.
+# Usa barras / incluso en Windows. No subas el archivo real ni el .jks a GitHub.
+storeFile=C:/ClavesCasa/casa-upload.jks
+storePassword=COMPLETAR_SOLO_EN_EL_ARCHIVO_LOCAL
+keyAlias=casa-upload
+keyPassword=COMPLETAR_SOLO_EN_EL_ARCHIVO_LOCAL

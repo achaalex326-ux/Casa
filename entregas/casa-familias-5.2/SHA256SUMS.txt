@@ -1,0 +1,5 @@
+0089a676436b73b5ed80579c119bfa15af22dbbd976758581f892c4347ae2541  CasaFamilias-5.2-SIN-FIRMAR.aab
+e6d3dbc24eab2a80e92202f4c607d1362d36ede8b570205be3df164dbacf772f  CasaFamilias-5.2-capturas.zip
+ea389db0f7f595d11bce11d8d424883edd2c743684063cad0db825bcd1486fdc  CasaFamilias-5.2-proyecto.zip
+49f3d86318ca3b798268f95403ca795d55d614d49aa55eac2563fd9c4d8f66ee  CasaFamilias-5.2-pruebas.apk
+da316f61c4144b4829820b0da1ca76e6dd4a270cf64fdd22bf20116e98e100ff  verificacion.json

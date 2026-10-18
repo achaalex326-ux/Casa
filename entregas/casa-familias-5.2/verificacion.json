@@ -1,0 +1,97 @@
+{
+  "date": "2026-10-18",
+  "version": "5.2",
+  "versionCode": 8,
+  "package": "com.casafamilias.app",
+  "minSdk": 26,
+  "targetSdk": 36,
+  "multiHouseholdSelfRegistration": false,
+  "database": {
+    "migration": "202610180007_payer_services.sql",
+    "deployed": true,
+    "newAutomaticCoverageEntries": 22,
+    "payerServiceBalancesZero": true,
+    "priorPaymentsPreserved": true,
+    "expensesAndSharesPreserved": true,
+    "creditsPreserved": true,
+    "otherFamiliesUnchanged": true,
+    "futureServicesColumnFixed": true
+  },
+  "localSql": {
+    "backend": 59,
+    "rotation": 41,
+    "sharedCleaning": 26,
+    "nativeCommunity": 43,
+    "payerServices": 29,
+    "allPassed": true,
+    "cronRunLocally": false
+  },
+  "publication": {
+    "uploadedToPlay": false,
+    "signingKeyProvided": false,
+    "privacyPolicyPublished": false,
+    "accountDeletionImplemented": false,
+    "physicalPhoneTested": false,
+    "android16RuntimeTested": false
+  },
+  "unitTests": [
+    {
+      "name": "com.casafamilias.app.NativeRulesTest",
+      "tests": "24",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "timestamp": "2026-10-18T20:50:54"
+    },
+    {
+      "name": "com.casafamilias.app.RepositoryContractTest",
+      "tests": "9",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "timestamp": "2026-10-18T20:50:54"
+    }
+  ],
+  "lint": {
+    "errors": 0,
+    "warnings": 17
+  },
+  "build": {
+    "passed": true,
+    "gradle": "8.11.1",
+    "agp": "8.10.1",
+    "bundleValidated": true,
+    "bundleSigned": false,
+    "native64BitAlignment16Kb": true,
+    "apkZipAlignment16Kb": true
+  },
+  "androidTests": {
+    "passed": 8,
+    "failures": 0,
+    "device": "Android 11/API30 emulator",
+    "resolution": "320x800",
+    "systemFontScale": 1.3,
+    "largeAppFontScale": 1.3,
+    "combinedDarkFontScale": 1.69,
+    "data": "read-only fictional PreviewRepository"
+  },
+  "presentationSmoke": {
+    "updateInstall": "PASS",
+    "versionName": "5.2",
+    "versionCode": 8,
+    "nativeLoginRendered": true,
+    "presentationIgnoresPreviewExtras": true,
+    "physicalPhoneTested": false,
+    "android16RuntimeTested": false,
+    "emulatorSystemUiAnrDuringSmoke": true,
+    "recoveredAfterSystemWait": true,
+    "appCrashBufferEmpty": true
+  },
+  "uploadSigningConfiguration": {
+    "signedBundleVerified": true,
+    "temporaryLocalKeyOnly": true,
+    "productionKeyProvided": false,
+    "temporaryKeyNotDistributed": true
+  },
+  "apkCertificateSha256": "be231e4d4f51af408cdc3728c18aacd76b1f3758b2fe452674294df4cbad2b5c"
+}

@@ -1,0 +1,82 @@
+[
+  {
+    "archive": "app-release.aab",
+    "library": "base/lib/arm64-v8a/libandroidx.graphics.path.so",
+    "loadSegmentAlignment": [
+      16384,
+      16384,
+      16384
+    ],
+    "pass": true
+  },
+  {
+    "archive": "app-release.aab",
+    "library": "base/lib/arm64-v8a/libmlkit_google_ocr_pipeline.so",
+    "loadSegmentAlignment": [
+      16384,
+      16384,
+      16384
+    ],
+    "pass": true
+  },
+  {
+    "archive": "app-release.aab",
+    "library": "base/lib/x86_64/libandroidx.graphics.path.so",
+    "loadSegmentAlignment": [
+      16384,
+      16384,
+      16384
+    ],
+    "pass": true
+  },
+  {
+    "archive": "app-release.aab",
+    "library": "base/lib/x86_64/libmlkit_google_ocr_pipeline.so",
+    "loadSegmentAlignment": [
+      16384,
+      16384,
+      16384
+    ],
+    "pass": true
+  },
+  {
+    "archive": "app-presentation.apk",
+    "library": "lib/arm64-v8a/libandroidx.graphics.path.so",
+    "loadSegmentAlignment": [
+      16384,
+      16384,
+      16384
+    ],
+    "pass": true
+  },
+  {
+    "archive": "app-presentation.apk",
+    "library": "lib/arm64-v8a/libmlkit_google_ocr_pipeline.so",
+    "loadSegmentAlignment": [
+      16384,
+      16384,
+      16384
+    ],
+    "pass": true
+  },
+  {
+    "archive": "app-presentation.apk",
+    "library": "lib/x86_64/libandroidx.graphics.path.so",
+    "loadSegmentAlignment": [
+      16384,
+      16384,
+      16384
+    ],
+    "pass": true
+  },
+  {
+    "archive": "app-presentation.apk",
+    "library": "lib/x86_64/libmlkit_google_ocr_pipeline.so",
+    "loadSegmentAlignment": [
+      16384,
+      16384,
+      16384
+    ],
+    "pass": true
+  }
+]
