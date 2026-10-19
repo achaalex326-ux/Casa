@@ -1,0 +1,245 @@
+{
+  "versionName": "5.6",
+  "versionCode": 12,
+  "minSdk": 26,
+  "targetSdk": 36,
+  "unitTests": {
+    "passed": 70,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "suites": [
+      {
+        "name": "com.casafamilias.app.DeviceAlertRulesTest",
+        "tests": "10",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "timestamp": "2026-10-19T03:16:35"
+      },
+      {
+        "name": "com.casafamilias.app.LocalAccessPolicyTest",
+        "tests": "7",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "timestamp": "2026-10-19T03:16:35"
+      },
+      {
+        "name": "com.casafamilias.app.NativeRulesTest",
+        "tests": "29",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "timestamp": "2026-10-19T03:16:36"
+      },
+      {
+        "name": "com.casafamilias.app.PaymentPlansTest",
+        "tests": "10",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "timestamp": "2026-10-19T03:16:36"
+      },
+      {
+        "name": "com.casafamilias.app.RepositoryContractTest",
+        "tests": "14",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "timestamp": "2026-10-19T03:16:36"
+      }
+    ]
+  },
+  "androidTests": {
+    "passed": 26,
+    "failures": 0,
+    "runs": {
+      "passed": 26,
+      "finalFailures": 0,
+      "initialRun": {
+        "passed": 25,
+        "failed": 1
+      },
+      "targetedRetry": {
+        "passed": 1,
+        "failed": 0
+      },
+      "initialFailure": "Screenshot helper found both the screen and dialog roots after the approval assertion passed. Capture moved after dialog dismissal. Production code unchanged.",
+      "cases": {
+        "com.casafamilias.app.BatchPaymentSubmissionTest#lostReplyRetriesSameDepositAndUploadsReceiptOnlyOnce": {
+          "status": "PASS",
+          "source": "android-tests-initial.txt"
+        },
+        "com.casafamilias.app.BatchPaymentSubmissionTest#doubleTapWhileSubmittingDoesNotCreateTwoRequests": {
+          "status": "PASS",
+          "source": "android-tests-initial.txt"
+        },
+        "com.casafamilias.app.BiometricGateTest#correctPasswordWorksWhenBiometricsAreUnavailableAndLogoutDisablesOptIn": {
+          "status": "PASS",
+          "source": "android-tests-initial.txt"
+        },
+        "com.casafamilias.app.BiometricGateTest#coldStartAndRetryCannotReadOrMutateBeforeUnlock": {
+          "status": "PASS",
+          "source": "android-tests-initial.txt"
+        },
+        "com.casafamilias.app.BiometricGateTest#verifiedBiometricUnlocksAndLongBackgroundLocksAgain": {
+          "status": "PASS",
+          "source": "android-tests-initial.txt"
+        },
+        "com.casafamilias.app.BiometricGateTest#expiredServerSessionRequiresPasswordEvenAfterVerifiedBiometric": {
+          "status": "PASS",
+          "source": "android-tests-initial.txt"
+        },
+        "com.casafamilias.app.BiometricGateTest#cancellationAndWrongPasswordNeverUnlockTheStoredSession": {
+          "status": "PASS",
+          "source": "android-tests-initial.txt"
+        },
+        "com.casafamilias.app.BiometricGateTest#enablingRequiresSuccessfulVerificationAndCanBeDisabled": {
+          "status": "PASS",
+          "source": "android-tests-initial.txt"
+        },
+        "com.casafamilias.app.DeviceNotificationsTest#accountMismatchAndLogoutDoNotFetchOrNotify": {
+          "status": "PASS",
+          "source": "android-tests-initial.txt"
+        },
+        "com.casafamilias.app.DeviceNotificationsTest#disabledAlertsCancelDeliveryAndSchedulingUsesOnePeriodicJob": {
+          "status": "PASS",
+          "source": "android-tests-initial.txt"
+        },
+        "com.casafamilias.app.DeviceNotificationsTest#paidDebtWithdrawsAnAlreadyDisplayedReminder": {
+          "status": "PASS",
+          "source": "android-tests-initial.txt"
+        },
+        "com.casafamilias.app.DeviceNotificationsTest#workerPostsToAndroidWithoutAnActivityAndDoesNotRepeat": {
+          "status": "PASS",
+          "source": "android-tests-initial.txt"
+        },
+        "com.casafamilias.app.NativeNavigationTest#administratorReviewsWholeDepositWithOneDecision": {
+          "status": "PASS",
+          "source": "android-tests-retry.txt"
+        },
+        "com.casafamilias.app.NativeNavigationTest#adminDesignScreensAreImplementedInNativeAndroid": {
+          "status": "PASS",
+          "source": "android-tests-initial.txt"
+        },
+        "com.casafamilias.app.NativeNavigationTest#administratorHasFiveTabsAndUniqueMoreMenu": {
+          "status": "PASS",
+          "source": "android-tests-initial.txt"
+        },
+        "com.casafamilias.app.NativeNavigationTest#familyCanOpenItsTurnAndLargeTextDarkMode": {
+          "status": "PASS",
+          "source": "android-tests-initial.txt"
+        },
+        "com.casafamilias.app.NativeNavigationTest#familyDepositHistoryGroupsOneReceiptAndThreeMonths": {
+          "status": "PASS",
+          "source": "android-tests-initial.txt"
+        },
+        "com.casafamilias.app.NativeNavigationTest#rotationAndProcessRecreationKeepTheNativeScreen": {
+          "status": "PASS",
+          "source": "android-tests-initial.txt"
+        },
+        "com.casafamilias.app.NativeNavigationTest#familyCannotSeeOtherFamilyAdministration": {
+          "status": "PASS",
+          "source": "android-tests-initial.txt"
+        },
+        "com.casafamilias.app.NativeNavigationTest#recipientFamilyCanAnswerIncomingExchangeAndSenderCannotAnswerOutgoing": {
+          "status": "PASS",
+          "source": "android-tests-initial.txt"
+        },
+        "com.casafamilias.app.NativeNavigationTest#payerHasFinanceAndNoSystemAdministration": {
+          "status": "PASS",
+          "source": "android-tests-initial.txt"
+        },
+        "com.casafamilias.app.NativeNavigationTest#restaurantRemainsReadOnlyAndBalanceIsSixty": {
+          "status": "PASS",
+          "source": "android-tests-initial.txt"
+        },
+        "com.casafamilias.app.NativeNavigationTest#familyCanPreviewOneDepositAcrossThreeMonths": {
+          "status": "PASS",
+          "source": "android-tests-initial.txt"
+        },
+        "com.casafamilias.app.NativeNavigationTest#payerSeesOtherFamilyWeekButCannotRequestTheirExchange": {
+          "status": "PASS",
+          "source": "android-tests-initial.txt"
+        },
+        "com.casafamilias.app.NativeNavigationTest#engineerAdministratorSeesCurrentFamilyAndWholeCalendarWithoutSwapAuthority": {
+          "status": "PASS",
+          "source": "android-tests-initial.txt"
+        },
+        "com.casafamilias.app.NativeNavigationTest#passwordConfirmationAndPdfExportAreNative": {
+          "status": "PASS",
+          "source": "android-tests-initial.txt"
+        }
+      }
+    },
+    "device": "Android 11/API30 emulator",
+    "data": "Fictional local accounts and server only",
+    "biometricResults": "System callback results simulated in six gate integration tests; no physical sensor tested",
+    "display": "320x800, system font 130%; dark app large font adds 130%"
+  },
+  "notifications": {
+    "transport": "WorkManager periodic sync",
+    "minimumIntervalMinutes": 15,
+    "instantPush": false,
+    "firebaseConfigured": false,
+    "realAndroidNotificationManagerTested": true,
+    "workerSource": "Fictional injected account/server",
+    "android13PermissionRuntimeTested": false
+  },
+  "lint": {
+    "errors": 0,
+    "warnings": 24
+  },
+  "apkCertificateSha256": "be231e4d4f51af408cdc3728c18aacd76b1f3758b2fe452674294df4cbad2b5c",
+  "matchesPreviousApkCertificate": true,
+  "zipalign16k": true,
+  "presentationSmoke": {
+    "updateInstall": "PASS",
+    "versionName": "5.6",
+    "versionCode": 12,
+    "nativeLoginRendered": true,
+    "presentationIgnoresPreviewExtras": true,
+    "physicalPhoneTested": false,
+    "android16RuntimeTested": false
+  },
+  "backendChanged": true,
+  "backendChecks": 277,
+  "concurrentSqlScenarios": 3,
+  "paymentExample": {
+    "deposit": 200,
+    "debtBefore": 240,
+    "allocation": [
+      80,
+      80,
+      40
+    ],
+    "debtAfter": 40
+  },
+  "realBackendPaymentCreated": false,
+  "realReceiptUploaded": false,
+  "backendDeployment": {
+    "result": "PASS",
+    "migration": "202610190009_multi_month_payments",
+    "newBatchRows": 0,
+    "newBatchIdColumnOnlyNulls": true,
+    "applicationTablesUnchanged": 15,
+    "existingPaymentValuesPreserved": true
+  },
+  "backendReadback": {
+    "newBatchRows": 0,
+    "rowLevelSecurity": true,
+    "anonTableReadable": false,
+    "authenticatedCanCallSubmit": true,
+    "legacyReviewerStillAvailable": true,
+    "allHistoricalPaymentsUnlinked": true,
+    "familyRoleCanCallInternalPlanner": false,
+    "restSchemaTableAvailable": true,
+    "anonymousRestReadDenied": true,
+    "anonymousRestStatus": 401,
+    "mode": "Read-only metadata/permissions and REST; no real payments or receipts created"
+  },
+  "biometricEnrollmentAndSensorTestedOnPhysicalPhone": false,
+  "android16RuntimeTested": false,
+  "publishedOnGooglePlay": false
+}

@@ -1,0 +1,9 @@
+{
+  "updateInstall": "PASS",
+  "versionName": "5.6",
+  "versionCode": 12,
+  "nativeLoginRendered": true,
+  "presentationIgnoresPreviewExtras": true,
+  "physicalPhoneTested": false,
+  "android16RuntimeTested": false
+}

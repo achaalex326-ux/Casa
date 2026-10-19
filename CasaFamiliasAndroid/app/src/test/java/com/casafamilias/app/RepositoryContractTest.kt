@@ -25,7 +25,7 @@ class RepositoryContractTest {
         server.dispatcher=object: Dispatcher(){override fun dispatch(r: RecordedRequest): MockResponse {val path=r.requestUrl!!.encodedPath;val body=when(path){"/auth/v1/user"->"""{"id":"u","email":"test@example.test"}""";"/rest/v1/profiles"->"""[{"id":"u","role":"family","family_id":1,"display_name":"Familia"}]""";"/rest/v1/rpc/family_portal_debts"->"""[{"share_id":"s","balance":12.34}]""";else->"[]"};return MockResponse().setBody(body)}}
         val snapshot=repo(Store(Session.from(JSONObject(token())))).load();assertEquals("12.34",snapshot.balance(1).toPlainString())
         val requests=(0 until server.requestCount).map{server.takeRequest()};assertTrue(requests.none{it.path!!.contains("expense_shares") || it.path!!.contains("/expenses") || it.path!!.contains("audit_log")})
-        assertEquals("eq.1",requests.first{it.requestUrl!!.encodedPath=="/rest/v1/payments"}.requestUrl!!.queryParameter("family_id"));assertFalse(requests.first{it.requestUrl!!.encodedPath=="/rest/v1/proposals"}.requestUrl!!.queryParameter("select")!!.contains("created_by"))
+        assertEquals("eq.1",requests.first{it.requestUrl!!.encodedPath=="/rest/v1/payments"}.requestUrl!!.queryParameter("family_id"));assertEquals("eq.1",requests.first{it.requestUrl!!.encodedPath=="/rest/v1/payment_batches"}.requestUrl!!.queryParameter("family_id"));assertFalse(requests.first{it.requestUrl!!.encodedPath=="/rest/v1/proposals"}.requestUrl!!.queryParameter("select")!!.contains("created_by"))
     }
     @Test fun selectFetchesEveryPageWithoutDroppingRows()=runBlocking {
         server.enqueue(MockResponse().setBody(org.json.JSONArray((1..500).map {json("id" to it)}).toString()))
@@ -73,6 +73,13 @@ class RepositoryContractTest {
         assertEquals("eq.u",notices.queryParameter("user_id"));assertEquals("is.null",notices.queryParameter("read_at"))
         assertTrue(requests.all {it.method=="GET" || it.requestUrl!!.encodedPath=="/rest/v1/rpc/family_portal_debts"})
         assertFalse(requests.any {it.path!!.contains("generate_due_notifications") || it.path!!.contains("expense_shares") || it.path!!.contains("/payments")})
+    }
+
+    @Test fun batchRpcKeepsIdempotencyKeyTotalFamilyAndNullableShare()=runBlocking {
+        server.enqueue(MockResponse().setBody("\"batch-id\""))
+        repo(Store(Session.from(JSONObject(token())))).rpc("casa_record_payment_batch",json("p_request_id" to "stable-request","p_family_id" to 1,"p_amount" to java.math.BigDecimal("200.00"),"p_paid_at" to "2030-03-20","p_method" to "qr","p_receipt_path" to "u/receipt.png","p_note" to null,"p_ocr_text" to null,"p_share_id" to null))
+        val request=server.takeRequest();assertEquals("/rest/v1/rpc/casa_record_payment_batch",request.requestUrl!!.encodedPath)
+        val body=JSONObject(request.body.readUtf8());assertEquals("stable-request",body.getString("p_request_id"));assertEquals(1,body.getInt("p_family_id"));assertEquals(200.0,body.getDouble("p_amount"),0.0);assertTrue(body.isNull("p_share_id"))
     }
 
 }

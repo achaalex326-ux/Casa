@@ -1,0 +1,8 @@
+{
+  "result": "PASS",
+  "migration": "202610190009_multi_month_payments",
+  "newBatchRows": 0,
+  "newBatchIdColumnOnlyNulls": true,
+  "applicationTablesUnchanged": 15,
+  "existingPaymentValuesPreserved": true
+}

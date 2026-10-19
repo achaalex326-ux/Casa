@@ -1,0 +1,392 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<issues format="6" by="lint 8.10.1">
+
+    <issue
+        id="ApplySharedPref"
+        severity="Warning"
+        message="Consider using `apply()` instead; `commit` writes its data to persistent storage immediately, whereas `apply` will handle it in the background"
+        category="Correctness"
+        priority="6"
+        summary="Use `apply()` on `SharedPreferences`"
+        explanation="Consider using `apply()` instead of `commit` on shared preferences. Whereas `commit` blocks and writes its data to persistent storage immediately, `apply` will handle it in the background."
+        errorLine1="    fun disable(c: Context) {synchronized(lock){prefs(c).edit().remove(&quot;owner&quot;).remove(&quot;enabled_at&quot;).commit();WorkManager.getInstance(c).cancelUniqueWork(&quot;casa-alert-periodic&quot;);WorkManager.getInstance(c).cancelUniqueWork(&quot;casa-alert-now&quot;);NotificationManagerCompat.from(c).cancelAll()}}"
+        errorLine2="                                                                                                     ~~~~~~~~">
+        <location
+            file="/workspace/Casa/CasaFamiliasAndroid/app/src/main/java/com/casafamilias/app/data/DeviceAlerts.kt"
+            line="35"
+            column="102"/>
+    </issue>
+
+    <issue
+        id="AndroidGradlePluginVersion"
+        severity="Warning"
+        message="A newer version of Gradle than 8.11.1 is available: 8.14.6"
+        category="Correctness"
+        priority="4"
+        summary="Obsolete Android Gradle Plugin Version"
+        explanation="This detector looks for usage of the Android Gradle Plugin where the version you are using is not the current stable release. Using older versions is fine, and there are cases where you deliberately want to stick with an older version. However, you may simply not be aware that a more recent version is available, and that is what this lint check helps find."
+        errorLine1="distributionUrl=https\://services.gradle.org/distributions/gradle-8.11.1-bin.zip"
+        errorLine2="                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/workspace/Casa/CasaFamiliasAndroid/gradle/wrapper/gradle-wrapper.properties"
+            line="3"
+            column="17"/>
+    </issue>
+
+    <issue
+        id="CompositionLocalNaming"
+        severity="Warning"
+        message="CompositionLocal properties should be prefixed with `Local`"
+        category="Correctness"
+        priority="3"
+        summary="CompositionLocal properties should be prefixed with `Local`"
+        explanation="CompositionLocal properties should be prefixed with `Local`. This helps make it clear at their use site that these values are local to the current composition. Typically the full name will be `Local` + the type of the CompositionLocal, for example val LocalFoo = compositionLocalOf { Foo() }."
+        errorLine1="val PageHeadingInBar=staticCompositionLocalOf {false}"
+        errorLine2="    ~~~~~~~~~~~~~~~~">
+        <location
+            file="/workspace/Casa/CasaFamiliasAndroid/app/src/main/java/com/casafamilias/app/ui/Components.kt"
+            line="94"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="CompositionLocalNaming"
+        severity="Warning"
+        message="CompositionLocal properties should be prefixed with `Local`"
+        category="Correctness"
+        priority="3"
+        summary="CompositionLocal properties should be prefixed with `Local`"
+        explanation="CompositionLocal properties should be prefixed with `Local`. This helps make it clear at their use site that these values are local to the current composition. Typically the full name will be `Local` + the type of the CompositionLocal, for example val LocalFoo = compositionLocalOf { Foo() }."
+        errorLine1="val ReceiptViewer=staticCompositionLocalOf&lt;(String,Boolean)->Unit> { {_,_->} }"
+        errorLine2="    ~~~~~~~~~~~~~">
+        <location
+            file="/workspace/Casa/CasaFamiliasAndroid/app/src/main/java/com/casafamilias/app/ui/Screens.kt"
+            line="75"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="SetJavaScriptEnabled"
+        severity="Warning"
+        message="Using `setJavaScriptEnabled` can introduce XSS vulnerabilities into your application, review carefully"
+        category="Security"
+        priority="6"
+        summary="Using `setJavaScriptEnabled`"
+        explanation="Your code should not invoke `setJavaScriptEnabled` if you are not sure that your app really requires JavaScript support."
+        url="https://goo.gle/SetJavaScriptEnabled"
+        urls="https://goo.gle/SetJavaScriptEnabled,https://developer.android.com/training/articles/security-tips"
+        errorLine1="                settings.javaScriptEnabled=true;settings.domStorageEnabled=true;settings.allowFileAccess=false;settings.allowContentAccess=false"
+        errorLine2="                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/workspace/Casa/CasaFamiliasAndroid/app/src/main/java/com/casafamilias/app/MainActivity.kt"
+            line="56"
+            column="17"/>
+    </issue>
+
+    <issue
+        id="DataExtractionRules"
+        severity="Warning"
+        message="The attribute `android:allowBackup` is deprecated from Android 12 and higher and may be removed in future versions. Consider adding the attribute `android:dataExtractionRules` specifying an `@xml` resource which configures cloud backups and device transfers on Android 12 and higher."
+        category="Security"
+        priority="3"
+        summary="Missing data extraction rules"
+        explanation="Before Android 12, the attributes `android:allowBackup` and `android:fullBackupContent` were used to configure all forms of backup, including cloud backups, device-to-device transfers and adb backup.&#xA;&#xA;In Android 12 and higher, these attributes have been deprecated and will only apply to cloud backups. You should instead use the attribute `android:dataExtractionRules`, specifying an `@xml` resource that configures which files to back up, for cloud backups and for device-to-device transfers, separately. If your `minSdkVersion` supports older versions, you&apos;ll still want to specify an `android:fullBackupContent` resource if the default behavior is not right for your app."
+        url="https://developer.android.com/about/versions/12/backup-restore#xml-changes"
+        urls="https://developer.android.com/about/versions/12/backup-restore#xml-changes,https://goo.gle/DataExtractionRules"
+        errorLine1="&lt;application android:theme=&quot;@style/AppTheme&quot; android:label=&quot;Casa Familias&quot; android:icon=&quot;@drawable/ic_house&quot; android:allowBackup=&quot;false&quot; android:usesCleartextTraffic=&quot;false&quot;>"
+        errorLine2="                                                                                                                                  ~~~~~">
+        <location
+            file="/workspace/Casa/CasaFamiliasAndroid/app/src/main/AndroidManifest.xml"
+            line="6"
+            column="131"/>
+    </issue>
+
+    <issue
+        id="UseKtx"
+        severity="Warning"
+        message="Use the KTX extension function `String.toUri` instead?"
+        category="Productivity"
+        priority="6"
+        summary="Use KTX extension function"
+        explanation="The Android KTX libraries decorates the Android platform SDK as well as various libraries with more convenient extension functions available from Kotlin, allowing you to use default parameters, named parameters, and more."
+        errorLine1="        val values=Uri.parse(&quot;https://local/?&quot;+fragment)"
+        errorLine2="                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/workspace/Casa/CasaFamiliasAndroid/app/src/main/java/com/casafamilias/app/data/CasaRepository.kt"
+            line="185"
+            column="20"/>
+    </issue>
+
+    <issue
+        id="UseKtx"
+        severity="Warning"
+        message="Use the KTX extension function `SharedPreferences.edit` instead?"
+        category="Productivity"
+        priority="6"
+        summary="Use KTX extension function"
+        explanation="The Android KTX libraries decorates the Android platform SDK as well as various libraries with more convenient extension functions available from Kotlin, allowing you to use default parameters, named parameters, and more."
+        errorLine1="            access.enable(user);accessPrefs.edit().putString(&quot;owner&quot;,user).apply()"
+        errorLine2="                                ~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/workspace/Casa/CasaFamiliasAndroid/app/src/main/java/com/casafamilias/app/ui/CasaViewModel.kt"
+            line="46"
+            column="33"/>
+    </issue>
+
+    <issue
+        id="UseKtx"
+        severity="Warning"
+        message="Use the KTX extension function `SharedPreferences.edit` instead?"
+        category="Productivity"
+        priority="6"
+        summary="Use KTX extension function"
+        explanation="The Android KTX libraries decorates the Android platform SDK as well as various libraries with more convenient extension functions available from Kotlin, allowing you to use default parameters, named parameters, and more."
+        errorLine1="        access.disable();accessPrefs.edit().remove(&quot;owner&quot;).apply()"
+        errorLine2="                         ~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/workspace/Casa/CasaFamiliasAndroid/app/src/main/java/com/casafamilias/app/ui/CasaViewModel.kt"
+            line="59"
+            column="26"/>
+    </issue>
+
+    <issue
+        id="UseKtx"
+        severity="Warning"
+        message="Use the KTX extension function `SharedPreferences.edit` instead?"
+        category="Productivity"
+        priority="6"
+        summary="Use KTX extension function"
+        explanation="The Android KTX libraries decorates the Android platform SDK as well as various libraries with more convenient extension functions available from Kotlin, allowing you to use default parameters, named parameters, and more."
+        errorLine1="        if(access.owner==null)accessPrefs.edit().remove(&quot;owner&quot;).apply()"
+        errorLine2="                              ~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/workspace/Casa/CasaFamiliasAndroid/app/src/main/java/com/casafamilias/app/ui/CasaViewModel.kt"
+            line="75"
+            column="31"/>
+    </issue>
+
+    <issue
+        id="UseKtx"
+        severity="Warning"
+        message="Use the KTX extension function `SharedPreferences.edit` instead?"
+        category="Productivity"
+        priority="6"
+        summary="Use KTX extension function"
+        explanation="The Android KTX libraries decorates the Android platform SDK as well as various libraries with more convenient extension functions available from Kotlin, allowing you to use default parameters, named parameters, and more."
+        errorLine1="        biometricRequest=null;access.disable();accessPrefs.edit().remove(&quot;owner&quot;).apply()"
+        errorLine2="                                               ~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/workspace/Casa/CasaFamiliasAndroid/app/src/main/java/com/casafamilias/app/ui/CasaViewModel.kt"
+            line="80"
+            column="48"/>
+    </issue>
+
+    <issue
+        id="UseKtx"
+        severity="Warning"
+        message="Use the KTX extension function `SharedPreferences.edit` instead?"
+        category="Productivity"
+        priority="6"
+        summary="Use KTX extension function"
+        explanation="The Android KTX libraries decorates the Android platform SDK as well as various libraries with more convenient extension functions available from Kotlin, allowing you to use default parameters, named parameters, and more."
+        errorLine1="    fun theme(dark: Boolean) {prefs.edit().putBoolean(&quot;dark&quot;,dark).apply();mutable.update { it.copy(dark=dark) }}"
+        errorLine2="                              ~~~~~~~~~~~~">
+        <location
+            file="/workspace/Casa/CasaFamiliasAndroid/app/src/main/java/com/casafamilias/app/ui/CasaViewModel.kt"
+            line="83"
+            column="31"/>
+    </issue>
+
+    <issue
+        id="UseKtx"
+        severity="Warning"
+        message="Use the KTX extension function `SharedPreferences.edit` instead?"
+        category="Productivity"
+        priority="6"
+        summary="Use KTX extension function"
+        explanation="The Android KTX libraries decorates the Android platform SDK as well as various libraries with more convenient extension functions available from Kotlin, allowing you to use default parameters, named parameters, and more."
+        errorLine1="    fun scale(scale: Float) {prefs.edit().putFloat(&quot;text_scale&quot;,scale).apply();mutable.update { it.copy(textScale=scale) }}"
+        errorLine2="                             ~~~~~~~~~~~~">
+        <location
+            file="/workspace/Casa/CasaFamiliasAndroid/app/src/main/java/com/casafamilias/app/ui/CasaViewModel.kt"
+            line="84"
+            column="30"/>
+    </issue>
+
+    <issue
+        id="UseKtx"
+        severity="Warning"
+        message="Use the KTX extension function `SharedPreferences.edit` instead?"
+        category="Productivity"
+        priority="6"
+        summary="Use KTX extension function"
+        explanation="The Android KTX libraries decorates the Android platform SDK as well as various libraries with more convenient extension functions available from Kotlin, allowing you to use default parameters, named parameters, and more."
+        errorLine1="    fun logout() {task { source.logout();clearLocalAccess();getApplication&lt;Application>().getSharedPreferences(&quot;casa_native_migration&quot;,0).edit().putBoolean(&quot;done&quot;,true).apply();mutable.update { it.copy(data=null,recovery=false,error=null,extras=emptyMap()) } }}"
+        errorLine2="                                                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/workspace/Casa/CasaFamiliasAndroid/app/src/main/java/com/casafamilias/app/ui/CasaViewModel.kt"
+            line="109"
+            column="61"/>
+    </issue>
+
+    <issue
+        id="UseKtx"
+        severity="Warning"
+        message="Use the KTX extension function `String.toUri` instead?"
+        category="Productivity"
+        priority="6"
+        summary="Use KTX extension function"
+        explanation="The Android KTX libraries decorates the Android platform SDK as well as various libraries with more convenient extension functions available from Kotlin, allowing you to use default parameters, named parameters, and more."
+        errorLine1="            suspend fun image(key: String,qr: Boolean=false): String?=v(key).takeIf { it.isNotBlank() }?.let { source.upload(Uri.parse(it),qr) }"
+        errorLine2="                                                                                                                             ~~~~~~~~~~~~~">
+        <location
+            file="/workspace/Casa/CasaFamiliasAndroid/app/src/main/java/com/casafamilias/app/ui/CasaViewModel.kt"
+            line="151"
+            column="126"/>
+    </issue>
+
+    <issue
+        id="UseKtx"
+        severity="Warning"
+        message="Use the KTX extension function `SharedPreferences.edit` instead?"
+        category="Productivity"
+        priority="6"
+        summary="Use KTX extension function"
+        explanation="The Android KTX libraries decorates the Android platform SDK as well as various libraries with more convenient extension functions available from Kotlin, allowing you to use default parameters, named parameters, and more."
+        errorLine1="    fun disable(c: Context) {synchronized(lock){prefs(c).edit().remove(&quot;owner&quot;).remove(&quot;enabled_at&quot;).commit();WorkManager.getInstance(c).cancelUniqueWork(&quot;casa-alert-periodic&quot;);WorkManager.getInstance(c).cancelUniqueWork(&quot;casa-alert-now&quot;);NotificationManagerCompat.from(c).cancelAll()}}"
+        errorLine2="                                                ~~~~~~~~~~~~~~~">
+        <location
+            file="/workspace/Casa/CasaFamiliasAndroid/app/src/main/java/com/casafamilias/app/data/DeviceAlerts.kt"
+            line="35"
+            column="49"/>
+    </issue>
+
+    <issue
+        id="UseKtx"
+        severity="Warning"
+        message="Use the KTX extension function `SharedPreferences.edit` instead?"
+        category="Productivity"
+        priority="6"
+        summary="Use KTX extension function"
+        explanation="The Android KTX libraries decorates the Android platform SDK as well as various libraries with more convenient extension functions available from Kotlin, allowing you to use default parameters, named parameters, and more."
+        errorLine1="            h.edit().putString(&quot;seen&quot;,JSONArray((previous+newKeys).distinct().takeLast(2000)).toString())"
+        errorLine2="            ~~~~~~~~">
+        <location
+            file="/workspace/Casa/CasaFamiliasAndroid/app/src/main/java/com/casafamilias/app/data/DeviceAlerts.kt"
+            line="104"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UseKtx"
+        severity="Warning"
+        message="Use the KTX extension function `SharedPreferences.edit` instead?"
+        category="Productivity"
+        priority="6"
+        summary="Use KTX extension function"
+        explanation="The Android KTX libraries decorates the Android platform SDK as well as various libraries with more convenient extension functions available from Kotlin, allowing you to use default parameters, named parameters, and more."
+        errorLine1="        synchronized(DeviceAlertState.lock) {DeviceAlertState.prefs(activity).edit().putString(&quot;owner&quot;,user).putString(&quot;enabled_at&quot;,Instant.now().toString()).commit()}"
+        errorLine2="                                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/workspace/Casa/CasaFamiliasAndroid/app/src/main/java/com/casafamilias/app/data/DeviceAlerts.kt"
+            line="127"
+            column="46"/>
+    </issue>
+
+    <issue
+        id="UseKtx"
+        severity="Warning"
+        message="Use the KTX extension function `String.toUri` instead?"
+        category="Productivity"
+        priority="6"
+        summary="Use KTX extension function"
+        explanation="The Android KTX libraries decorates the Android platform SDK as well as various libraries with more convenient extension functions available from Kotlin, allowing you to use default parameters, named parameters, and more."
+        errorLine1="                        AsyncImage(Uri.parse(value),field.label,Modifier.fillMaxWidth().heightIn(min=120.dp,max=220.dp))"
+        errorLine2="                                   ~~~~~~~~~~~~~~~~">
+        <location
+            file="/workspace/Casa/CasaFamiliasAndroid/app/src/main/java/com/casafamilias/app/ui/FormScreen.kt"
+            line="63"
+            column="36"/>
+    </issue>
+
+    <issue
+        id="UseKtx"
+        severity="Warning"
+        message="Use the KTX extension function `String.toUri` instead?"
+        category="Productivity"
+        priority="6"
+        summary="Use KTX extension function"
+        explanation="The Android KTX libraries decorates the Android platform SDK as well as various libraries with more convenient extension functions available from Kotlin, allowing you to use default parameters, named parameters, and more."
+        errorLine1="                            try {val recognized=reader.process(InputImage.fromFilePath(context,Uri.parse(value))).await();val lines=recognized.text.lines();val preferred=lines.filter { Regex(&quot;total|importe|monto|pagar|cancelar&quot;,RegexOption.IGNORE_CASE).containsMatchIn(it) }.ifEmpty {lines.takeLast(12)}"
+        errorLine2="                                                                                               ~~~~~~~~~~~~~~~~">
+        <location
+            file="/workspace/Casa/CasaFamiliasAndroid/app/src/main/java/com/casafamilias/app/ui/FormScreen.kt"
+            line="70"
+            column="96"/>
+    </issue>
+
+    <issue
+        id="UseKtx"
+        severity="Warning"
+        message="Use the KTX extension function `SharedPreferences.edit` instead?"
+        category="Productivity"
+        priority="6"
+        summary="Use KTX extension function"
+        explanation="The Android KTX libraries decorates the Android platform SDK as well as various libraries with more convenient extension functions available from Kotlin, allowing you to use default parameters, named parameters, and more."
+        errorLine1="        fun finish(value: String?) {if(finished)return;finished=true;timeout?.cancel();prefs.edit().putBoolean(&quot;done&quot;,true).apply();web?.destroy();web=null;done(value)}"
+        errorLine2="                                                                                       ~~~~~~~~~~~~">
+        <location
+            file="/workspace/Casa/CasaFamiliasAndroid/app/src/main/java/com/casafamilias/app/MainActivity.kt"
+            line="51"
+            column="88"/>
+    </issue>
+
+    <issue
+        id="UseKtx"
+        severity="Warning"
+        message="Use the KTX extension function `String.toUri` instead?"
+        category="Productivity"
+        priority="6"
+        summary="Use KTX extension function"
+        explanation="The Android KTX libraries decorates the Android platform SDK as well as various libraries with more convenient extension functions available from Kotlin, allowing you to use default parameters, named parameters, and more."
+        errorLine1="            val config=ApiConfig.load(this);val ref=android.net.Uri.parse(config.url).host!!.substringBefore(&apos;.&apos;)"
+        errorLine2="                                                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/workspace/Casa/CasaFamiliasAndroid/app/src/main/java/com/casafamilias/app/MainActivity.kt"
+            line="53"
+            column="53"/>
+    </issue>
+
+    <issue
+        id="UseKtx"
+        severity="Warning"
+        message="Use the KTX extension function `SharedPreferences.edit` instead?"
+        category="Productivity"
+        priority="6"
+        summary="Use KTX extension function"
+        explanation="The Android KTX libraries decorates the Android platform SDK as well as various libraries with more convenient extension functions available from Kotlin, allowing you to use default parameters, named parameters, and more."
+        errorLine1="        check(prefs.edit().putString(&quot;data&quot;,Base64.encodeToString(encrypted,Base64.NO_WRAP)).putString(&quot;iv&quot;,Base64.encodeToString(cipher.iv,Base64.NO_WRAP)).commit()) { &quot;No se pudo conservar la sesión en el teléfono.&quot; }"
+        errorLine2="              ~~~~~~~~~~~~">
+        <location
+            file="/workspace/Casa/CasaFamiliasAndroid/app/src/main/java/com/casafamilias/app/data/SecureSessionStore.kt"
+            line="35"
+            column="15"/>
+    </issue>
+
+    <issue
+        id="UseKtx"
+        severity="Warning"
+        message="Use the KTX extension function `SharedPreferences.edit` instead?"
+        category="Productivity"
+        priority="6"
+        summary="Use KTX extension function"
+        explanation="The Android KTX libraries decorates the Android platform SDK as well as various libraries with more convenient extension functions available from Kotlin, allowing you to use default parameters, named parameters, and more."
+        errorLine1="    override fun clear() {synchronized(storageLock) {prefs.edit().remove(&quot;data&quot;).remove(&quot;iv&quot;).commit()}}"
+        errorLine2="                                                     ~~~~~~~~~~~~">
+        <location
+            file="/workspace/Casa/CasaFamiliasAndroid/app/src/main/java/com/casafamilias/app/data/SecureSessionStore.kt"
+            line="37"
+            column="54"/>
+    </issue>
+
+</issues>

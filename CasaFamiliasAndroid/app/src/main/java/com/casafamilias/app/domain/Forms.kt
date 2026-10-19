@@ -51,9 +51,15 @@ object Forms {
         when(kind) {
             "payment" -> {
                 title="Registrar pago"
-                val debts=if(s.profile.role==Role.FAMILY)s.rows("family_debts") else s.rows("expense_shares").filter { s.shareBalance(it)>java.math.BigDecimal.ZERO }
-                val opts=debts.map { d -> val key=d.text("share_id").ifBlank { d.id };val e=s.find("expenses",d.text("expense_id"));Choice(key,(if(s.profile.role.staff)s.family(d.number("family_id"))+" · " else "")+(d.text("concept").ifBlank { e?.text("concept") ?: "Cuota" })+" · "+Amounts.format(if(s.profile.role==Role.FAMILY)d.money("balance") else s.shareBalance(d))) }
-                fields=listOf(f("share","Cuota a pagar",InputType.CHOICE,true,id.takeIf { it.isNotBlank() } ?: "",choices=opts),amount,date,f("method","Forma de pago",InputType.CHOICE,true,"qr",choices=listOf(Choice("qr","QR"),Choice("cash","Efectivo"))),receipt,f("note","Observación",InputType.MULTILINE,max=1000));help="Puedes pagar una parte o el total. El servidor calcula el saldo y el crédito; un comprobante enviado queda sujeto a revisión."
+                val selected=s.rows("expense_shares").firstOrNull {it.id==id}?.number("family_id") ?: s.profile.familyId
+                val debts=if(s.profile.role==Role.FAMILY)s.paymentDebts(s.profile.familyId) else s.rows("families").flatMap {s.paymentDebts(it.number("id"))}
+                val opts=debts.map {d->Choice(d.shareId,d.label+" · "+Amounts.format(d.balance))}
+                fields=listOf(f("family","Familia del depósito",InputType.CHOICE,true,selected?.toString().orEmpty(),choices=families),
+                    f("mode","Aplicar el pago a",InputType.CHOICE,true,if(id.isBlank())"all" else "single",choices=listOf(Choice("all","Mis deudas más antiguas"),Choice("single","Una deuda específica"))),
+                    f("share","Deuda específica",InputType.CHOICE,true,id,choices=opts,show="mode" to "single"),amount.copy(label="Total depositado (Bs)"),date,
+                    f("method","Forma de pago",InputType.CHOICE,true,"qr",choices=listOf(Choice("qr","QR o transferencia"),Choice("cash","Efectivo"))),receipt,f("note","Observación",InputType.MULTILINE,max=1000))
+                help="Adjunta un solo comprobante por el total depositado. El reparto comienza por los meses más antiguos; puede cubrir varios meses o una parte del siguiente. El saldo se descuenta al aprobar el depósito."
+
             }
             "expense" -> { title="Registrar gasto extraordinario";val proposal=s.find("proposals",id)
                 fields=listOf(f("template","Plantilla (opcional)",InputType.CHOICE,choices=s.rows("recurring_expense_templates").map { Choice(it.id,it.text("concept")) }),f("concept","Concepto",required=true,initial=proposal?.text("concept").orEmpty(),max=160),amount.copy(initial=proposal?.text("estimated_amount").orEmpty()),date,f("due","Fecha límite",InputType.DATE,true,Dates.today()),f("paid_by","Familia que adelantó el pago",InputType.CHOICE,true,choices=families),f("justification","Justificación",InputType.MULTILINE,true,proposal?.text("justification").orEmpty(),max=2000),receipt);help="Se utilizará el reparto del servidor entre las seis identidades contables. Revisa los datos antes de guardar."

@@ -1,8 +1,10 @@
 # Casa Familias
 
-Entrega actual: **5.5 nativa, con calendario semanal visible para el ingeniero/administrador y encargado e intercambios acordados entre usuarios**. Conserva el diseño de 5.1 y la preparación de Google Play de 5.2. Consulta [la entrega y las pruebas](ENTREGA.md) y [la guía de publicación](entregas/google-play/GUIA_GOOGLE_PLAY.md). Todavía no está publicada en la tienda.
+Entrega actual: **5.6 nativa, con un solo comprobante para pagar varios meses**. Conserva el diseño de 5.1 y la preparación de Google Play de 5.2. Consulta [la entrega y las pruebas](ENTREGA.md) y [la guía de publicación](entregas/google-play/GUIA_GOOGLE_PLAY.md). Todavía no está publicada en la tienda.
 
-Para los avisos del celular: **Mi perfil → Activar notificaciones**, permite el permiso de Android y pulsa **Probar notificación**. WorkManager revisa la semana de limpieza, nuevas deudas, vencimientos y publicaciones de servicios con la app cerrada. Es sincronización periódica con intervalo mínimo de 15 minutos, sujeta a batería y conexión; **no es push instantáneo**. Cerrar sesión o desactivar la opción detiene los avisos en ese teléfono. Consulta [la instalación y las funciones actuales](entregas/casa-familias-5.5/LEEME.md).
+En **Pagos → Registrar pago**, «Mis deudas más antiguas» reparte el depósito por mes y muestra cuánto quedaría pendiente. Tres meses de Bs80 y un depósito de Bs200 se reparten 80/80/40: quedan Bs40. Se adjunta una sola foto y el encargado revisa el depósito completo. El servidor recalcula al aprobar, guarda el crédito si sobra e impide duplicar la solicitud al reintentar. El historial muestra el depósito una vez; los reportes conservan las asignaciones contables.
+
+Para los avisos del celular: **Mi perfil → Activar notificaciones**, permite el permiso de Android y pulsa **Probar notificación**. WorkManager revisa la semana de limpieza, nuevas deudas, vencimientos y publicaciones de servicios con la app cerrada. Es sincronización periódica con intervalo mínimo de 15 minutos, sujeta a batería y conexión; **no es push instantáneo**. Cerrar sesión o desactivar la opción detiene los avisos en ese teléfono. Consulta [la instalación y las funciones actuales](entregas/casa-familias-5.6/LEEME.md).
 
 En **Inicio** y **Limpieza**, el ingeniero/administrador y encargado consultan quién limpia esta semana y el calendario de todas las familias. Los intercambios solo se solicitan para una familia propia y los responde otra persona de la familia receptora; el rol administrativo no da permiso para decidir por familias ajenas.
 

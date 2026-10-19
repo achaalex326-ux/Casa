@@ -159,4 +159,32 @@ class NativeNavigationTest {
         screenshot("20-intercambio-enviado")
     }
 
+    @Test fun familyCanPreviewOneDepositAcrossThreeMonths() {
+        launch("family");compose.onNodeWithText("Pagos").performClick()
+        scroll("Registrar pago").performClick()
+        scroll("Total depositado (Bs)").performTextInput("200")
+        scroll("Así se repartirá tu depósito").assertExists()
+        scroll("Deuda que quedaría").assertExists()
+        compose.onAllNodesWithText("Bs 40,00").onLast().assertExists()
+        screenshot("21-vista-previa-pago-varios-meses")
+    }
+    @Test fun familyDepositHistoryGroupsOneReceiptAndThreeMonths() {
+        launch("family");compose.onNodeWithText("Pagos").performClick()
+        scroll("Ver reparto del depósito").performClick()
+        scroll("Reparto previsto al enviar").assertExists()
+        scroll("enero 2030").assertExists();scroll("febrero 2030").assertExists();scroll("marzo 2030").assertExists()
+        screenshot("22-deposito-reparto-tres-meses")
+        scroll("Los saldos no cambian hasta aprobar. El reparto se recalcula al revisar, por si ya se aprobó otro pago.").assertExists()
+        compose.onNodeWithText("Aprobar depósito completo").assertDoesNotExist()
+    }
+    @Test fun administratorReviewsWholeDepositWithOneDecision() {
+        launch("sysadmin");compose.onNodeWithText("Pagos").performClick()
+        scroll("Revisar depósito completo").performClick()
+        scroll("Aprobar depósito completo").performClick()
+        compose.onNodeWithText("¿Confirmas la aprobación de Bs 200,00? Se revisará el depósito completo, con un solo comprobante.").assertExists()
+        compose.onNodeWithText("Cancelar").performClick()
+        scroll("Rechazar depósito completo").assertExists()
+        screenshot("23-aprobacion-deposito-completo")
+    }
+
 }

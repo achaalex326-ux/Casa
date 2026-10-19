@@ -17,7 +17,7 @@ import org.json.JSONArray
 typealias Go = (String)->Unit
 @Composable fun ContentList(content: LazyListScope.()->Unit) {LazyColumn(Modifier.fillMaxSize(),contentPadding=PaddingValues(20.dp),verticalArrangement=Arrangement.spacedBy(16.dp),content=content)}
 @Composable fun HomeScreen(s: Snapshot,go: Go) {
-    val p=s.profile;val month=Dates.month();val pending=s.ownPayments().filter {it.text("status")=="pending"}
+    val p=s.profile;val month=Dates.month();val pending=s.paymentEntries().filter {it.text("status")=="pending"}
     val cleaning=s.rows("cleaning_turns").filter {it.text("status")=="pending"}.sortedBy {it.text("turn_date")}
     ContentList {
         item {Title("Buen día, ${p.name.split(' ').firstOrNull().orEmpty()}","Así está nuestra casa hoy")}
@@ -42,7 +42,7 @@ typealias Go = (String)->Unit
             item {CleaningThisWeek(s,go)}
             item {NavRow("cleaning","Calendario de todas las familias","Consultar semanas anteriores y próximas"){go("cleaning")}}
             item {Text("Actividad reciente",style=MaterialTheme.typography.titleLarge)}
-            val recent=s.ownPayments().sortedByDescending {it.text("created_at")}.take(4)
+            val recent=s.paymentEntries().sortedByDescending {it.text("created_at")}.take(4)
             items(recent){r->NavRow("payments",s.family(r.number("family_id")),Amounts.format(r.money("amount"))+" · "+statusLabel(r.text("status"))){go("payment/${r.id}")}}
             if(recent.isEmpty())item{Empty("Todavía no hay movimientos")}
         }
@@ -77,23 +77,51 @@ val ReceiptViewer=staticCompositionLocalOf<(String,Boolean)->Unit> { {_,_->} }
 fun serviceLabel(s: String)=mapOf("water" to "Agua","electricity" to "Luz","gas" to "Gas","wifi" to "Internet")[s] ?: s
 @Composable fun PaymentsScreen(s: Snapshot,go: Go,family: String="") {
     var filter by rememberSaveable {mutableStateOf(if(s.profile.role.staff)"pending" else "all")}
-    val all=s.ownPayments().filter {family.isBlank() || it.text("family_id")==family}
+    val all=s.paymentEntries().filter {family.isBlank() || it.text("family_id")==family}
     val rows=all.filter {filter=="all" || it.text("status")==filter}.sortedByDescending {it.text("created_at")}
     ContentList {item{Title(if(family.isBlank())"Pagos" else "Pagos de ${s.family(family.toLongOrNull())}",if(s.profile.role.staff)"Comprobantes y revisión" else "Tus pagos e historial")}
         item {Filters((if(!s.profile.role.staff)listOf(Choice("all","Todos")) else emptyList())+listOf(Choice("pending","En revisión"),Choice("approved","Aprobados"),Choice("rejected","Rechazados")),filter,{filter=it})}
         if(s.profile.role!=Role.RESTAURANT)item{Action("Registrar pago"){go("form/payment")}}
-        items(rows){r->Panel{Text(if(s.profile.role.staff)s.family(r.number("family_id")) else r.text("note").ifBlank {"Pago"},style=MaterialTheme.typography.titleMedium);Text(Amounts.format(r.money("amount")),style=MaterialTheme.typography.titleLarge);Badge(r.text("status"));Text(Dates.label(r.text("paid_at")),style=MaterialTheme.typography.bodySmall);Secondary(if(s.profile.role.staff && r.text("status")=="pending")"Revisar comprobante" else "Ver detalle"){go("payment/${r.id}")}}}
+        items(rows){r->Panel{Text(if(s.profile.role.staff)s.family(r.number("family_id")) else if(r.flag("batch"))"Depósito con un comprobante" else r.text("note").ifBlank {"Pago"},style=MaterialTheme.typography.titleMedium);Text(Amounts.format(r.money("amount")),style=MaterialTheme.typography.titleLarge);Badge(r.text("status"));Text(Dates.label(r.text("paid_at")),style=MaterialTheme.typography.bodySmall);Secondary(if(r.flag("batch"))if(s.profile.role.staff && r.text("status")=="pending")"Revisar depósito completo" else "Ver reparto del depósito" else if(s.profile.role.staff && r.text("status")=="pending")"Revisar comprobante" else "Ver detalle"){go("payment/${r.id}")}}}
         if(rows.isEmpty())item{Empty("No hay pagos en esta sección")}
     }
 }
 @Composable fun PaymentDetail(s: Snapshot,id: String,vm: CasaViewModel) {
-    val r=s.ownPayments().firstOrNull {it.id==id};var action by remember {mutableStateOf<Boolean?>(null)};val state by vm.state.collectAsState()
+    val r=s.paymentEntries().firstOrNull {it.id==id};var action by remember {mutableStateOf<Boolean?>(null)};val state by vm.state.collectAsState()
     if(r==null){Empty("Pago no disponible");return}
-    ContentList {item{Title("Detalle del pago",s.family(r.number("family_id")))};item{Panel{DataLine("Monto",Amounts.format(r.money("amount")));Badge(r.text("status"));DataLine("Aplicado a la cuota",Amounts.format(r.money("applied_amount")));DataLine("Crédito generado",Amounts.format(r.money("credit_amount")));DataLine("Fecha",Dates.label(r.text("paid_at")));DataLine("Forma de pago",r.paymentMethodLabel());if(r.text("note").isNotBlank())Text(r.text("note"))}}
-        if(r.text("receipt_path").isNotBlank())item{Panel{Text("Comprobante",style=MaterialTheme.typography.titleMedium);ImageReceipt(vm,r.text("receipt_path"))}} else item{Text("Este pago no tiene una imagen adjunta.")}
-        if(s.profile.role.staff && r.text("status")=="pending"){item{Action("Aprobar pago",!state.busy){action=true}};item{Secondary("Rechazar pago",!state.busy){action=false}}}
+    val batch=r.flag("batch");val approved=r.text("status")=="approved"
+    val parts=if(batch && !approved)r.json.optJSONArray("planned_allocation")?.records().orEmpty() else if(batch)s.rows("payments").filter {it.text("batch_id")==id} else emptyList()
+    ContentList {
+        item{Title(if(batch)"Detalle del depósito" else "Detalle del pago",s.family(r.number("family_id")))}
+        item{Panel{
+            DataLine(if(batch)"Total depositado" else "Monto",Amounts.format(r.money("amount")));Badge(r.text("status"))
+            DataLine("Aplicado a tus deudas",Amounts.format(r.money("applied_amount")));DataLine("Saldo a favor generado",Amounts.format(r.money("credit_amount")))
+            DataLine("Fecha",Dates.label(r.text("paid_at")));DataLine("Forma de pago",r.paymentMethodLabel())
+            if(r.text("note").isNotBlank())Text(r.text("note"))
+        }}
+        if(batch){
+            item{Text(if(approved)"Reparto aprobado por mes" else "Reparto previsto al enviar",style=MaterialTheme.typography.titleLarge)}
+            items(parts){part->
+                val share=s.find("expense_shares",part.text("share_id"))
+                val debt=s.rows("family_debts").firstOrNull {it.text("share_id")==part.text("share_id")}
+                val expense=s.find("expenses",share?.text("expense_id").orEmpty())
+                val monthly=s.rows("monthly_basic_services").firstOrNull {m->val expenseId=share?.text("expense_id").orEmpty();expenseId.isNotBlank() && (m.text("expense_id")==expenseId || m.text("monthly_expense_id")==expenseId)}
+                val month=part.text("month_start").ifBlank {debt?.text("month_start").orEmpty().ifBlank {monthly?.text("month_start").orEmpty()}}
+                val concept=part.text("concept").ifBlank {debt?.text("concept").orEmpty().ifBlank {expense?.text("concept").orEmpty().ifBlank {"Deuda"}}}
+                Panel{Text(if(month.isNotBlank())Dates.monthLabel(month.take(7)) else concept,style=MaterialTheme.typography.titleMedium);if(month.isNotBlank())Text(concept);DataLine(if(approved)"Importe aplicado" else "Importe previsto",Amounts.format(part.money(if(approved)"applied_amount" else "amount")))}
+            }
+            if(!approved)item{Panel{
+                if(r.money("planned_credit")>BigDecimal.ZERO)DataLine("Saldo a favor previsto",Amounts.format(r.money("planned_credit")))
+                Text(if(r.text("status")=="rejected")"Depósito rechazado: no se descontó ninguna deuda." else "Los saldos no cambian hasta aprobar. El reparto se recalcula al revisar, por si ya se aprobó otro pago.")
+            }}
+        }
+        if(r.text("receipt_path").isNotBlank())item{Panel{Text("Un comprobante para todo el depósito",style=MaterialTheme.typography.titleMedium);ImageReceipt(vm,r.text("receipt_path"))}} else item{Text("Este pago no tiene una imagen adjunta.")}
+        if(s.profile.role.staff && r.text("status")=="pending"){item{Action(if(batch)"Aprobar depósito completo" else "Aprobar pago",!state.busy){action=true}};item{Secondary(if(batch)"Rechazar depósito completo" else "Rechazar pago",!state.busy){action=false}}}
     }
-    if(action!=null)Confirm(if(action==true)"Aprobar pago" else "Rechazar pago","${if(action==true)"¿Confirmas la aprobación" else "¿Confirmas el rechazo"} de ${Amounts.format(r.money("amount"))}?",onDismiss={action=null}){val approve=action==true;action=null;vm.mutate("review_payment",json("p_payment_id" to id,"p_approve" to approve),if(approve)"Pago aprobado." else "Pago rechazado.")}
+    if(action!=null)Confirm(if(action==true)"Aprobar depósito" else "Rechazar depósito","${if(action==true)"¿Confirmas la aprobación" else "¿Confirmas el rechazo"} de ${Amounts.format(r.money("amount"))}? ${if(batch)"Se revisará el depósito completo, con un solo comprobante." else ""}",onDismiss={action=null}){
+        val approve=action==true;action=null
+        vm.mutate(if(batch)"casa_review_payment_batch" else "review_payment",if(batch)json("p_batch_id" to id,"p_approve" to approve) else json("p_payment_id" to id,"p_approve" to approve),if(approve)"Pago aprobado." else "Pago rechazado.")
+    }
 }
 @Composable fun FamiliesScreen(s: Snapshot,go: Go) {
     var search by rememberSaveable {mutableStateOf("")};val rows=s.rows("families").filter {it.text("name").contains(search,true)}
@@ -107,6 +135,7 @@ fun serviceLabel(s: String)=mapOf("water" to "Agua","electricity" to "Luz","gas"
     val familyMode=s.profile.role==Role.FAMILY
     val debts=if(familyMode)s.rows("family_debts") else s.rows("expense_shares").filter {it.number("family_id")==family}
     ContentList {item{Title(if(familyMode)"Mis cuotas" else s.family(family))};item{Hero("Saldo pendiente",s.balance(family))};item{Panel{DataLine("Saldo a favor",Amounts.format(s.credit(family)))}}
+        if(familyMode && s.balance(family)>BigDecimal.ZERO)item{Action("Pagar varios meses con un comprobante"){go("form/payment")}}
         if(s.profile.role==Role.ADMIN && !familyMode)item{Secondary("Editar nombre de familia"){go("form/family-name?id=$family")}}
         if(!familyMode)item{NavRow("payments","Historial de pagos","Consultar los pagos de esta familia"){go("payments-family/$family")}}
         items(debts){r->val expense=s.find("expenses",r.text("expense_id"));val balance=if(familyMode)r.money("balance") else s.shareBalance(r)

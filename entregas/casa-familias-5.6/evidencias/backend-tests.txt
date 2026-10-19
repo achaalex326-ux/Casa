@@ -1,0 +1,8 @@
+{"payerServicesChecks" : 29, "status" : "PASS"}
+{"batchPaymentChecks" : 54, "result" : "PASS"}
+{"batchConcurrencyScenarios":3,"result":"PASS"}
+{"backendChecks" : 59, "result" : "PASS", "database" : "isolated PostgreSQL"}
+{"rotationChecks" : 41, "result" : "PASS", "cron" : "not run in local PostgreSQL"}
+{"sharedCleaningChecks" : 26, "result" : "PASS"}
+{"nativeCommunityChecks" : 43, "result" : "PASS"}
+{"householdSwapChecks" : 25, "result" : "PASS"}

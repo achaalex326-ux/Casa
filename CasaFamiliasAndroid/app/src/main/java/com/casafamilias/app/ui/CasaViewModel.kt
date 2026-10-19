@@ -17,6 +17,7 @@ class CasaViewModel(app: Application,private val source: CasaDataSource,private 
     private val prefs=app.getSharedPreferences("casa_preferences",0)
     private val accessPrefs=app.getSharedPreferences("casa_local_access",0)
     private val access=LocalAccessPolicy(accessPrefs.getString("owner",null).takeIf {it==source.session?.userId})
+    private val paymentUploads=mutableMapOf<String,Pair<String,String>>()
     private var biometricRequest: Boolean?=null
     private val mutable=MutableStateFlow(CasaState(dark=prefs.getBoolean("dark",false),textScale=prefs.getFloat("text_scale",1f),locked=access.requiresUnlock(source.session?.userId),biometricEnabled=access.enabledFor(source.session?.userId)))
     val state=mutable.asStateFlow()
@@ -150,10 +151,18 @@ class CasaViewModel(app: Application,private val source: CasaDataSource,private 
             suspend fun image(key: String,qr: Boolean=false): String?=v(key).takeIf { it.isNotBlank() }?.let { source.upload(Uri.parse(it),qr) }
             val tasks=JSONArray(v("tasks").lines().map {it.trim()}.filter {it.isNotBlank()})
             when(form.kind) {
-                "payment" -> {val receipt=image("receipt");val payment=source.rpc("record_payment_v7",json("p_share_id" to v("share"),"p_amount" to amount("amount"),"p_paid_at" to v("date"),"p_method" to v("method"),"p_receipt_path" to receipt,"p_note" to v("note").ifBlank { null },"p_ocr_text" to values["ocr_text"]))
-                    // Notification delivery remains a server-side concern; saving a payment is authoritative.
-                    payment?.toString()?.takeIf { it.isNotBlank() }?.let { paymentId -> viewModelScope.launch {runCatching {source.notifyPayment(paymentId)}} }
+                "payment" -> {
+                    val request=v("request_id").ifBlank {error("Abre de nuevo el formulario para registrar este depósito.")}
+                    val cacheKey=s.profile.id+":"+request
+                    val uri=v("receipt")
+                    val receipt=if(uri.isBlank())null else paymentUploads[cacheKey]?.takeIf {it.first==uri}?.second ?: image("receipt")?.also {path->
+                        if(paymentUploads.size>=8)paymentUploads.clear()
+                        paymentUploads[cacheKey]=uri to path
+                    }
+                    source.rpc("casa_record_payment_batch",json("p_request_id" to request,"p_family_id" to id("family"),"p_amount" to amount("amount"),"p_paid_at" to v("date"),"p_method" to v("method"),"p_receipt_path" to receipt,"p_note" to v("note").ifBlank {null},"p_ocr_text" to values["ocr_text"],"p_share_id" to v("share").takeIf {v("mode")=="single" && it.isNotBlank()}))
+                    paymentUploads.remove(cacheKey)
                 }
+
                 "expense" -> source.rpc("create_expense",json("p_concept" to v("concept"),"p_category" to "external","p_total_amount" to amount("amount"),"p_expense_date" to v("date"),"p_due_date" to v("due"),"p_justification" to v("justification"),"p_receipt_path" to image("receipt"),"p_ocr_text" to values["ocr_text"],"p_paid_by_family_id" to id("paid_by")))
                 "credit" -> source.rpc("create_utility_credit",json("p_service" to v("service"),"p_amount" to amount("amount"),"p_note" to v("note"),"p_receipt_path" to image("receipt")))
                 "services" -> { val reference=v("reference")=="true";source.rpc("create_monthly_basic_services",json("p_month" to v("month")+"-01","p_water" to amount("water"),"p_electricity" to amount("electricity"),"p_gas" to amount("gas"),"p_wifi" to amount("wifi"),"p_due_date" to v("due"),"p_water_receipt" to image("water_receipt"),"p_electricity_receipt" to image("electricity_receipt"),"p_gas_receipt" to image("gas_receipt"),"p_wifi_receipt" to image("wifi_receipt"),"p_other_water" to if(reference)0 else amount("other_water"),"p_other_electricity" to if(reference)0 else amount("other_electricity"),"p_reference_only" to reference)) }
@@ -174,7 +183,7 @@ class CasaViewModel(app: Application,private val source: CasaDataSource,private 
                 "password" -> {source.password(values["password"].orEmpty());mutable.update { it.copy(recovery=false) }}
                 else -> error("Operación no disponible.")
             }
-            events.emit(if(form.kind=="payment")"Pago enviado para revisión." else "Cambio guardado.");done();val refreshed=runCatching {source.load()};mutable.update { it.copy(data=refreshed.getOrNull() ?: it.data,error=if(refreshed.isFailure) "Guardado. No se pudo actualizar la vista; usa Actualizar datos." else null) }
+            events.emit(if(form.kind=="payment")if(s.profile.role.staff)"Depósito registrado y aprobado." else "Depósito enviado para revisión." else "Cambio guardado.");done();val refreshed=runCatching {source.load()};mutable.update { it.copy(data=refreshed.getOrNull() ?: it.data,error=if(refreshed.isFailure) "Guardado. No se pudo actualizar la vista; usa Actualizar datos." else null) }
         }
     }
 }

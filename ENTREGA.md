@@ -1,6 +1,8 @@
-# Casa Familias 5.5 — calendario e intercambios entre usuarios
+# Casa Familias 5.6 — depósitos para varios meses
 
-Versión **5.5**, código **11**, paquete `com.casafamilias.app`. Compatible con Android 8 o posterior, con destino Android 16/API 36. Mantiene la interfaz de 5.1 y las cuentas de la casa actual; el registro de comunidades independientes queda para otra etapa.
+Versión **5.6**, código **12**, paquete `com.casafamilias.app`. Compatible con Android 8 o posterior, con destino Android 16/API 36. Mantiene la interfaz de 5.1 y las cuentas de la casa actual; el registro de comunidades independientes queda para otra etapa.
+
+Añade un depósito con una sola foto para varias deudas: vista previa por mes, revisión conjunta y reparto definitivo de más antiguo a más reciente al aprobar. Bs200 frente a tres meses de Bs80 se aplica 80/80/40. El sobrante de las deudas seleccionadas queda a favor. El historial agrupa el depósito, la contabilidad conserva sus asignaciones y las solicitudes repetidas con la misma clave no duplican el dinero. Se mantiene el modo de deuda individual y los pagos anteriores. La migración009 se aplica sin crear ni cambiar registros comerciales.
 
 Incluye la familia de esta semana en Inicio y Limpieza, rango de lunes a domingo, calendario por mes de todas las familias para el ingeniero/administrador y encargado, y filtros de solicitudes recibidas/enviadas. Los usuarios solicitan cambios para sus propias familias; otra persona del hogar receptor acepta o rechaza. Las semanas conservan su asignación hasta la aceptación.
 
@@ -8,7 +10,7 @@ Incorpora avisos nativos de Android mediante WorkManager: limpieza de la semana,
 
 ## Descargar y revisar
 
-Los archivos actuales están en [entregas/casa-familias-5.5](entregas/casa-familias-5.5): APK optimizado, código fuente e instrucciones para activar notificaciones y huella. La [entrega 5.2](entregas/casa-familias-5.2) conserva su AAB sin firmar y sus verificaciones históricas. Para publicar, sigue [la guía de Google Play](entregas/google-play/GUIA_GOOGLE_PLAY.md). No se ha publicado la aplicación ni creado una cuenta de desarrollador.
+Los archivos actuales están en [entregas/casa-familias-5.6](entregas/casa-familias-5.6): APK optimizado, código fuente e instrucciones para activar notificaciones y huella. La [entrega 5.2](entregas/casa-familias-5.2) conserva su AAB sin firmar y sus verificaciones históricas. Para publicar, sigue [la guía de Google Play](entregas/google-play/GUIA_GOOGLE_PLAY.md). No se ha publicado la aplicación ni creado una cuenta de desarrollador.
 
 El APK usa la variante `presentation`, con la firma de pruebas de este entorno. La variante `release` deja de utilizar esa firma automáticamente y admite una clave de subida propia mediante Android Studio o un archivo local ignorado `casa-upload.properties`. Sin esa clave, el AAB se genera sin firmar y **no se puede enviar a Play Console**.
 
@@ -32,7 +34,7 @@ El ciclo semanal sigue **Choque → Galarza → Salinas → David → Acha**. Sa
 
 ## Verificación y pendientes
 
-Consulta [la verificación de 5.5](entregas/casa-familias-5.5/VERIFICACION.md) para la compilación actual. Las verificaciones de5.2 y5.3 son históricas. Se actualizaron las funciones de intercambios en Supabase sin modificar registros de turnos, rotación, familias, cuentas ni finanzas.
+Consulta [la verificación de 5.6](entregas/casa-familias-5.6/VERIFICACION.md) para la compilación actual. Las verificaciones de5.2 y5.3 son históricas. Se añadieron depósitos de varios meses y un revisor compatible en Supabase, sin modificar los saldos, pagos ni turnos existentes.
 
 No se ha probado esta versión en un teléfono físico ni ejecutado en Android 16 o en un dispositivo de páginas de 16 KB. Las capturas usan datos ficticios; no demuestran pagos reales. Antes de publicar faltan tu clave de subida, la cuenta de Google Play, privacidad y eliminación de cuentas, recursos de tienda y las pruebas/revisión correspondientes. Las guías y borradores señalan esos pendientes expresamente.
 

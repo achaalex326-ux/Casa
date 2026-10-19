@@ -30,12 +30,16 @@ import java.time.YearMonth
 @Composable fun FormScreen(vm: CasaViewModel,s: Snapshot,form: Form,onBack: ()->Unit) {
     val state by vm.state.collectAsState();val context=LocalContext.current;val scope=rememberCoroutineScope()
     val saver=mapSaver<Map<String,String>>(save={ it.filterKeys { key -> key !in setOf("password","confirmation") } },restore={ it.mapValues { v->v.value.toString() } })
-    var values by rememberSaveable(form.kind,form.recordId,stateSaver=saver){mutableStateOf(form.fields.associate { it.key to it.initial })}
+    var values by rememberSaveable(form.kind,form.recordId,stateSaver=saver){mutableStateOf(form.fields.associate { it.key to it.initial } + if(form.kind=="payment")mapOf("request_id" to java.util.UUID.randomUUID().toString()) else emptyMap())}
     var page by rememberSaveable(form.kind,form.recordId){mutableIntStateOf(0)}
     var localError by remember {mutableStateOf<String?>(null)}
     var imageKey by remember {mutableStateOf("receipt")};var reading by remember {mutableStateOf(false)}
     var confirm by remember {mutableStateOf(false)}
     fun update(key: String,value: String){values=values+(key to value);localError=null
+        if(form.kind=="payment"){
+            values=values+("request_id" to java.util.UUID.randomUUID().toString())
+            if(key=="family")values=values+("share" to "")
+        }
         if(key=="template")s.find("recurring_expense_templates",value)?.let { t -> values=values+("concept" to t.text("concept"))+("justification" to t.text("justification")) }
     }
     val picker=rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()){ uri ->
@@ -50,7 +54,7 @@ import java.time.YearMonth
             val qr=s.rows("payment_qr_settings").firstOrNull()
             if(qr!=null && qr.text("qr_image_path").isNotBlank() && values["method"]!="cash")Panel {Text(qr.text("qr_title").ifBlank {"Pago por QR"},style=MaterialTheme.typography.titleMedium);Text(qr.text("qr_note"));ImageReceipt(vm,qr.text("qr_image_path"),true)}
         }
-        form.visible(values).filter { it.page==page && !(form.kind=="assignment" && it.key=="role") }.forEach { field ->
+        form.visible(values).filter { it.page==page && !(form.kind=="assignment" && it.key=="role") && !(form.kind=="payment" && it.key=="family" && !s.profile.role.staff) }.forEach { field ->
             val value=values[field.key].orEmpty()
             if(field.type==InputType.IMAGE) {
                 Panel {
@@ -72,19 +76,38 @@ import java.time.YearMonth
                         }
                     }
                 }
-            } else Input(field,value,!state.busy){update(field.key,it)}
+            } else {
+                val actual=if(form.kind=="payment" && field.key=="share")field.copy(choices=s.paymentDebts(values["family"]?.toLongOrNull()).map {Choice(it.shareId,it.label+" · "+Amounts.format(it.balance))}) else field
+                Input(actual,value,!state.busy){update(field.key,it)}
+            }
         }
         if(form.kind=="rotation")Panel {Text("Vista previa del orden",style=MaterialTheme.typography.titleSmall);form.fields.filter {it.key.startsWith("order_")}.forEachIndexed {i,f->Text("${i+1}. "+f.choices.firstOrNull {it.value==values[f.key]}?.label.orEmpty())};Text("Los turnos ya asignados se conservan.",style=MaterialTheme.typography.bodySmall)}
+        if(form.kind=="payment"){
+            val debts=s.paymentDebts(values["family"]?.toLongOrNull())
+            val amount=Amounts.parse(values["amount"].orEmpty())
+            if(amount!=null && amount>java.math.BigDecimal.ZERO && (values["mode"]!="single" || !values["share"].isNullOrBlank())){
+                val plan=PaymentPlans.preview(debts,amount,values["share"].takeIf {values["mode"]=="single"})
+                Panel {
+                    Text("Así se repartirá tu depósito",style=MaterialTheme.typography.titleMedium)
+                    plan.allocations.forEach {a->DataLine(a.debt.label,Amounts.format(a.amount))}
+                    DataLine("Total depositado",Amounts.format(plan.amount))
+                    DataLine("Deuda que quedaría",Amounts.format(plan.remainingDebt))
+                    if(plan.credit>java.math.BigDecimal.ZERO)DataLine("Saldo a favor que se generaría",Amounts.format(plan.credit))
+                    Text("Es una vista previa. Al aprobar, se recalcula con los pagos ya revisados. Un solo comprobante cubre todo el depósito.",style=MaterialTheme.typography.bodySmall)
+                    if(plan.allocations.isEmpty())Text("No hay deudas pendientes para esta selección.",color=MaterialTheme.colorScheme.error)
+                }
+            }
+        }
         val error=localError ?: state.error
         if(error!=null)Text(error,color=MaterialTheme.colorScheme.error)
         if(page>0)Secondary("Paso anterior",!state.busy){page--}
-        Action(if(state.busy)"Guardando…" else if(page<form.pages-1)"Continuar" else if(form.kind=="payment")"Enviar pago a revisión" else "Guardar",!state.busy && !reading){
+        Action(if(state.busy)"Guardando…" else if(page<form.pages-1)"Continuar" else if(form.kind=="payment")if(s.profile.role.staff)"Registrar depósito" else "Enviar depósito a revisión" else "Guardar",!state.busy && !reading){
             localError=form.error(values,if(page<form.pages-1)page else null)
             if(localError==null){if(page<form.pages-1)page++ else if(form.kind in setOf("services","expense","credit","external-paid","rotation","complete","payment"))confirm=true else vm.submit(form,values,onBack)}
         }
         Spacer(Modifier.height(12.dp))
     }
-    if(confirm)Confirm("Confirmar ${form.title.lowercase()}",when(form.kind){"rotation"->"Se guardará el orden elegido. Las semanas existentes se conservan.";"complete"->"¿Confirmas que se realizaron las tareas del turno?";else->"Revisa los importes y la familia seleccionada. ¿Quieres guardar estos datos?"},onDismiss={confirm=false}){confirm=false;vm.submit(form,values,onBack)}
+    if(confirm)Confirm("Confirmar ${form.title.lowercase()}",when(form.kind){"payment"->"Registrar ${Amounts.format(Amounts.parse(values["amount"].orEmpty()) ?: java.math.BigDecimal.ZERO)} para ${s.family(values["family"]?.toLongOrNull())} con un solo comprobante. ${if(s.profile.role.staff)"Se aprobará y aplicará a las deudas." else "El encargado debe aprobarlo antes de descontar el saldo."}";"rotation"->"Se guardará el orden elegido. Las semanas existentes se conservan.";"complete"->"¿Confirmas que se realizaron las tareas del turno?";else->"Revisa los importes y la familia seleccionada. ¿Quieres guardar estos datos?"},onDismiss={confirm=false}){confirm=false;vm.submit(form,values,onBack)}
 }
 @Composable fun Input(field: Field,value: String,enabled: Boolean=true,onChange: (String)->Unit) {
     val context=LocalContext.current;var choosing by remember {mutableStateOf(false)};var reveal by remember {mutableStateOf(false)}

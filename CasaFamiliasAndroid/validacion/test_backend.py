@@ -41,7 +41,7 @@ try:
         # pg_cron se comprueba en Supabase; el conjunto financiero se ejecuta
         # con su propio esquema más abajo, en test_payer_services.py.
         for migration in sorted((ROOT / "supabase/migrations").glob("*.sql")):
-            if migration.name.endswith(("_cron.sql", "_payer_services.sql")):
+            if migration.name.endswith(("_cron.sql", "_payer_services.sql", "_multi_month_payments.sql")):
                 continue
             sql(migration)
     output = sql(HERE / "backend_checks.sql")
@@ -61,3 +61,6 @@ finally:
 # Este conjunto se ejecuta aparte en otro contenedor y no se omite.
 import sys
 subprocess.run([sys.executable, str(HERE / "test_payer_services.py")], check=True)
+
+# Pagos de varios meses: esquema financiero realista y pruebas transaccionales separadas.
+subprocess.run([sys.executable, str(HERE / "test_batch_payments.py")], check=True)

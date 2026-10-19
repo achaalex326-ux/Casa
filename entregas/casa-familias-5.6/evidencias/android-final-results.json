@@ -1,0 +1,119 @@
+{
+  "passed": 26,
+  "finalFailures": 0,
+  "initialRun": {
+    "passed": 25,
+    "failed": 1
+  },
+  "targetedRetry": {
+    "passed": 1,
+    "failed": 0
+  },
+  "initialFailure": "Screenshot helper found both the screen and dialog roots after the approval assertion passed. Capture moved after dialog dismissal. Production code unchanged.",
+  "cases": {
+    "com.casafamilias.app.BatchPaymentSubmissionTest#lostReplyRetriesSameDepositAndUploadsReceiptOnlyOnce": {
+      "status": "PASS",
+      "source": "android-tests-initial.txt"
+    },
+    "com.casafamilias.app.BatchPaymentSubmissionTest#doubleTapWhileSubmittingDoesNotCreateTwoRequests": {
+      "status": "PASS",
+      "source": "android-tests-initial.txt"
+    },
+    "com.casafamilias.app.BiometricGateTest#correctPasswordWorksWhenBiometricsAreUnavailableAndLogoutDisablesOptIn": {
+      "status": "PASS",
+      "source": "android-tests-initial.txt"
+    },
+    "com.casafamilias.app.BiometricGateTest#coldStartAndRetryCannotReadOrMutateBeforeUnlock": {
+      "status": "PASS",
+      "source": "android-tests-initial.txt"
+    },
+    "com.casafamilias.app.BiometricGateTest#verifiedBiometricUnlocksAndLongBackgroundLocksAgain": {
+      "status": "PASS",
+      "source": "android-tests-initial.txt"
+    },
+    "com.casafamilias.app.BiometricGateTest#expiredServerSessionRequiresPasswordEvenAfterVerifiedBiometric": {
+      "status": "PASS",
+      "source": "android-tests-initial.txt"
+    },
+    "com.casafamilias.app.BiometricGateTest#cancellationAndWrongPasswordNeverUnlockTheStoredSession": {
+      "status": "PASS",
+      "source": "android-tests-initial.txt"
+    },
+    "com.casafamilias.app.BiometricGateTest#enablingRequiresSuccessfulVerificationAndCanBeDisabled": {
+      "status": "PASS",
+      "source": "android-tests-initial.txt"
+    },
+    "com.casafamilias.app.DeviceNotificationsTest#accountMismatchAndLogoutDoNotFetchOrNotify": {
+      "status": "PASS",
+      "source": "android-tests-initial.txt"
+    },
+    "com.casafamilias.app.DeviceNotificationsTest#disabledAlertsCancelDeliveryAndSchedulingUsesOnePeriodicJob": {
+      "status": "PASS",
+      "source": "android-tests-initial.txt"
+    },
+    "com.casafamilias.app.DeviceNotificationsTest#paidDebtWithdrawsAnAlreadyDisplayedReminder": {
+      "status": "PASS",
+      "source": "android-tests-initial.txt"
+    },
+    "com.casafamilias.app.DeviceNotificationsTest#workerPostsToAndroidWithoutAnActivityAndDoesNotRepeat": {
+      "status": "PASS",
+      "source": "android-tests-initial.txt"
+    },
+    "com.casafamilias.app.NativeNavigationTest#administratorReviewsWholeDepositWithOneDecision": {
+      "status": "PASS",
+      "source": "android-tests-retry.txt"
+    },
+    "com.casafamilias.app.NativeNavigationTest#adminDesignScreensAreImplementedInNativeAndroid": {
+      "status": "PASS",
+      "source": "android-tests-initial.txt"
+    },
+    "com.casafamilias.app.NativeNavigationTest#administratorHasFiveTabsAndUniqueMoreMenu": {
+      "status": "PASS",
+      "source": "android-tests-initial.txt"
+    },
+    "com.casafamilias.app.NativeNavigationTest#familyCanOpenItsTurnAndLargeTextDarkMode": {
+      "status": "PASS",
+      "source": "android-tests-initial.txt"
+    },
+    "com.casafamilias.app.NativeNavigationTest#familyDepositHistoryGroupsOneReceiptAndThreeMonths": {
+      "status": "PASS",
+      "source": "android-tests-initial.txt"
+    },
+    "com.casafamilias.app.NativeNavigationTest#rotationAndProcessRecreationKeepTheNativeScreen": {
+      "status": "PASS",
+      "source": "android-tests-initial.txt"
+    },
+    "com.casafamilias.app.NativeNavigationTest#familyCannotSeeOtherFamilyAdministration": {
+      "status": "PASS",
+      "source": "android-tests-initial.txt"
+    },
+    "com.casafamilias.app.NativeNavigationTest#recipientFamilyCanAnswerIncomingExchangeAndSenderCannotAnswerOutgoing": {
+      "status": "PASS",
+      "source": "android-tests-initial.txt"
+    },
+    "com.casafamilias.app.NativeNavigationTest#payerHasFinanceAndNoSystemAdministration": {
+      "status": "PASS",
+      "source": "android-tests-initial.txt"
+    },
+    "com.casafamilias.app.NativeNavigationTest#restaurantRemainsReadOnlyAndBalanceIsSixty": {
+      "status": "PASS",
+      "source": "android-tests-initial.txt"
+    },
+    "com.casafamilias.app.NativeNavigationTest#familyCanPreviewOneDepositAcrossThreeMonths": {
+      "status": "PASS",
+      "source": "android-tests-initial.txt"
+    },
+    "com.casafamilias.app.NativeNavigationTest#payerSeesOtherFamilyWeekButCannotRequestTheirExchange": {
+      "status": "PASS",
+      "source": "android-tests-initial.txt"
+    },
+    "com.casafamilias.app.NativeNavigationTest#engineerAdministratorSeesCurrentFamilyAndWholeCalendarWithoutSwapAuthority": {
+      "status": "PASS",
+      "source": "android-tests-initial.txt"
+    },
+    "com.casafamilias.app.NativeNavigationTest#passwordConfirmationAndPdfExportAreNative": {
+      "status": "PASS",
+      "source": "android-tests-initial.txt"
+    }
+  }
+}

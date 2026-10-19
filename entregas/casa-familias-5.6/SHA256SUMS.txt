@@ -1,0 +1,3 @@
+237acabc17990ab42d25152584406845769813c20e49589b69a8ab27add191e3  CasaFamilias-5.6-proyecto.zip
+3f52bfb514d822e4bea6e17e78898a8e9996a738febdbbbee5d25ef8c9a4ab7b  CasaFamilias-5.6-pruebas.apk
+7b4e39d6b6494d21dcf43d3896f016f68a6839e49255d842d770039fbaef6a49  verificacion.json

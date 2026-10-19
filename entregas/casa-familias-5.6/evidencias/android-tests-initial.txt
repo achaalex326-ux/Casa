@@ -1,0 +1,424 @@
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.BatchPaymentSubmissionTest
+INSTRUMENTATION_STATUS: current=1
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=26
+INSTRUMENTATION_STATUS: stream=
+com.casafamilias.app.BatchPaymentSubmissionTest:
+INSTRUMENTATION_STATUS: test=lostReplyRetriesSameDepositAndUploadsReceiptOnlyOnce
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.BatchPaymentSubmissionTest
+INSTRUMENTATION_STATUS: current=1
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=26
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=lostReplyRetriesSameDepositAndUploadsReceiptOnlyOnce
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.BatchPaymentSubmissionTest
+INSTRUMENTATION_STATUS: current=2
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=26
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=doubleTapWhileSubmittingDoesNotCreateTwoRequests
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.BatchPaymentSubmissionTest
+INSTRUMENTATION_STATUS: current=2
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=26
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=doubleTapWhileSubmittingDoesNotCreateTwoRequests
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.BiometricGateTest
+INSTRUMENTATION_STATUS: current=3
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=26
+INSTRUMENTATION_STATUS: stream=
+com.casafamilias.app.BiometricGateTest:
+INSTRUMENTATION_STATUS: test=correctPasswordWorksWhenBiometricsAreUnavailableAndLogoutDisablesOptIn
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.BiometricGateTest
+INSTRUMENTATION_STATUS: current=3
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=26
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=correctPasswordWorksWhenBiometricsAreUnavailableAndLogoutDisablesOptIn
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.BiometricGateTest
+INSTRUMENTATION_STATUS: current=4
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=26
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=coldStartAndRetryCannotReadOrMutateBeforeUnlock
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.BiometricGateTest
+INSTRUMENTATION_STATUS: current=4
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=26
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=coldStartAndRetryCannotReadOrMutateBeforeUnlock
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.BiometricGateTest
+INSTRUMENTATION_STATUS: current=5
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=26
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=verifiedBiometricUnlocksAndLongBackgroundLocksAgain
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.BiometricGateTest
+INSTRUMENTATION_STATUS: current=5
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=26
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=verifiedBiometricUnlocksAndLongBackgroundLocksAgain
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.BiometricGateTest
+INSTRUMENTATION_STATUS: current=6
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=26
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=expiredServerSessionRequiresPasswordEvenAfterVerifiedBiometric
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.BiometricGateTest
+INSTRUMENTATION_STATUS: current=6
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=26
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=expiredServerSessionRequiresPasswordEvenAfterVerifiedBiometric
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.BiometricGateTest
+INSTRUMENTATION_STATUS: current=7
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=26
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=cancellationAndWrongPasswordNeverUnlockTheStoredSession
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.BiometricGateTest
+INSTRUMENTATION_STATUS: current=7
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=26
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=cancellationAndWrongPasswordNeverUnlockTheStoredSession
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.BiometricGateTest
+INSTRUMENTATION_STATUS: current=8
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=26
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=enablingRequiresSuccessfulVerificationAndCanBeDisabled
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.BiometricGateTest
+INSTRUMENTATION_STATUS: current=8
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=26
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=enablingRequiresSuccessfulVerificationAndCanBeDisabled
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.DeviceNotificationsTest
+INSTRUMENTATION_STATUS: current=9
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=26
+INSTRUMENTATION_STATUS: stream=
+com.casafamilias.app.DeviceNotificationsTest:
+INSTRUMENTATION_STATUS: test=accountMismatchAndLogoutDoNotFetchOrNotify
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.DeviceNotificationsTest
+INSTRUMENTATION_STATUS: current=9
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=26
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=accountMismatchAndLogoutDoNotFetchOrNotify
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.DeviceNotificationsTest
+INSTRUMENTATION_STATUS: current=10
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=26
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=disabledAlertsCancelDeliveryAndSchedulingUsesOnePeriodicJob
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.DeviceNotificationsTest
+INSTRUMENTATION_STATUS: current=10
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=26
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=disabledAlertsCancelDeliveryAndSchedulingUsesOnePeriodicJob
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.DeviceNotificationsTest
+INSTRUMENTATION_STATUS: current=11
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=26
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=paidDebtWithdrawsAnAlreadyDisplayedReminder
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.DeviceNotificationsTest
+INSTRUMENTATION_STATUS: current=11
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=26
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=paidDebtWithdrawsAnAlreadyDisplayedReminder
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.DeviceNotificationsTest
+INSTRUMENTATION_STATUS: current=12
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=26
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=workerPostsToAndroidWithoutAnActivityAndDoesNotRepeat
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.DeviceNotificationsTest
+INSTRUMENTATION_STATUS: current=12
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=26
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=workerPostsToAndroidWithoutAnActivityAndDoesNotRepeat
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.NativeNavigationTest
+INSTRUMENTATION_STATUS: current=13
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=26
+INSTRUMENTATION_STATUS: stream=
+com.casafamilias.app.NativeNavigationTest:
+INSTRUMENTATION_STATUS: test=administratorReviewsWholeDepositWithOneDecision
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.NativeNavigationTest
+INSTRUMENTATION_STATUS: current=13
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=26
+INSTRUMENTATION_STATUS: stack=java.lang.AssertionError: Failed to capture a node to bitmap.
+Reason: Expected exactly '1' node but found '2' nodes that satisfy: (isRoot)
+Nodes found:
+1) Node #620 at (l=0.0, t=0.0, r=320.0, b=800.0)px
+Has 1 child
+2) Node #869 at (l=0.0, t=0.0, r=320.0, b=280.0)px
+Has 1 child
+
+	at androidx.compose.ui.test.SemanticsNodeInteraction.fetchOneOrThrow(SemanticsNodeInteraction.kt:178)
+	at androidx.compose.ui.test.SemanticsNodeInteraction.fetchOneOrThrow$default(SemanticsNodeInteraction.kt:150)
+	at androidx.compose.ui.test.SemanticsNodeInteraction.fetchSemanticsNode(SemanticsNodeInteraction.kt:84)
+	at androidx.compose.ui.test.AndroidImageHelpers_androidKt.captureToImage(AndroidImageHelpers.android.kt:51)
+	at com.casafamilias.app.NativeNavigationTest.screenshot(NativeNavigationTest.kt:38)
+	at com.casafamilias.app.NativeNavigationTest.administratorReviewsWholeDepositWithOneDecision(NativeNavigationTest.kt:185)
+
+INSTRUMENTATION_STATUS: stream=
+Error in administratorReviewsWholeDepositWithOneDecision(com.casafamilias.app.NativeNavigationTest):
+java.lang.AssertionError: Failed to capture a node to bitmap.
+Reason: Expected exactly '1' node but found '2' nodes that satisfy: (isRoot)
+Nodes found:
+1) Node #620 at (l=0.0, t=0.0, r=320.0, b=800.0)px
+Has 1 child
+2) Node #869 at (l=0.0, t=0.0, r=320.0, b=280.0)px
+Has 1 child
+
+	at androidx.compose.ui.test.SemanticsNodeInteraction.fetchOneOrThrow(SemanticsNodeInteraction.kt:178)
+	at androidx.compose.ui.test.SemanticsNodeInteraction.fetchOneOrThrow$default(SemanticsNodeInteraction.kt:150)
+	at androidx.compose.ui.test.SemanticsNodeInteraction.fetchSemanticsNode(SemanticsNodeInteraction.kt:84)
+	at androidx.compose.ui.test.AndroidImageHelpers_androidKt.captureToImage(AndroidImageHelpers.android.kt:51)
+	at com.casafamilias.app.NativeNavigationTest.screenshot(NativeNavigationTest.kt:38)
+	at com.casafamilias.app.NativeNavigationTest.administratorReviewsWholeDepositWithOneDecision(NativeNavigationTest.kt:185)
+
+INSTRUMENTATION_STATUS: test=administratorReviewsWholeDepositWithOneDecision
+INSTRUMENTATION_STATUS_CODE: -2
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.NativeNavigationTest
+INSTRUMENTATION_STATUS: current=14
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=26
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=adminDesignScreensAreImplementedInNativeAndroid
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.NativeNavigationTest
+INSTRUMENTATION_STATUS: current=14
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=26
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=adminDesignScreensAreImplementedInNativeAndroid
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.NativeNavigationTest
+INSTRUMENTATION_STATUS: current=15
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=26
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=administratorHasFiveTabsAndUniqueMoreMenu
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.NativeNavigationTest
+INSTRUMENTATION_STATUS: current=15
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=26
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=administratorHasFiveTabsAndUniqueMoreMenu
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.NativeNavigationTest
+INSTRUMENTATION_STATUS: current=16
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=26
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=familyCanOpenItsTurnAndLargeTextDarkMode
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.NativeNavigationTest
+INSTRUMENTATION_STATUS: current=16
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=26
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=familyCanOpenItsTurnAndLargeTextDarkMode
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.NativeNavigationTest
+INSTRUMENTATION_STATUS: current=17
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=26
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=familyDepositHistoryGroupsOneReceiptAndThreeMonths
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.NativeNavigationTest
+INSTRUMENTATION_STATUS: current=17
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=26
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=familyDepositHistoryGroupsOneReceiptAndThreeMonths
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.NativeNavigationTest
+INSTRUMENTATION_STATUS: current=18
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=26
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=rotationAndProcessRecreationKeepTheNativeScreen
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.NativeNavigationTest
+INSTRUMENTATION_STATUS: current=18
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=26
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=rotationAndProcessRecreationKeepTheNativeScreen
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.NativeNavigationTest
+INSTRUMENTATION_STATUS: current=19
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=26
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=familyCannotSeeOtherFamilyAdministration
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.NativeNavigationTest
+INSTRUMENTATION_STATUS: current=19
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=26
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=familyCannotSeeOtherFamilyAdministration
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.NativeNavigationTest
+INSTRUMENTATION_STATUS: current=20
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=26
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=recipientFamilyCanAnswerIncomingExchangeAndSenderCannotAnswerOutgoing
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.NativeNavigationTest
+INSTRUMENTATION_STATUS: current=20
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=26
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=recipientFamilyCanAnswerIncomingExchangeAndSenderCannotAnswerOutgoing
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.NativeNavigationTest
+INSTRUMENTATION_STATUS: current=21
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=26
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=payerHasFinanceAndNoSystemAdministration
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.NativeNavigationTest
+INSTRUMENTATION_STATUS: current=21
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=26
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=payerHasFinanceAndNoSystemAdministration
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.NativeNavigationTest
+INSTRUMENTATION_STATUS: current=22
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=26
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=restaurantRemainsReadOnlyAndBalanceIsSixty
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.NativeNavigationTest
+INSTRUMENTATION_STATUS: current=22
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=26
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=restaurantRemainsReadOnlyAndBalanceIsSixty
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.NativeNavigationTest
+INSTRUMENTATION_STATUS: current=23
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=26
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=familyCanPreviewOneDepositAcrossThreeMonths
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.NativeNavigationTest
+INSTRUMENTATION_STATUS: current=23
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=26
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=familyCanPreviewOneDepositAcrossThreeMonths
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.NativeNavigationTest
+INSTRUMENTATION_STATUS: current=24
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=26
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=payerSeesOtherFamilyWeekButCannotRequestTheirExchange
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.NativeNavigationTest
+INSTRUMENTATION_STATUS: current=24
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=26
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=payerSeesOtherFamilyWeekButCannotRequestTheirExchange
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.NativeNavigationTest
+INSTRUMENTATION_STATUS: current=25
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=26
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=engineerAdministratorSeesCurrentFamilyAndWholeCalendarWithoutSwapAuthority
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.NativeNavigationTest
+INSTRUMENTATION_STATUS: current=25
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=26
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=engineerAdministratorSeesCurrentFamilyAndWholeCalendarWithoutSwapAuthority
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.NativeNavigationTest
+INSTRUMENTATION_STATUS: current=26
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=26
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=passwordConfirmationAndPdfExportAreNative
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.NativeNavigationTest
+INSTRUMENTATION_STATUS: current=26
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=26
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=passwordConfirmationAndPdfExportAreNative
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_RESULT: stream=
+
+Time: 272.075
+There was 1 failure:
+1) administratorReviewsWholeDepositWithOneDecision(com.casafamilias.app.NativeNavigationTest)
+java.lang.AssertionError: Failed to capture a node to bitmap.
+Reason: Expected exactly '1' node but found '2' nodes that satisfy: (isRoot)
+Nodes found:
+1) Node #620 at (l=0.0, t=0.0, r=320.0, b=800.0)px
+Has 1 child
+2) Node #869 at (l=0.0, t=0.0, r=320.0, b=280.0)px
+Has 1 child
+
+	at androidx.compose.ui.test.SemanticsNodeInteraction.fetchOneOrThrow(SemanticsNodeInteraction.kt:178)
+	at androidx.compose.ui.test.SemanticsNodeInteraction.fetchOneOrThrow$default(SemanticsNodeInteraction.kt:150)
+	at androidx.compose.ui.test.SemanticsNodeInteraction.fetchSemanticsNode(SemanticsNodeInteraction.kt:84)
+	at androidx.compose.ui.test.AndroidImageHelpers_androidKt.captureToImage(AndroidImageHelpers.android.kt:51)
+	at com.casafamilias.app.NativeNavigationTest.screenshot(NativeNavigationTest.kt:38)
+	at com.casafamilias.app.NativeNavigationTest.administratorReviewsWholeDepositWithOneDecision(NativeNavigationTest.kt:185)
+
+FAILURES!!!
+Tests run: 26,  Failures: 1
+
+
+INSTRUMENTATION_CODE: -1

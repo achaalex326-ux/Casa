@@ -1,0 +1,13 @@
+{
+  "newBatchRows": 0,
+  "rowLevelSecurity": true,
+  "anonTableReadable": false,
+  "authenticatedCanCallSubmit": true,
+  "legacyReviewerStillAvailable": true,
+  "allHistoricalPaymentsUnlinked": true,
+  "familyRoleCanCallInternalPlanner": false,
+  "restSchemaTableAvailable": true,
+  "anonymousRestReadDenied": true,
+  "anonymousRestStatus": 401,
+  "mode": "Read-only metadata/permissions and REST; no real payments or receipts created"
+}

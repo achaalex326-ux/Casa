@@ -112,8 +112,8 @@ class CasaRepository(private val context: Context?,private val config: ApiConfig
         if(p.role.staff && notifiedForUser!=p.id){runCatching {rpc("generate_due_notifications",JSONObject())};notifiedForUser=p.id}
         val names=when(p.role) {
             Role.RESTAURANT -> listOf("external_utility_debts")
-            Role.FAMILY -> listOf("families","payments","cleaning_turns","notices","notifications","payment_qr_settings","family_credits","proposals","proposal_votes","cleaning_swap_requests","cleaning_family_aliases")
-            else -> listOf("families","profiles","periods","recurring_expense_templates","expenses","monthly_basic_services","external_utility_debts","utility_baselines","utility_credits","expense_shares","family_credits","payments","cleaning_turns","cleaning_swap_requests","proposals","proposal_votes","notices","expense_comments","notifications","payment_qr_settings","cleaning_family_aliases")+if(p.role==Role.ADMIN) listOf("audit_log","cleaning_rotation_settings") else emptyList()
+            Role.FAMILY -> listOf("families","payments","payment_batches","cleaning_turns","notices","notifications","payment_qr_settings","family_credits","proposals","proposal_votes","cleaning_swap_requests","cleaning_family_aliases")
+            else -> listOf("families","profiles","periods","recurring_expense_templates","expenses","monthly_basic_services","external_utility_debts","utility_baselines","utility_credits","expense_shares","family_credits","payments","payment_batches","cleaning_turns","cleaning_swap_requests","proposals","proposal_votes","notices","expense_comments","notifications","payment_qr_settings","cleaning_family_aliases")+if(p.role==Role.ADMIN) listOf("audit_log","cleaning_rotation_settings") else emptyList()
         }
         val tables=names.map { name -> async { val filters=when {
             p.role==Role.RESTAURANT -> mapOf("profile_id" to "eq.${p.id}","order" to "month_start.desc")
@@ -121,7 +121,7 @@ class CasaRepository(private val context: Context?,private val config: ApiConfig
             p.role==Role.FAMILY && name=="proposal_votes" -> mapOf("select" to "id,proposal_id,family_id,vote")
             name=="notifications" -> mapOf("order" to "created_at.desc","limit" to "100")
             name=="audit_log" -> mapOf("order" to "created_at.desc","limit" to "300")
-            p.role==Role.FAMILY && name in listOf("payments","family_credits") -> mapOf("family_id" to "eq.${p.familyId}")
+            p.role==Role.FAMILY && name in listOf("payments","payment_batches","family_credits") -> mapOf("family_id" to "eq.${p.familyId}")
             else -> emptyMap()
         };name to select(name,filters) } }.awaitAll().toMap().toMutableMap()
         if(p.role==Role.FAMILY){tables["family_debts"]=JSONArray(rpc("family_portal_debts",JSONObject()).toString()).records();tables["proposal_totals"]=JSONArray(rpc("casa_proposal_totals",JSONObject()).toString()).records()}
