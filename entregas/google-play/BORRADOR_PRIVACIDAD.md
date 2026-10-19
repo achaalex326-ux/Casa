@@ -14,6 +14,8 @@ La aplicación utiliza información de la cuenta —nombre, usuario, correo, rol
 
 Las fotografías se seleccionan mediante los controles del dispositivo para adjuntar facturas o comprobantes. El proyecto incluye lectura de texto mediante ML Kit. Revisar su implementación y las divulgaciones del SDK para describir por separado el procesamiento local y cualquier dato técnico transmitido por el proveedor.
 
+Desde la versión 5.3, el usuario puede activar un bloqueo biométrico local. Android verifica la biometría ya registrada en el dispositivo; Casa Familias no recibe, almacena ni envía imágenes o plantillas de huellas. La preferencia de activación se conserva localmente para esa cuenta y ese teléfono. Cualquier biometría compatible registrada en Android puede autorizar el acceso. Se mantiene el ingreso con correo y contraseña y sigue siendo necesaria una sesión válida de Supabase.
+
 ## Uso y acceso
 
 Los datos permiten organizar las obligaciones de la casa, revisar aportes, coordinar limpieza y mantener el historial. Las cuentas de familia consultan la información permitida para su familia. El encargado y el administrador tienen funciones adicionales según su rol. No incluir contraseñas, claves de administración ni datos reales en las capturas de la tienda.

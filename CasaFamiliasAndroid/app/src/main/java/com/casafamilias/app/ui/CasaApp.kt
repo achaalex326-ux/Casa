@@ -31,19 +31,27 @@ import androidx.navigation.compose.*
 import androidx.navigation.navArgument
 import com.casafamilias.app.domain.*
 import com.casafamilias.app.data.ExportFiles
+import com.casafamilias.app.data.BiometricAccess
 import kotlinx.coroutines.*
 
-@Composable fun CasaApp(vm: CasaViewModel) {
+val LocalBiometricAccess=staticCompositionLocalOf<BiometricAccess?> {null}
+
+@Composable fun CasaApp(vm: CasaViewModel,biometrics: BiometricAccess?=null) {
     val state by vm.state.collectAsStateWithLifecycle()
     val density=LocalDensity.current
     val activity=LocalContext.current as? Activity
+    SideEffect {activity?.window?.let {window->
+        if(state.biometricEnabled)window.addFlags(android.view.WindowManager.LayoutParams.FLAG_SECURE)
+        else window.clearFlags(android.view.WindowManager.LayoutParams.FLAG_SECURE)
+    }}
     SideEffect {activity?.window?.let {window->val bars=WindowCompat.getInsetsController(window,window.decorView);bars.isAppearanceLightStatusBars=!state.dark;bars.isAppearanceLightNavigationBars=!state.dark;window.navigationBarColor=if(state.dark)0xFF0D1728.toInt() else 0xFFF3F7FF.toInt()}}
     CasaTheme(state.dark) {
-        CompositionLocalProvider(LocalDensity provides Density(density.density,density.fontScale*state.textScale)) {
+        CompositionLocalProvider(LocalDensity provides Density(density.density,density.fontScale*state.textScale),LocalBiometricAccess provides biometrics) {
             Surface(Modifier.fillMaxSize(),color=MaterialTheme.colorScheme.background) {
                 when {
                     state.starting -> Column(Modifier.fillMaxSize().padding(28.dp),verticalArrangement=Arrangement.Center,horizontalAlignment=Alignment.CenterHorizontally){BrandMark(72.dp);Spacer(Modifier.height(20.dp));Text("Casa Familias",style=MaterialTheme.typography.headlineMedium);Spacer(Modifier.height(18.dp));CircularProgressIndicator();Spacer(Modifier.height(18.dp));Text("Conectando con tu hogar…",textAlign=TextAlign.Center);Text("Necesitas conexión a internet.",style=MaterialTheme.typography.bodySmall)}
                     state.recovery -> RecoveryScreen(vm,state)
+                    state.locked -> if(state.passwordEntry)LoginScreen(vm,state) else BiometricLockScreen(vm,state)
                     state.data==null -> LoginScreen(vm,state)
                     else -> key(state.data!!.profile.id,state.data!!.profile.role,state.data!!.profile.familyId,state.data!!.profile.secondFamilyId){SignedApp(vm,state.data!!)}
                 }
@@ -51,12 +59,25 @@ import kotlinx.coroutines.*
         }
     }
 }
+@Composable fun BiometricLockScreen(vm: CasaViewModel,state: CasaState) {
+    val biometrics=LocalBiometricAccess.current
+    Column(Modifier.fillMaxSize().safeDrawingPadding().verticalScroll(rememberScrollState()).padding(28.dp),verticalArrangement=Arrangement.spacedBy(20.dp),horizontalAlignment=Alignment.CenterHorizontally) {
+        Spacer(Modifier.height(48.dp));BrandMark(80.dp)
+        Text("Tu hogar, protegido",style=MaterialTheme.typography.headlineMedium,textAlign=TextAlign.Center)
+        Text("Confirma tu identidad para abrir Casa Familias.",textAlign=TextAlign.Center,color=MaterialTheme.colorScheme.onSurfaceVariant)
+        if(biometrics?.available()==true)Action(if(state.biometricPrompting)"Esperando tu huella…" else "Entrar con huella",!state.biometricPrompting){biometrics.authenticate()}
+        else Text(biometrics?.explanation() ?: "Usa tu correo y contraseña para ingresar.",textAlign=TextAlign.Center)
+        state.info?.let {Text(it,textAlign=TextAlign.Center,color=MaterialTheme.colorScheme.primary)}
+        Secondary("Usar correo y contraseña",!state.biometricPrompting){vm.usePassword()}
+        Text("La huella se verifica en este teléfono.",style=MaterialTheme.typography.bodySmall,textAlign=TextAlign.Center)
+    }
+}
 @Composable fun LoginScreen(vm: CasaViewModel,state: CasaState) {
     var email by rememberSaveable {mutableStateOf("")};var password by remember {mutableStateOf("")};var reveal by remember {mutableStateOf(false)}
     Column(Modifier.fillMaxSize().safeDrawingPadding().imePadding().verticalScroll(rememberScrollState()).padding(horizontal=26.dp,vertical=38.dp),verticalArrangement=Arrangement.spacedBy(18.dp)) {
         Spacer(Modifier.height(28.dp));BrandMark(72.dp)
         Text("Casa Familias",style=MaterialTheme.typography.titleLarge)
-        Text("Bienvenido a casa.",style=MaterialTheme.typography.headlineLarge)
+        Text(if(state.locked)"Ingresa con tu contraseña" else "Bienvenido a casa.",style=MaterialTheme.typography.headlineLarge)
         Text("Pagos claros y un hogar organizado, entre todos.",color=MaterialTheme.colorScheme.onSurfaceVariant)
         OutlinedTextField(email,{email=it},label={Text("Correo electrónico")},modifier=Modifier.fillMaxWidth(),singleLine=true,shape=MaterialTheme.shapes.medium,keyboardOptions=KeyboardOptions(keyboardType=KeyboardType.Email),enabled=!state.busy)
         OutlinedTextField(password,{password=it},label={Text("Contraseña")},modifier=Modifier.fillMaxWidth(),singleLine=true,shape=MaterialTheme.shapes.medium,keyboardOptions=KeyboardOptions(keyboardType=KeyboardType.Password),visualTransformation=if(reveal)VisualTransformation.None else PasswordVisualTransformation(),enabled=!state.busy,trailingIcon={IconButton(onClick={reveal=!reveal}){Glyph("eye",if(reveal)"Ocultar contraseña" else "Mostrar contraseña")}})
@@ -64,6 +85,7 @@ import kotlinx.coroutines.*
         if(state.error!=null)Text(state.error,color=MaterialTheme.colorScheme.error)
         Action(if(state.busy)"Conectando…" else "Entrar a mi cuenta",!state.busy){vm.login(email,password)}
         TextButton(onClick={vm.recover(email)},enabled=!state.busy){Text("Olvidé mi contraseña")}
+        if(state.locked)Secondary("Volver al acceso con huella",!state.busy){vm.returnToBiometric()}
         if(state.error!=null)Secondary("Reintentar conexión",!state.busy){vm.start()}
         Text("¿Necesitas una cuenta? Habla con el administrador.",style=MaterialTheme.typography.bodySmall,color=MaterialTheme.colorScheme.onSurfaceVariant)
     }

@@ -1,6 +1,8 @@
 # Casa Familias
 
-Entrega actual: **5.2 nativa, para probar y preparar Google Play**. Conserva el diseño de 5.1. Consulta [la entrega y las pruebas](ENTREGA.md) y [la guía de publicación](entregas/google-play/GUIA_GOOGLE_PLAY.md). Todavía no está publicada en la tienda.
+Entrega actual: **5.3 nativa, con acceso biométrico opcional por teléfono**. Conserva el diseño de 5.1 y la preparación de Google Play de 5.2. Consulta [la entrega y las pruebas](ENTREGA.md) y [la guía de publicación](entregas/google-play/GUIA_GOOGLE_PLAY.md). Todavía no está publicada en la tienda.
+
+Después de iniciar sesión, entra en **Mi perfil → Activar huella** y confirma con la biometría de Android. Necesita un lector compatible y una huella previamente registrada. La opción se activa solo para la cuenta de ese teléfono; no se puede habilitar remotamente para los otros celulares. La contraseña sigue disponible. Se solicita autenticación al reiniciar el proceso o regresar tras 30 segundos fuera de la app. Consulta [la instalación y sus límites](entregas/casa-familias-5.3/LEEME.md).
 
 La interfaz utiliza Kotlin, Jetpack Compose, Material 3, Navigation Compose y MVVM. Incluye azul eléctrico con acentos coral y turquesa, botones con iconos, accesos con texto, Inter, tema claro y oscuro, texto ampliable, formularios por pasos y navegación según el rol. Administrador: Inicio, Gastos, Pagos, Familias y Más. Las capturas de la actualización visual están en [diseno/nativo-v5.1](diseno/nativo-v5.1); las propuestas de la versión anterior se conservan en diseno/nativo-v5/propuestas; la [auditoría de funciones](diseno/nativo-v5/AUDITORIA.md) explica su ubicación.
 

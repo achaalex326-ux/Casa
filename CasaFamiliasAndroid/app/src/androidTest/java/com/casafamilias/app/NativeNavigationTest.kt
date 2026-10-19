@@ -102,6 +102,8 @@ class NativeNavigationTest {
         scroll("Solicitar intercambio").assertExists();screenshot("11-familia-turno")
         compose.onNodeWithContentDescription("Volver").performClick()
         compose.onNodeWithContentDescription("Abrir mi perfil").performClick()
+        scroll("Acceso con huella").assertExists()
+        scroll("Modo oscuro").assertExists()
         compose.onNode(isToggleable()).performScrollTo().performClick()
         scroll("Extra grande").performClick()
         screenshot("12-perfil-oscuro-texto-grande")

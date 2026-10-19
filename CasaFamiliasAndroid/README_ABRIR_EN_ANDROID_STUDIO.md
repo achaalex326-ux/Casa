@@ -1,10 +1,11 @@
-# Abrir Casa Familias 5.2 en Android Studio
+# Abrir Casa Familias 5.3 en Android Studio
 
 1. Actualiza el repositorio desde GitHub Desktop: Fetch origin → Pull origin.
 2. Abre la carpeta **CasaFamiliasAndroid**, que contiene settings.gradle. No abras el ZIP histórico.
 3. Usa JDK 17, Android SDK Platform 36 y conexión para descargar dependencias. El Wrapper fija Gradle 8.11.1; AGP 8.10.1 y Kotlin 2.0.21 están declarados en el proyecto.
 4. Espera Gradle Sync. Selecciona un dispositivo Android 8.0 o posterior y pulsa Run.
 5. Inicia sesión con una cuenta existente. No se crean cuentas de demostración en Supabase.
+6. Para la huella, registra primero una en los ajustes de Android. En la app: Mi perfil → Activar huella. La activación requiere verificar la biometría y se guarda solo en ese teléfono. AndroidX BiometricPrompt conserva el acceso con contraseña cuando no hay lector o no está disponible.
 
 En Windows: `gradlew.bat testDebugUnitTest assembleDebug`. En Linux/macOS: `./gradlew testDebugUnitTest assembleDebug`. Salida: app/build/outputs/apk/debug/app-debug.apk. Para la entrega optimizada de pruebas: assemblePresentation; salida app/build/outputs/apk/presentation/app-presentation.apk. La entrega actual usa firma de pruebas compatible con los APK entregados previamente desde este entorno; una compilación hecha en otro equipo puede tener un certificado diferente.
 

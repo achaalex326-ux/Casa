@@ -5,7 +5,7 @@ import android.content.pm.ApplicationInfo
 import android.os.Bundle
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import androidx.activity.ComponentActivity
+import androidx.fragment.app.FragmentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.SystemBarStyle
@@ -20,7 +20,7 @@ import kotlinx.coroutines.*
 import org.json.JSONTokener
 import org.json.JSONObject
 
-class MainActivity: ComponentActivity() {
+class MainActivity: FragmentActivity() {
     private lateinit var vm: CasaViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,13 +30,16 @@ class MainActivity: ComponentActivity() {
         vm=ViewModelProvider(this,object: ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST") override fun <T: ViewModel> create(modelClass: Class<T>): T=CasaViewModel(application,source) as T
         })[CasaViewModel::class.java]
-        setContent {CasaApp(vm)}
+        val biometrics=BiometricAccess(this,vm)
+        setContent {CasaApp(vm,biometrics)}
         if(!vm.hasStarted) {
             val fragment=recovery(intent)
             if(preview || fragment!=null || source.session!=null)vm.start(fragment=fragment)
             else migrateLegacySession {vm.start(it)}
         }
     }
+    override fun onStart() {super.onStart();if(::vm.isInitialized)vm.foreground()}
+    override fun onStop() {if(::vm.isInitialized && !isChangingConfigurations)vm.background();super.onStop()}
     override fun onNewIntent(intent: Intent) {super.onNewIntent(intent);setIntent(intent);recovery(intent)?.let {vm.start(fragment=it)}}
     private fun recovery(intent: Intent): String? = intent.data?.takeIf {it.scheme=="casafamilias" && it.host=="auth"}?.encodedFragment
     private fun migrateLegacySession(done: (String?)->Unit) {

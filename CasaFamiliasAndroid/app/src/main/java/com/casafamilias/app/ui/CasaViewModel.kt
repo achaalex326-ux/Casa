@@ -2,6 +2,7 @@ package com.casafamilias.app.ui
 
 import android.app.Application
 import android.net.Uri
+import android.os.SystemClock
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.casafamilias.app.data.*
@@ -11,35 +12,90 @@ import kotlinx.coroutines.flow.*
 import org.json.JSONArray
 import org.json.JSONObject
 
-data class CasaState(val starting: Boolean=true,val data: Snapshot?=null,val busy: Boolean=false,val error: String?=null,val info: String?=null,val recovery: Boolean=false,val dark: Boolean=false,val textScale: Float=1f,val extras: Map<String,List<Record>> = emptyMap())
-class CasaViewModel(app: Application,private val source: CasaDataSource): AndroidViewModel(app) {
+data class CasaState(val starting: Boolean=true,val data: Snapshot?=null,val busy: Boolean=false,val error: String?=null,val info: String?=null,val recovery: Boolean=false,val dark: Boolean=false,val textScale: Float=1f,val extras: Map<String,List<Record>> = emptyMap(),val locked: Boolean=false,val passwordEntry: Boolean=false,val biometricEnabled: Boolean=false,val biometricPrompting: Boolean=false,val securityRevision: Int=0)
+class CasaViewModel(app: Application,private val source: CasaDataSource,private val clock: ()->Long = SystemClock::elapsedRealtime): AndroidViewModel(app) {
     private val prefs=app.getSharedPreferences("casa_preferences",0)
-    private val mutable=MutableStateFlow(CasaState(dark=prefs.getBoolean("dark",false),textScale=prefs.getFloat("text_scale",1f)))
+    private val accessPrefs=app.getSharedPreferences("casa_local_access",0)
+    private val access=LocalAccessPolicy(accessPrefs.getString("owner",null).takeIf {it==source.session?.userId})
+    private var biometricRequest: Boolean?=null
+    private val mutable=MutableStateFlow(CasaState(dark=prefs.getBoolean("dark",false),textScale=prefs.getFloat("text_scale",1f),locked=access.requiresUnlock(source.session?.userId),biometricEnabled=access.enabledFor(source.session?.userId)))
     val state=mutable.asStateFlow()
     private val events=MutableSharedFlow<String>(extraBufferCapacity=8);val messages=events.asSharedFlow()
     var hasStarted=false; private set
+    fun beginBiometric(enable: Boolean): Boolean {
+        val s=state.value
+        if(s.busy || s.starting || biometricRequest!=null)return false
+        if(enable && (s.locked || s.data==null || s.data.preview || s.data.profile.id!=source.session?.userId))return false
+        if(!enable && !access.requiresUnlock(source.session?.userId))return false
+        biometricRequest=enable;mutable.update {it.copy(biometricPrompting=true,info=null)};return true
+    }
+    fun biometricVerified() {
+        val enable=biometricRequest ?: return
+        biometricRequest=null
+        if(enable) {
+            val user=source.session?.userId ?: return biometricCancelled("Vuelve a ingresar antes de activar la huella.")
+            if(state.value.data?.profile?.id!=user || state.value.locked)return biometricCancelled(null)
+            access.enable(user);accessPrefs.edit().putString("owner",user).apply()
+        } else access.authenticate()
+        mutable.update {it.copy(locked=false,passwordEntry=false,biometricEnabled=true,biometricPrompting=false,info=null,error=null)}
+        if(enable)inform("Acceso con huella activado en este teléfono.") else start()
+    }
+    fun biometricCancelled(message: String?,password: Boolean=false) {
+        val enabling=biometricRequest==true;biometricRequest=null
+        mutable.update {it.copy(biometricPrompting=false,info=message)}
+        if(password && !enabling)usePassword()
+        if(message!=null && !state.value.locked)inform(message)
+    }
+    fun disableBiometric() {
+        if(state.value.locked || state.value.data==null)return
+        access.disable();accessPrefs.edit().remove("owner").apply()
+        mutable.update {it.copy(biometricEnabled=false,biometricPrompting=false)}
+        inform("Acceso con huella desactivado en este teléfono.")
+    }
+    fun usePassword() {if(state.value.locked)mutable.update {it.copy(passwordEntry=true,error=null,info=null)}}
+    fun returnToBiometric() {if(state.value.locked)mutable.update {it.copy(passwordEntry=false,error=null,info=null)}}
+    fun background() {access.background(clock())}
+    fun foreground() {
+        access.foreground(clock())
+        val locked=access.requiresUnlock(source.session?.userId)
+        // Recheck Android enrollment when returning from its security settings.
+        mutable.update {it.copy(locked=it.locked || locked,passwordEntry=if(locked)false else it.passwordEntry,info=if(locked)null else it.info,securityRevision=it.securityRevision+1)}
+    }
+    private fun passwordAccepted() {
+        val user=source.session?.userId ?: return
+        access.passwordAuthenticated(user)
+        if(access.owner==null)accessPrefs.edit().remove("owner").apply()
+        mutable.update {it.copy(locked=false,passwordEntry=false,biometricEnabled=access.enabledFor(user))}
+    }
+    private fun clearLocalAccess() {
+        biometricRequest=null;access.disable();accessPrefs.edit().remove("owner").apply()
+        mutable.update {it.copy(locked=false,passwordEntry=false,biometricEnabled=false,biometricPrompting=false)}
+    }
     fun theme(dark: Boolean) {prefs.edit().putBoolean("dark",dark).apply();mutable.update { it.copy(dark=dark) }}
     fun scale(scale: Float) {prefs.edit().putFloat("text_scale",scale).apply();mutable.update { it.copy(textScale=scale) }}
     fun start(legacy: String?=null,fragment: String?=null) {
         hasStarted=true
+        if(fragment==null && access.requiresUnlock(source.session?.userId)) {
+            mutable.update {it.copy(starting=false,locked=true)};return
+        }
         viewModelScope.launch {
             mutable.update { it.copy(starting=true,error=null) }
             try {
-                withTimeout(45000) { if(fragment!=null){source.importRecovery(fragment);mutable.update { it.copy(starting=false,recovery=true,data=null) };return@withTimeout} else source.restore(legacy)
+                withTimeout(45000) { if(fragment!=null){source.importRecovery(fragment);clearLocalAccess();mutable.update { it.copy(starting=false,recovery=true,data=null) };return@withTimeout} else source.restore(legacy)
                     val data=if(source.session!=null)source.load() else null
                     mutable.update { it.copy(starting=false,data=data,recovery=false) }
                 }
-            } catch(e: Exception) { if(e is CancellationException && e !is TimeoutCancellationException)throw e;mutable.update { it.copy(starting=false,error=human(e)) } }
+            } catch(e: Exception) { if(e is CancellationException && e !is TimeoutCancellationException)throw e;if(source.session==null){clearLocalAccess();mutable.update {it.copy(data=null,extras=emptyMap())}};mutable.update { it.copy(starting=false,error=human(e)) } }
         }
     }
     fun login(email: String,password: String) {
         if(state.value.busy)return
         if(!Regex("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$").matches(email.trim()) || password.isBlank()){mutable.update { it.copy(error="Escribe tu correo y contraseña.") };return}
-        task {source.login(email,password);val data=source.load();mutable.update { it.copy(data=data,recovery=false,error=null) }}
+        task(authentication=true) {source.login(email,password);passwordAccepted();mutable.update {it.copy(data=null,extras=emptyMap())};val data=source.load();mutable.update { it.copy(data=data,recovery=false,error=null) }}
     }
-    fun recover(email: String) {if(email.isBlank()){mutable.update { it.copy(error="Escribe tu correo para enviarte el enlace.") };return};task {source.recover(email);mutable.update {it.copy(info="Si el correo tiene una cuenta, recibirás el enlace de recuperación.")} }}
+    fun recover(email: String) {if(email.isBlank()){mutable.update { it.copy(error="Escribe tu correo para enviarte el enlace.") };return};task(authentication=true) {source.recover(email);mutable.update {it.copy(info="Si el correo tiene una cuenta, recibirás el enlace de recuperación.")} }}
     fun refresh() {if(state.value.data?.preview==true){events.tryEmit("Vista de diseño: datos de ejemplo.");return};task { val data=source.load();mutable.update { it.copy(data=data,error=null) } }}
-    fun logout() {task { source.logout();getApplication<Application>().getSharedPreferences("casa_native_migration",0).edit().putBoolean("done",true).apply();mutable.update { it.copy(data=null,recovery=false,error=null,extras=emptyMap()) } }}
+    fun logout() {task { source.logout();clearLocalAccess();getApplication<Application>().getSharedPreferences("casa_native_migration",0).edit().putBoolean("done",true).apply();mutable.update { it.copy(data=null,recovery=false,error=null,extras=emptyMap()) } }}
     fun resetPassword(password: String,confirmation: String) {
         if(password.length<8 || password!=confirmation){mutable.update {it.copy(error=if(password.length<8)"La contraseña debe tener al menos 8 caracteres." else "Las contraseñas no coinciden.")};return}
         task {source.password(password);val data=runCatching {source.load()}.getOrNull();mutable.update {it.copy(recovery=false,data=data,error=if(data==null)"Contraseña actualizada. Ingresa con tu nueva contraseña." else null)};events.emit("Contraseña actualizada.")}
@@ -47,12 +103,12 @@ class CasaViewModel(app: Application,private val source: CasaDataSource): Androi
     fun clearError(){mutable.update { it.copy(error=null) }}
     fun inform(message: String){events.tryEmit(message)}
     private fun human(e: Exception)=when(e){is java.io.IOException->if(e is ApiError)e.message else "No se pudo conectar. Revisa internet y vuelve a intentar.";is TimeoutCancellationException->"La conexión está tardando demasiado. Revisa internet y vuelve a intentar.";is java.net.UnknownHostException,is java.net.ConnectException->"No se pudo conectar. Revisa internet y vuelve a intentar.";else->e.message?.takeIf { it.isNotBlank() } ?: "No se pudo completar. Inténtalo de nuevo."}
-    private fun task(block: suspend ()->Unit) {
-        if(state.value.busy)return
+    private fun task(authentication: Boolean=false,block: suspend ()->Unit) {
+        if(state.value.busy || (state.value.locked && !authentication))return
         mutable.update { it.copy(busy=true,error=null) }
         viewModelScope.launch {
             try {withTimeout(60000){block()}}
-            catch(e: SessionExpired){mutable.update { it.copy(data=null,recovery=false,error=e.message,extras=emptyMap()) }}
+            catch(e: SessionExpired){clearLocalAccess();mutable.update { it.copy(data=null,recovery=false,error=e.message,extras=emptyMap()) }}
             catch(e: Exception){if(e is CancellationException && e !is TimeoutCancellationException)throw e;mutable.update { it.copy(error=human(e)) };events.emit(human(e))}
             finally{mutable.update { it.copy(busy=false) }}
         }
@@ -62,7 +118,8 @@ class CasaViewModel(app: Application,private val source: CasaDataSource): Androi
         task {source.rpc(name,body);val data=source.load();mutable.update { it.copy(data=data) };events.emit(success);done()}
     }
     fun image(path: String,qr: Boolean=false,done: (String)->Unit) {
-        viewModelScope.launch {try {done(source.signedImage(path,qr))}catch(e: Exception){if(e is CancellationException)throw e;events.emit("No se pudo abrir la imagen. Revisa tu conexión.")}}
+        if(state.value.locked)return
+        viewModelScope.launch {try {val url=source.signedImage(path,qr);if(!state.value.locked)done(url)}catch(e: Exception){if(e is CancellationException)throw e;events.emit("No se pudo abrir la imagen. Revisa tu conexión.")}}
     }
     fun targets(turnId: String) {
         if(state.value.data?.preview==true)return
