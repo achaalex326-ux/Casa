@@ -22,6 +22,13 @@ class CasaViewModel(app: Application,private val source: CasaDataSource,private 
     val state=mutable.asStateFlow()
     private val events=MutableSharedFlow<String>(extraBufferCapacity=8);val messages=events.asSharedFlow()
     var hasStarted=false; private set
+    fun deviceSettingsChanged(){mutable.update {it.copy(securityRevision=it.securityRevision+1)}}
+    private fun resumeDeviceAlerts(data: Snapshot?) {
+        if(source !is CasaRepository)return
+        val app=getApplication<Application>()
+        DeviceAlertState.accountChanged(app,source.session?.userId)
+        if(data!=null && !data.preview)DeviceAlertState.schedule(app,data.profile.id)
+    }
     fun beginBiometric(enable: Boolean): Boolean {
         val s=state.value
         if(s.busy || s.starting || biometricRequest!=null)return false
@@ -68,6 +75,7 @@ class CasaViewModel(app: Application,private val source: CasaDataSource,private 
         mutable.update {it.copy(locked=false,passwordEntry=false,biometricEnabled=access.enabledFor(user))}
     }
     private fun clearLocalAccess() {
+        if(source is CasaRepository)DeviceAlertState.disable(getApplication())
         biometricRequest=null;access.disable();accessPrefs.edit().remove("owner").apply()
         mutable.update {it.copy(locked=false,passwordEntry=false,biometricEnabled=false,biometricPrompting=false)}
     }
@@ -76,6 +84,7 @@ class CasaViewModel(app: Application,private val source: CasaDataSource,private 
     fun start(legacy: String?=null,fragment: String?=null) {
         hasStarted=true
         if(fragment==null && access.requiresUnlock(source.session?.userId)) {
+            if(source is CasaRepository)source.session?.userId?.let {DeviceAlertState.schedule(getApplication(),it,false)}
             mutable.update {it.copy(starting=false,locked=true)};return
         }
         viewModelScope.launch {
@@ -83,6 +92,7 @@ class CasaViewModel(app: Application,private val source: CasaDataSource,private 
             try {
                 withTimeout(45000) { if(fragment!=null){source.importRecovery(fragment);clearLocalAccess();mutable.update { it.copy(starting=false,recovery=true,data=null) };return@withTimeout} else source.restore(legacy)
                     val data=if(source.session!=null)source.load() else null
+                    resumeDeviceAlerts(data)
                     mutable.update { it.copy(starting=false,data=data,recovery=false) }
                 }
             } catch(e: Exception) { if(e is CancellationException && e !is TimeoutCancellationException)throw e;if(source.session==null){clearLocalAccess();mutable.update {it.copy(data=null,extras=emptyMap())}};mutable.update { it.copy(starting=false,error=human(e)) } }
@@ -91,10 +101,10 @@ class CasaViewModel(app: Application,private val source: CasaDataSource,private 
     fun login(email: String,password: String) {
         if(state.value.busy)return
         if(!Regex("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$").matches(email.trim()) || password.isBlank()){mutable.update { it.copy(error="Escribe tu correo y contraseña.") };return}
-        task(authentication=true) {source.login(email,password);passwordAccepted();mutable.update {it.copy(data=null,extras=emptyMap())};val data=source.load();mutable.update { it.copy(data=data,recovery=false,error=null) }}
+        task(authentication=true) {source.login(email,password);passwordAccepted();if(source is CasaRepository)DeviceAlertState.accountChanged(getApplication(),source.session?.userId);mutable.update {it.copy(data=null,extras=emptyMap())};val data=source.load();resumeDeviceAlerts(data);mutable.update { it.copy(data=data,recovery=false,error=null) }}
     }
     fun recover(email: String) {if(email.isBlank()){mutable.update { it.copy(error="Escribe tu correo para enviarte el enlace.") };return};task(authentication=true) {source.recover(email);mutable.update {it.copy(info="Si el correo tiene una cuenta, recibirás el enlace de recuperación.")} }}
-    fun refresh() {if(state.value.data?.preview==true){events.tryEmit("Vista de diseño: datos de ejemplo.");return};task { val data=source.load();mutable.update { it.copy(data=data,error=null) } }}
+    fun refresh() {if(state.value.data?.preview==true){events.tryEmit("Vista de diseño: datos de ejemplo.");return};task { val data=source.load();resumeDeviceAlerts(data);mutable.update { it.copy(data=data,error=null) } }}
     fun logout() {task { source.logout();clearLocalAccess();getApplication<Application>().getSharedPreferences("casa_native_migration",0).edit().putBoolean("done",true).apply();mutable.update { it.copy(data=null,recovery=false,error=null,extras=emptyMap()) } }}
     fun resetPassword(password: String,confirmation: String) {
         if(password.length<8 || password!=confirmation){mutable.update {it.copy(error=if(password.length<8)"La contraseña debe tener al menos 8 caracteres." else "Las contraseñas no coinciden.")};return}

@@ -1,4 +1,4 @@
-# Abrir Casa Familias 5.3 en Android Studio
+# Abrir Casa Familias 5.4 en Android Studio
 
 1. Actualiza el repositorio desde GitHub Desktop: Fetch origin → Pull origin.
 2. Abre la carpeta **CasaFamiliasAndroid**, que contiene settings.gradle. No abras el ZIP histórico.
@@ -6,6 +6,7 @@
 4. Espera Gradle Sync. Selecciona un dispositivo Android 8.0 o posterior y pulsa Run.
 5. Inicia sesión con una cuenta existente. No se crean cuentas de demostración en Supabase.
 6. Para la huella, registra primero una en los ajustes de Android. En la app: Mi perfil → Activar huella. La activación requiere verificar la biometría y se guarda solo en ese teléfono. AndroidX BiometricPrompt conserva el acceso con contraseña cuando no hay lector o no está disponible.
+7. Para avisos del celular: Mi perfil → Activar notificaciones. Android13 o posterior solicita POST_NOTIFICATIONS. Hay un botón de prueba y acceso a los ajustes del sistema. WorkManager revisa los datos con la actividad cerrada, mínimo cada15minutos y sujeto a las restricciones de Android. No es FCM/push instantáneo. No requiere un proyecto Firebase.
 
 En Windows: `gradlew.bat testDebugUnitTest assembleDebug`. En Linux/macOS: `./gradlew testDebugUnitTest assembleDebug`. Salida: app/build/outputs/apk/debug/app-debug.apk. Para la entrega optimizada de pruebas: assemblePresentation; salida app/build/outputs/apk/presentation/app-presentation.apk. La entrega actual usa firma de pruebas compatible con los APK entregados previamente desde este entorno; una compilación hecha en otro equipo puede tener un certificado diferente.
 
@@ -26,7 +27,7 @@ Todas las pantallas son nativas. Solo existe un WebView invisible y temporal par
 
 Solo en compilación debug se puede iniciar MainActivity con extras design_preview=true y preview_role=sysadmin, family, payer o restaurant. Utiliza PreviewRepository de solo lectura y muestra un aviso de datos ficticios. La entrega release ignora esos extras y abre la autenticación real. No uses capturas de ejemplo como evidencia de operaciones reales.
 
-La aplicación necesita internet para autenticarse y sincronizar registros. ML Kit está incluido para leer comprobantes sin descargar un modelo; la lectura requiere revisión humana. El selector de documentos de Android proporciona acceso a imágenes sin pedir permiso general de archivos. La campana muestra notificaciones guardadas en Supabase, no se implementa un servicio nuevo de notificaciones push.
+La aplicación necesita internet para autenticarse y sincronizar registros. ML Kit está incluido para leer comprobantes sin descargar un modelo; la lectura requiere revisión humana. El selector de documentos de Android proporciona acceso a imágenes sin pedir permiso general de archivos. La campana muestra avisos guardados en Supabase; los avisos nativos del celular se revisan con WorkManager tras la activación del usuario. Los recordatorios de deuda se calculan desde el saldo vigente, evitando reenviar avisos históricos de deudas saldadas.
 
 ## Preparación para Google Play (5.2)
 

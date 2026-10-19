@@ -1,0 +1,9 @@
+{
+  "updateInstall": "PASS",
+  "versionName": "5.4",
+  "versionCode": 10,
+  "nativeLoginRendered": true,
+  "presentationIgnoresPreviewExtras": true,
+  "physicalPhoneTested": false,
+  "android16RuntimeTested": false
+}

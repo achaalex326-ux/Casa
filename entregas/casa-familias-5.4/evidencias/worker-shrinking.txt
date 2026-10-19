@@ -1,0 +1,66 @@
+com.casafamilias.app.data.DeviceAlertWorker -> com.casafamilias.app.data.DeviceAlertWorker:
+# {"id":"sourceFile","fileName":"DeviceAlerts.kt"}
+    kotlin.jvm.functions.Function4 fetch -> g
+      # {"id":"com.android.tools.r8.residualsignature","signature":"LT3/g;"}
+    1:1:void <init>(android.content.Context,androidx.work.WorkerParameters,kotlin.jvm.functions.Function4):74:74 -> <init>
+      # {"id":"com.android.tools.r8.residualsignature","signature":"(Landroid/content/Context;Landroidx/work/WorkerParameters;LT3/g;)V"}
+    2:2:void <init>(android.content.Context,androidx.work.WorkerParameters):75:75 -> <init>
+    3:3:void com.casafamilias.app.data.DeviceAlertWorker$1.<init>(kotlin.coroutines.Continuation):0:0 -> <init>
+    3:3:void <init>(android.content.Context,androidx.work.WorkerParameters):75 -> <init>
+    4:4:void <init>(android.content.Context,androidx.work.WorkerParameters):75:75 -> <init>
+    30:72:java.lang.Object doWork(kotlin.coroutines.Continuation):76:76 -> c
+      # {"id":"com.android.tools.r8.residualsignature","signature":"(LK3/d;)Ljava/lang/Object;"}
+    73:79:java.lang.Object doWork(kotlin.coroutines.Continuation):77:77 -> c
+    80:83:androidx.work.Data androidx.work.WorkerParameters.getInputData():105:105 -> c
+    80:83:androidx.work.Data androidx.work.ListenableWorker.getInputData():117 -> c
+      # {"id":"com.android.tools.r8.rewriteFrame","conditions":["throws(Ljava/lang/NullPointerException;)"],"actions":["removeInnerFrames(1)"]}
+    80:83:java.lang.Object doWork(kotlin.coroutines.Continuation):77 -> c
+    84:85:java.lang.String androidx.work.Data.getString(java.lang.String):177:177 -> c
+    84:85:java.lang.Object doWork(kotlin.coroutines.Continuation):77 -> c
+      # {"id":"com.android.tools.r8.rewriteFrame","conditions":["throws(Ljava/lang/NullPointerException;)"],"actions":["removeInnerFrames(1)"]}
+    86:103:java.lang.String androidx.work.Data.getString(java.lang.String):177:177 -> c
+    86:103:java.lang.Object doWork(kotlin.coroutines.Continuation):77 -> c
+    104:109:androidx.work.ListenableWorker$Result androidx.work.ListenableWorker$Result.success():368:368 -> c
+    104:109:java.lang.Object doWork(kotlin.coroutines.Continuation):77 -> c
+    110:116:android.content.SharedPreferences com.casafamilias.app.data.DeviceAlertState.prefs(android.content.Context):31:31 -> c
+    110:116:java.lang.String com.casafamilias.app.data.DeviceAlertState.owner(android.content.Context):32 -> c
+    110:116:java.lang.Object doWork(kotlin.coroutines.Continuation):78 -> c
+    117:122:java.lang.String com.casafamilias.app.data.DeviceAlertState.owner(android.content.Context):32:32 -> c
+    117:122:java.lang.Object doWork(kotlin.coroutines.Continuation):78 -> c
+    123:128:java.lang.Object doWork(kotlin.coroutines.Continuation):78:78 -> c
+    129:133:androidx.core.app.NotificationManagerCompat androidx.core.app.NotificationManagerCompat.from(android.content.Context):217:217 -> c
+    129:133:boolean com.casafamilias.app.data.DeviceAlertState.permitted(android.content.Context):34 -> c
+    129:133:java.lang.Object doWork(kotlin.coroutines.Continuation):78 -> c
+    134:141:boolean androidx.core.app.NotificationManagerCompat.areNotificationsEnabled():369:369 -> c
+    134:141:boolean com.casafamilias.app.data.DeviceAlertState.permitted(android.content.Context):34 -> c
+    134:141:java.lang.Object doWork(kotlin.coroutines.Continuation):78 -> c
+    142:155:boolean com.casafamilias.app.data.DeviceAlertState.permitted(android.content.Context):34:34 -> c
+    142:155:java.lang.Object doWork(kotlin.coroutines.Continuation):78 -> c
+    156:160:java.lang.Object doWork(kotlin.coroutines.Continuation):79:79 -> c
+    161:174:java.lang.Object doWork(kotlin.coroutines.Continuation):80:80 -> c
+    175:180:androidx.work.ListenableWorker$Result androidx.work.ListenableWorker$Result.success():368:368 -> c
+    175:180:java.lang.Object doWork(kotlin.coroutines.Continuation):80 -> c
+    181:225:java.lang.Object doWork(kotlin.coroutines.Continuation):81:81 -> c
+    226:227:int androidx.work.WorkerParameters.getRunAttemptCount():161:161 -> c
+    226:227:int androidx.work.ListenableWorker.getRunAttemptCount():173 -> c
+      # {"id":"com.android.tools.r8.rewriteFrame","conditions":["throws(Ljava/lang/NullPointerException;)"],"actions":["removeInnerFrames(1)"]}
+    226:227:java.lang.Object doWork(kotlin.coroutines.Continuation):91 -> c
+      # {"id":"com.android.tools.r8.rewriteFrame","conditions":["throws(Ljava/lang/NullPointerException;)"],"actions":["removeInnerFrames(2)"]}
+    228:232:int androidx.work.WorkerParameters.getRunAttemptCount():161:161 -> c
+    228:232:int androidx.work.ListenableWorker.getRunAttemptCount():173 -> c
+      # {"id":"com.android.tools.r8.rewriteFrame","conditions":["throws(Ljava/lang/NullPointerException;)"],"actions":["removeInnerFrames(1)"]}
+    228:232:java.lang.Object doWork(kotlin.coroutines.Continuation):91 -> c
+    233:234:androidx.work.ListenableWorker$Result androidx.work.ListenableWorker$Result.retry():394:394 -> c
+    233:234:java.lang.Object doWork(kotlin.coroutines.Continuation):91 -> c
+    235:238:void androidx.work.ListenableWorker$Result.<init>():437:437 -> c
+    235:238:void androidx.work.ListenableWorker$Result$Retry.<init>():553 -> c
+    235:238:androidx.work.ListenableWorker$Result androidx.work.ListenableWorker$Result.retry():394 -> c
+    235:238:java.lang.Object doWork(kotlin.coroutines.Continuation):91 -> c
+    239:247:androidx.work.ListenableWorker$Result androidx.work.ListenableWorker$Result.success():368:368 -> c
+    239:247:java.lang.Object doWork(kotlin.coroutines.Continuation):91 -> c
+    248:250:java.lang.Object doWork(kotlin.coroutines.Continuation):90:90 -> c
+    251:269:java.lang.Object doWork(kotlin.coroutines.Continuation):88:88 -> c
+    270:276:androidx.work.ListenableWorker$Result androidx.work.ListenableWorker$Result.success():368:368 -> c
+    270:276:java.lang.Object doWork(kotlin.coroutines.Continuation):89 -> c
+    277:282:androidx.work.ListenableWorker$Result androidx.work.ListenableWorker$Result.success():368:368 -> c
+    277:282:java.lang.Object doWork(kotlin.coroutines.Continuation):78 -> c

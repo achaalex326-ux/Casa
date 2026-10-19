@@ -189,6 +189,7 @@ fun serviceLabel(s: String)=mapOf("water" to "Agua","electricity" to "Luz","gas"
 @Composable fun AdministrationScreen(go: Go,onBackup: ()->Unit) {ContentList{item{Title("Administración","Control y configuración de la casa")};item{Panel{Glyph("admin");Text("Los cambios importantes quedan registrados.")}};item{Text("Configuración",style=MaterialTheme.typography.titleLarge)};item{NavRow("qr","QR de pago","Imagen e instrucciones"){go("form/qr")}};item{NavRow("families","Familias del encargado","Dos asignaciones contables"){go("form/payer-families")}};item{NavRow("expenses","Plantillas de gastos","Conceptos recurrentes"){go("templates")}};item{Text("Control",style=MaterialTheme.typography.titleLarge)};item{NavRow("date","Cierre y reapertura de meses","Control de períodos contables"){go("periods")}};item{NavRow("admin","Auditoría","Registro de cambios"){go("audit")}};item{Text("Datos",style=MaterialTheme.typography.titleLarge)};item{NavRow("download","Exportar respaldo","Datos y rutas de comprobantes"){onBackup()}}}}
 @Composable fun ProfileScreen(s: Snapshot,vm: CasaViewModel,go: Go) {val state by vm.state.collectAsState();var logout by remember {mutableStateOf(false)}
     val biometrics=LocalBiometricAccess.current
+    val alerts=LocalDeviceAlerts.current
     ContentList{item{Title("Mi perfil",s.profile.role.label)};item{Panel{DataLine("Nombre",s.profile.name);DataLine("Correo",s.profile.email);if(s.profile.familyId!=null)DataLine("Familia",s.family(s.profile.familyId))}};item{NavRow("lock","Cambiar contraseña","Gestiona el acceso a tu cuenta"){go("form/password")}}
         item{Panel{
             Glyph("lock");Text("Acceso con huella",style=MaterialTheme.typography.titleMedium)
@@ -199,6 +200,20 @@ fun serviceLabel(s: String)=mapOf("water" to "Agua","electricity" to "Luz","gas"
                 biometrics?.available()==true -> Action("Activar huella",!state.busy && !state.biometricPrompting){biometrics.authenticate(enable=true)}
                 biometrics?.canEnroll()==true -> Secondary("Configurar huella en el teléfono"){biometrics.enroll()}
             }
+        }}
+        item{Panel{
+            Glyph("notifications");Text("Notificaciones del celular",style=MaterialTheme.typography.titleMedium)
+            Text("Recibe tu turno de limpieza, nuevas deudas y avisos de servicios. Se revisan en segundo plano aproximadamente cada 15 minutos; Android puede demorarlos por batería o conexión.")
+            when {
+                s.preview -> Text("Actívalas al ingresar con tu cuenta real.",style=MaterialTheme.typography.bodySmall)
+                alerts?.enabled()==true -> {
+                    Text(if(alerts.allowed())"Activadas en este teléfono." else "Android está bloqueando las notificaciones. Permítelas en Ajustes.")
+                    Secondary("Probar notificación",alerts.allowed()){alerts.test()}
+                    Secondary("Desactivar notificaciones"){alerts.disable()}
+                }
+                alerts!=null -> Action("Activar notificaciones",!state.busy){alerts.enable()}
+            }
+            if(!s.preview && alerts!=null)Secondary("Ajustes de notificaciones"){alerts.settings()}
         }}
         item{Panel{Row(verticalAlignment=Alignment.CenterVertically){Text("Modo oscuro",Modifier.weight(1f));Switch(state.dark,{vm.theme(it)})};Text("Tamaño del texto",style=MaterialTheme.typography.titleMedium);Filters(listOf(Choice("1.0","Normal"),Choice("1.15","Grande"),Choice("1.3","Extra grande")),state.textScale.toString(),{vm.scale(it.toFloat())})}};item{Secondary("Actualizar datos",!state.busy){vm.refresh()}};item{Text("Casa Familias ${BuildConfig.VERSION_NAME} · Android",style=MaterialTheme.typography.bodySmall)};item{Secondary("Cerrar sesión",!state.busy){logout=true}}}
     if(logout)Confirm("Cerrar sesión","¿Quieres salir de esta cuenta en el teléfono?",onDismiss={logout=false}){logout=false;vm.logout()}

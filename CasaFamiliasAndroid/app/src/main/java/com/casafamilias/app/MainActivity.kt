@@ -31,7 +31,8 @@ class MainActivity: FragmentActivity() {
             @Suppress("UNCHECKED_CAST") override fun <T: ViewModel> create(modelClass: Class<T>): T=CasaViewModel(application,source) as T
         })[CasaViewModel::class.java]
         val biometrics=BiometricAccess(this,vm)
-        setContent {CasaApp(vm,biometrics)}
+        val alerts=DeviceAlerts(this,vm)
+        setContent {CasaApp(vm,biometrics,alerts)}
         if(!vm.hasStarted) {
             val fragment=recovery(intent)
             if(preview || fragment!=null || source.session!=null)vm.start(fragment=fragment)

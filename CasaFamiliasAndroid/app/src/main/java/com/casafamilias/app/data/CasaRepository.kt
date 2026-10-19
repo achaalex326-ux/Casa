@@ -46,7 +46,7 @@ interface CasaDataSource {
 }
 class CasaRepository(private val context: Context?,private val config: ApiConfig,private val store: SessionStore,private val client: OkHttpClient=OkHttpClient.Builder().connectTimeout(15,TimeUnit.SECONDS).readTimeout(25,TimeUnit.SECONDS).callTimeout(35,TimeUnit.SECONDS).build()): CasaDataSource {
     override var session: Session?=store.load();private set
-    private val refreshLock=Mutex()
+    companion object { private val authLock=Mutex() }
     private var notifiedForUser: String?=null
     private fun message(raw: String,status: Int): String {
         val j=runCatching { JSONObject(raw) }.getOrNull()
@@ -70,21 +70,28 @@ class CasaRepository(private val context: Context?,private val config: ApiConfig
         }
     }
     private fun save(j: JSONObject) { val parsed=Session.from(j);require(parsed.accessToken.isNotBlank() && parsed.refreshToken.isNotBlank());store.save(parsed);session=parsed }
-    private suspend fun refresh() = refreshLock.withLock {
+    private suspend fun refreshLocked(rejectedToken: String?=null) {
+        // Foreground and background repositories share one rotating refresh token.
+        val latest=store.load()
+        if(latest==null || (session?.userId?.isNotBlank()==true && latest.userId!=session?.userId)) {
+            session=null;throw SessionExpired()
+        }
+        session=latest
         val s=session ?: throw SessionExpired()
-        if(s.expiresAt>System.currentTimeMillis()/1000+60)return@withLock
+        if(s.expiresAt>System.currentTimeMillis()/1000+60 && s.accessToken!=rejectedToken)return
         try { save(JSONObject(send("/auth/v1/token","POST",json("refresh_token" to s.refreshToken).toString(),mapOf("grant_type" to "refresh_token"),token=null))) }
         catch(e: ApiError) { if(e.status in 400..499 && e.status!=429) {store.clear();session=null;throw SessionExpired()} else throw e }
     }
+    private suspend fun refresh(rejectedToken: String?=null) = authLock.withLock {refreshLocked(rejectedToken)}
     private suspend fun authorized(path: String,method: String="GET",body: JSONObject?=null,query: Map<String,String> = emptyMap()): String {
         refresh()
         val attemptedToken=session?.accessToken
         return try {send(path,method,body?.toString(),query)} catch(e: ApiError) {
             if(e.status!=401)throw e
-            if(session?.accessToken==attemptedToken)session=session?.copy(expiresAt=0);refresh();send(path,method,body?.toString(),query)
+            refresh(attemptedToken);send(path,method,body?.toString(),query)
         }
     }
-    override suspend fun login(email: String,password: String) {save(JSONObject(send("/auth/v1/token","POST",json("email" to email.trim(),"password" to password).toString(),mapOf("grant_type" to "password"),token=null)))}
+    override suspend fun login(email: String,password: String) {authLock.withLock {save(JSONObject(send("/auth/v1/token","POST",json("email" to email.trim(),"password" to password).toString(),mapOf("grant_type" to "password"),token=null)))}}
     override suspend fun restore(legacy: String?) {
         if(session==null && !legacy.isNullOrBlank())runCatching { save(JSONObject(legacy)) }
         if(session!=null)refresh()
@@ -100,7 +107,7 @@ class CasaRepository(private val context: Context?,private val config: ApiConfig
         val s=session ?: throw SessionExpired()
         val user=JSONObject(authorized("/auth/v1/user"));val id=user.getString("id")
         val current=session ?: s
-        if(id!=current.userId){val updated=current.copy(userId=id,email=user.optString("email"));store.save(updated);session=updated}
+        if(id!=current.userId)authLock.withLock {val latest=store.load() ?: throw SessionExpired();if(latest.userId.isNotBlank() && latest.userId!=id)throw SessionExpired();val updated=latest.copy(userId=id,email=user.optString("email"));store.save(updated);session=updated}
         val p=select("profiles",mapOf("id" to "eq.$id")).firstOrNull()?.let(Profile::from) ?: error("La cuenta no tiene un perfil disponible. Consulta al administrador.")
         if(p.role.staff && notifiedForUser!=p.id){runCatching {rpc("generate_due_notifications",JSONObject())};notifiedForUser=p.id}
         val names=when(p.role) {
@@ -119,6 +126,32 @@ class CasaRepository(private val context: Context?,private val config: ApiConfig
         };name to select(name,filters) } }.awaitAll().toMap().toMutableMap()
         if(p.role==Role.FAMILY){tables["family_debts"]=JSONArray(rpc("family_portal_debts",JSONObject()).toString()).records();tables["proposal_totals"]=JSONArray(rpc("casa_proposal_totals",JSONObject()).toString()).records()}
         Snapshot(p,tables)
+    }
+    /** Minimal, authenticated reads for opted-in background alerts; no mutations. */
+    suspend fun notificationSnapshot(enabledAt: String): Snapshot {
+        val user=JSONObject(authorized("/auth/v1/user"))
+        val id=user.getString("id")
+        if(session?.userId!=id)throw SessionExpired()
+        val p=select("profiles",mapOf("id" to "eq.$id")).firstOrNull()?.let(Profile::from) ?: throw SessionExpired()
+        val tables=mutableMapOf<String,List<Record>>()
+        tables["notifications"]=select("notifications",mapOf("user_id" to "eq.$id","created_at" to "gte.$enabledAt","read_at" to "is.null","order" to "created_at.desc","limit" to "100"))
+        if(p.role!=Role.RESTAURANT) {
+            tables["families"]=select("families")
+            tables["cleaning_family_aliases"]=select("cleaning_family_aliases")
+            val monday=Dates.monday(Dates.today())
+            tables["cleaning_turns"]=select("cleaning_turns",mapOf("turn_date" to "gte.$monday","and" to "(turn_date.lt.${java.time.LocalDate.parse(monday).plusWeeks(1)})"))
+        }
+        tables["alert_debts"]=when {
+            p.role==Role.FAMILY -> JSONArray(rpc("family_portal_debts",JSONObject()).toString()).records()
+            p.role==Role.RESTAURANT -> select("external_utility_debts",mapOf("profile_id" to "eq.$id")).map {d->Record(json("id" to d.id,"balance" to (d.money("amount_due")-d.money("amount_paid")).max(java.math.BigDecimal.ZERO),"concept" to if(d.text("service")=="water")"Agua" else "Luz","due_date" to d.text("due_date")))}
+            p.familyIds.isNotEmpty() -> {
+                val shares=select("expense_shares",mapOf("family_id" to "in.(${p.familyIds.joinToString(",")})","select" to "id,family_id,amount_due,expenses!inner(id,concept,due_date)"))
+                val paid=select("payments",mapOf("family_id" to "in.(${p.familyIds.joinToString(",")})","status" to "eq.approved","select" to "id,share_id,applied_amount"))
+                shares.map {d->val e=d.json.optJSONObject("expenses") ?: JSONObject();val applied=paid.filter {it.text("share_id")==d.id}.fold(java.math.BigDecimal.ZERO){a,r->a+r.money("applied_amount")};Record(json("share_id" to d.id,"concept" to e.optString("concept"),"due_date" to e.optString("due_date"),"balance" to (d.money("amount_due")-applied).max(java.math.BigDecimal.ZERO)))}
+            }
+            else -> emptyList()
+        }
+        return Snapshot(p,tables)
     }
     override suspend fun rpc(name: String,body: JSONObject): Any? = authorized("/rest/v1/rpc/$name","POST",body).takeIf { it.isNotBlank() && it!="null" }?.let { org.json.JSONTokener(it).nextValue() }
     override suspend fun change(table: String,method: String,body: JSONObject?,id: String?) { authorized("/rest/v1/$table",method,body,if(id!=null) mapOf("id" to "eq.$id") else emptyMap()) }
@@ -145,14 +178,14 @@ class CasaRepository(private val context: Context?,private val config: ApiConfig
         send("/storage/v1/object/${if(qr) "payment-qr" else config.bucket}/$path","POST",media=mime,bytes=data)
         path
     }
-    override suspend fun logout() { if(session!=null)authorized("/auth/v1/logout","POST");store.clear();session=null;notifiedForUser=null }
+    override suspend fun logout() {authLock.withLock {if(session!=null){refreshLocked();send("/auth/v1/logout","POST")};store.clear();session=null;notifiedForUser=null}}
     override suspend fun recover(email: String) {send("/auth/v1/recover","POST",json("email" to email.trim()).toString(),mapOf("redirect_to" to "casafamilias://auth"),token=null)}
     override suspend fun password(value: String) {require(value.length>=8);authorized("/auth/v1/user","PUT",json("password" to value))}
-    override suspend fun importRecovery(fragment: String) {
+    override suspend fun importRecovery(fragment: String) {authLock.withLock {
         val values=Uri.parse("https://local/?"+fragment)
         val access=values.getQueryParameter("access_token") ?: error("El enlace de recuperación no es válido.")
         val refresh=values.getQueryParameter("refresh_token") ?: error("El enlace de recuperación no es válido.")
         val u=JSONObject(send("/auth/v1/user",token=access))
         save(json("access_token" to access,"refresh_token" to refresh,"expires_at" to (System.currentTimeMillis()/1000+3600),"user" to u))
-    }
+    }}
 }

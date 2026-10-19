@@ -32,11 +32,13 @@ import androidx.navigation.navArgument
 import com.casafamilias.app.domain.*
 import com.casafamilias.app.data.ExportFiles
 import com.casafamilias.app.data.BiometricAccess
+import com.casafamilias.app.data.DeviceAlerts
 import kotlinx.coroutines.*
 
 val LocalBiometricAccess=staticCompositionLocalOf<BiometricAccess?> {null}
+val LocalDeviceAlerts=staticCompositionLocalOf<DeviceAlerts?> {null}
 
-@Composable fun CasaApp(vm: CasaViewModel,biometrics: BiometricAccess?=null) {
+@Composable fun CasaApp(vm: CasaViewModel,biometrics: BiometricAccess?=null,alerts: DeviceAlerts?=null) {
     val state by vm.state.collectAsStateWithLifecycle()
     val density=LocalDensity.current
     val activity=LocalContext.current as? Activity
@@ -46,7 +48,7 @@ val LocalBiometricAccess=staticCompositionLocalOf<BiometricAccess?> {null}
     }}
     SideEffect {activity?.window?.let {window->val bars=WindowCompat.getInsetsController(window,window.decorView);bars.isAppearanceLightStatusBars=!state.dark;bars.isAppearanceLightNavigationBars=!state.dark;window.navigationBarColor=if(state.dark)0xFF0D1728.toInt() else 0xFFF3F7FF.toInt()}}
     CasaTheme(state.dark) {
-        CompositionLocalProvider(LocalDensity provides Density(density.density,density.fontScale*state.textScale),LocalBiometricAccess provides biometrics) {
+        CompositionLocalProvider(LocalDensity provides Density(density.density,density.fontScale*state.textScale),LocalBiometricAccess provides biometrics,LocalDeviceAlerts provides alerts) {
             Surface(Modifier.fillMaxSize(),color=MaterialTheme.colorScheme.background) {
                 when {
                     state.starting -> Column(Modifier.fillMaxSize().padding(28.dp),verticalArrangement=Arrangement.Center,horizontalAlignment=Alignment.CenterHorizontally){BrandMark(72.dp);Spacer(Modifier.height(20.dp));Text("Casa Familias",style=MaterialTheme.typography.headlineMedium);Spacer(Modifier.height(18.dp));CircularProgressIndicator();Spacer(Modifier.height(18.dp));Text("Conectando con tu hogar…",textAlign=TextAlign.Center);Text("Necesitas conexión a internet.",style=MaterialTheme.typography.bodySmall)}

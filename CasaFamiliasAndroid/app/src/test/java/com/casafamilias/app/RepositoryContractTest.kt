@@ -43,5 +43,36 @@ class RepositoryContractTest {
         })}}
         repo(store).load();assertEquals("new-token",store.value!!.accessToken);assertEquals("u",store.value!!.userId)
     }
+    @Test fun anotherRepositoryReusesTheLatestRotatedSession()=runBlocking {
+        val store=Store(Session.from(JSONObject(token(expiry=0))))
+        val background=repo(store);val foreground=repo(store)
+        server.enqueue(MockResponse().setBody(token("rotated")))
+        foreground.restore();server.enqueue(MockResponse().setBody("[]"))
+        background.rpc("family_portal_debts",JSONObject())
+        assertEquals(2,server.requestCount);assertEquals("/auth/v1/token?grant_type=refresh_token",server.takeRequest().path)
+        assertEquals("Bearer rotated",server.takeRequest().getHeader("Authorization"))
+    }
+    @Test fun oldRepositoryCannotEraseTheNewAccountsSession()=runBlocking {
+        val store=Store(Session.from(JSONObject(token())))
+        val old=repo(store);store.value=store.value!!.copy(userId="other-user",accessToken="new-user-token")
+        try {old.rpc("family_portal_debts",JSONObject());fail("Old account was accepted")}catch(e: SessionExpired){assertEquals("other-user",store.value?.userId);assertEquals(0,server.requestCount)}
+    }
+    @Test fun rejectedAccessTokenForcesARefreshEvenBeforeItsExpiry()=runBlocking {
+        val store=Store(Session.from(JSONObject(token())))
+        server.enqueue(MockResponse().setResponseCode(401).setBody("{}"));server.enqueue(MockResponse().setBody(token("replacement")));server.enqueue(MockResponse().setBody("[]"))
+        repo(store).rpc("family_portal_debts",JSONObject())
+        assertEquals(3,server.requestCount);server.takeRequest();assertEquals("/auth/v1/token?grant_type=refresh_token",server.takeRequest().path);assertEquals("Bearer replacement",server.takeRequest().getHeader("Authorization"))
+    }
+    @Test fun backgroundSyncReadsOnlyItsOwnNotificationsAndDoesNotGenerateOrChangeData()=runBlocking {
+        server.dispatcher=object: Dispatcher(){override fun dispatch(r: RecordedRequest): MockResponse = MockResponse().setBody(when(r.requestUrl!!.encodedPath){
+            "/auth/v1/user"->"{\"id\":\"u\",\"email\":\"test@example.test\"}";"/rest/v1/profiles"->"[{\"id\":\"u\",\"role\":\"family\",\"family_id\":1,\"display_name\":\"Familia\"}]";else->"[]"
+        })}
+        repo(Store(Session.from(JSONObject(token())))).notificationSnapshot("2026-10-19T00:00:00Z")
+        val requests=(0 until server.requestCount).map {server.takeRequest()}
+        val notices=requests.single {it.requestUrl!!.encodedPath=="/rest/v1/notifications"}.requestUrl!!
+        assertEquals("eq.u",notices.queryParameter("user_id"));assertEquals("is.null",notices.queryParameter("read_at"))
+        assertTrue(requests.all {it.method=="GET" || it.requestUrl!!.encodedPath=="/rest/v1/rpc/family_portal_debts"})
+        assertFalse(requests.any {it.path!!.contains("generate_due_notifications") || it.path!!.contains("expense_shares") || it.path!!.contains("/payments")})
+    }
 
 }

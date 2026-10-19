@@ -1,0 +1,83 @@
+{
+  "versionName": "5.4",
+  "versionCode": 10,
+  "minSdk": 26,
+  "targetSdk": 36,
+  "unitTests": {
+    "passed": 54,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "suites": [
+      {
+        "name": "com.casafamilias.app.DeviceAlertRulesTest",
+        "tests": "10",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "timestamp": "2026-10-19T01:16:20"
+      },
+      {
+        "name": "com.casafamilias.app.LocalAccessPolicyTest",
+        "tests": "7",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "timestamp": "2026-10-19T01:16:20"
+      },
+      {
+        "name": "com.casafamilias.app.NativeRulesTest",
+        "tests": "24",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "timestamp": "2026-10-19T01:16:20"
+      },
+      {
+        "name": "com.casafamilias.app.RepositoryContractTest",
+        "tests": "13",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "timestamp": "2026-10-19T01:16:20"
+      }
+    ]
+  },
+  "androidTests": {
+    "passed": 18,
+    "failures": 0,
+    "device": "Android 11/API30 emulator",
+    "data": "Fictional local accounts and server only",
+    "biometricResults": "System callback results simulated in six gate integration tests; no physical sensor tested",
+    "display": "320x800, system font 130%; dark app large font adds 130%"
+  },
+  "notifications": {
+    "transport": "WorkManager periodic sync",
+    "minimumIntervalMinutes": 15,
+    "instantPush": false,
+    "firebaseConfigured": false,
+    "realAndroidNotificationManagerTested": true,
+    "workerSource": "Fictional injected account/server",
+    "android13PermissionRuntimeTested": false
+  },
+  "lint": {
+    "errors": 0,
+    "warnings": 24
+  },
+  "apkCertificateSha256": "be231e4d4f51af408cdc3728c18aacd76b1f3758b2fe452674294df4cbad2b5c",
+  "matchesPreviousApkCertificate": true,
+  "zipalign16k": true,
+  "presentationSmoke": {
+    "updateInstall": "PASS",
+    "versionName": "5.4",
+    "versionCode": 10,
+    "nativeLoginRendered": true,
+    "presentationIgnoresPreviewExtras": true,
+    "physicalPhoneTested": false,
+    "android16RuntimeTested": false
+  },
+  "backendChanged": false,
+  "biometricEnrollmentAndSensorTestedOnPhysicalPhone": false,
+  "android16RuntimeTested": false,
+  "publishedOnGooglePlay": false
+}

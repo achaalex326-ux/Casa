@@ -1,10 +1,12 @@
-# Casa Familias 5.3 — acceso con huella
+# Casa Familias 5.4 — notificaciones del celular
 
-Versión **5.3**, código **9**, paquete `com.casafamilias.app`. Compatible con Android 8 o posterior, con destino Android 16/API 36. Mantiene la interfaz de 5.1 y las cuentas de la casa actual; el registro de comunidades independientes queda para otra etapa.
+Versión **5.4**, código **10**, paquete `com.casafamilias.app`. Compatible con Android 8 o posterior, con destino Android 16/API 36. Mantiene la interfaz de 5.1 y las cuentas de la casa actual; el registro de comunidades independientes queda para otra etapa.
+
+Incorpora avisos nativos de Android mediante WorkManager: limpieza de la semana, deudas nuevas con saldo, recordatorios diarios desde tres días antes del vencimiento y publicaciones nuevas de servicios. Se activan por cuenta y teléfono desde Mi perfil. Revisión mínima cada15minutos; Android puede retrasarla por batería, red o restricciones del fabricante. No utiliza Firebase ni ofrece entrega push instantánea. Cerrar la actividad no cancela el trabajo; forzar la detención desde Android impide su ejecución hasta reabrir la app.
 
 ## Descargar y revisar
 
-Los archivos actuales están en [entregas/casa-familias-5.3](entregas/casa-familias-5.3): APK optimizado, código fuente e instrucciones para activar la huella. La [entrega 5.2](entregas/casa-familias-5.2) conserva su AAB sin firmar y sus verificaciones históricas. Para publicar, sigue [la guía de Google Play](entregas/google-play/GUIA_GOOGLE_PLAY.md). No se ha publicado la aplicación ni creado una cuenta de desarrollador.
+Los archivos actuales están en [entregas/casa-familias-5.4](entregas/casa-familias-5.4): APK optimizado, código fuente e instrucciones para activar notificaciones y huella. La [entrega 5.2](entregas/casa-familias-5.2) conserva su AAB sin firmar y sus verificaciones históricas. Para publicar, sigue [la guía de Google Play](entregas/google-play/GUIA_GOOGLE_PLAY.md). No se ha publicado la aplicación ni creado una cuenta de desarrollador.
 
 El APK usa la variante `presentation`, con la firma de pruebas de este entorno. La variante `release` deja de utilizar esa firma automáticamente y admite una clave de subida propia mediante Android Studio o un archivo local ignorado `casa-upload.properties`. Sin esa clave, el AAB se genera sin firmar y **no se puede enviar a Play Console**.
 
@@ -20,13 +22,15 @@ Se corrigió el registro de servicios futuros que usaba una columna de pago inex
 
 La versión 5.3 incorpora AndroidX BiometricPrompt para un bloqueo local opcional. Solo se activa tras iniciar sesión y verificar la biometría; cancelar o fallar no desbloquea la app. El correo y la contraseña válidos son la alternativa. Cerrar sesión desactiva la opción en el teléfono; otra cuenta debe activarla de nuevo. Se protege la ventana con FLAG_SECURE mientras está activa. Este bloqueo local complementa la sesión cifrada existente: no cambia los permisos de Supabase ni constituye una nueva autenticación biométrica en el servidor.
 
+Desde5.4, activar notificaciones autoriza consultas mínimas en segundo plano incluso con el bloqueo biométrico activo; no desbloquea la interfaz. La sesión sigue cifrada y los permisos del servidor limitan la cuenta. Las notificaciones usan una versión pública genérica para la pantalla bloqueada, canales configurables y un acceso que vuelve a pasar por la autenticación habitual. No almacenan saldos ni textos financieros en el historial de deduplicación local. Se serializan las renovaciones de sesión para evitar que dos repositorios usen a la vez el mismo refresh token.
+
 Kotlin, Jetpack Compose Material 3, Navigation Compose y MVVM; azul eléctrico, coral y turquesa; tema claro/oscuro y texto ampliable. Se conservan Supabase, sesiones cifradas con Android Keystore, pagos parciales, QR privado, comprobantes, familias, asignaciones, propuestas, avisos, auditoría y reportes PDF/Excel. El WebView invisible y temporal solo intenta recuperar una sesión antigua; no presenta la interfaz.
 
 El ciclo semanal sigue **Choque → Galarza → Salinas → David → Acha**. Salinas y Salinas2 comparten limpieza y conservan sus identidades contables separadas. No se modificaron la rotación ni las funciones de permisos de la comunidad.
 
 ## Verificación y pendientes
 
-Consulta [la verificación de 5.3](entregas/casa-familias-5.3/VERIFICACION.md) para la compilación actual. La [verificación de 5.2](entregas/casa-familias-5.2/VERIFICACION.md) conserva sus 33 pruebas unitarias, 198 comprobaciones SQL aisladas, 8 pruebas Android con datos ficticios y comprobaciones de preparación para Google Play. No se modificó el backend en 5.3.
+Consulta [la verificación de 5.4](entregas/casa-familias-5.4/VERIFICACION.md) para la compilación actual. Las verificaciones de5.2 y5.3 son históricas. No se modificó el backend ni se escribieron registros financieros para esta actualización.
 
 No se ha probado esta versión en un teléfono físico ni ejecutado en Android 16 o en un dispositivo de páginas de 16 KB. Las capturas usan datos ficticios; no demuestran pagos reales. Antes de publicar faltan tu clave de subida, la cuenta de Google Play, privacidad y eliminación de cuentas, recursos de tienda y las pruebas/revisión correspondientes. Las guías y borradores señalan esos pendientes expresamente.
 

@@ -1,6 +1,8 @@
 # Casa Familias
 
-Entrega actual: **5.3 nativa, con acceso biométrico opcional por teléfono**. Conserva el diseño de 5.1 y la preparación de Google Play de 5.2. Consulta [la entrega y las pruebas](ENTREGA.md) y [la guía de publicación](entregas/google-play/GUIA_GOOGLE_PLAY.md). Todavía no está publicada en la tienda.
+Entrega actual: **5.4 nativa, con notificaciones del celular y acceso biométrico opcional**. Conserva el diseño de 5.1 y la preparación de Google Play de 5.2. Consulta [la entrega y las pruebas](ENTREGA.md) y [la guía de publicación](entregas/google-play/GUIA_GOOGLE_PLAY.md). Todavía no está publicada en la tienda.
+
+Para los avisos del celular: **Mi perfil → Activar notificaciones**, permite el permiso de Android y pulsa **Probar notificación**. WorkManager revisa la semana de limpieza, nuevas deudas, vencimientos y publicaciones de servicios con la app cerrada. Es sincronización periódica con intervalo mínimo de 15 minutos, sujeta a batería y conexión; **no es push instantáneo**. Cerrar sesión o desactivar la opción detiene los avisos en ese teléfono. Consulta [la instalación y los límites de 5.4](entregas/casa-familias-5.4/LEEME.md).
 
 Después de iniciar sesión, entra en **Mi perfil → Activar huella** y confirma con la biometría de Android. Necesita un lector compatible y una huella previamente registrada. La opción se activa solo para la cuenta de ese teléfono; no se puede habilitar remotamente para los otros celulares. La contraseña sigue disponible. Se solicita autenticación al reiniciar el proceso o regresar tras 30 segundos fuera de la app. Consulta [la instalación y sus límites](entregas/casa-familias-5.3/LEEME.md).
 
