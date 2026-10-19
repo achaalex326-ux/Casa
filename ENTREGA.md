@@ -1,12 +1,14 @@
-# Casa Familias 5.4 — notificaciones del celular
+# Casa Familias 5.5 — calendario e intercambios entre usuarios
 
-Versión **5.4**, código **10**, paquete `com.casafamilias.app`. Compatible con Android 8 o posterior, con destino Android 16/API 36. Mantiene la interfaz de 5.1 y las cuentas de la casa actual; el registro de comunidades independientes queda para otra etapa.
+Versión **5.5**, código **11**, paquete `com.casafamilias.app`. Compatible con Android 8 o posterior, con destino Android 16/API 36. Mantiene la interfaz de 5.1 y las cuentas de la casa actual; el registro de comunidades independientes queda para otra etapa.
+
+Incluye la familia de esta semana en Inicio y Limpieza, rango de lunes a domingo, calendario por mes de todas las familias para el ingeniero/administrador y encargado, y filtros de solicitudes recibidas/enviadas. Los usuarios solicitan cambios para sus propias familias; otra persona del hogar receptor acepta o rechaza. Las semanas conservan su asignación hasta la aceptación.
 
 Incorpora avisos nativos de Android mediante WorkManager: limpieza de la semana, deudas nuevas con saldo, recordatorios diarios desde tres días antes del vencimiento y publicaciones nuevas de servicios. Se activan por cuenta y teléfono desde Mi perfil. Revisión mínima cada15minutos; Android puede retrasarla por batería, red o restricciones del fabricante. No utiliza Firebase ni ofrece entrega push instantánea. Cerrar la actividad no cancela el trabajo; forzar la detención desde Android impide su ejecución hasta reabrir la app.
 
 ## Descargar y revisar
 
-Los archivos actuales están en [entregas/casa-familias-5.4](entregas/casa-familias-5.4): APK optimizado, código fuente e instrucciones para activar notificaciones y huella. La [entrega 5.2](entregas/casa-familias-5.2) conserva su AAB sin firmar y sus verificaciones históricas. Para publicar, sigue [la guía de Google Play](entregas/google-play/GUIA_GOOGLE_PLAY.md). No se ha publicado la aplicación ni creado una cuenta de desarrollador.
+Los archivos actuales están en [entregas/casa-familias-5.5](entregas/casa-familias-5.5): APK optimizado, código fuente e instrucciones para activar notificaciones y huella. La [entrega 5.2](entregas/casa-familias-5.2) conserva su AAB sin firmar y sus verificaciones históricas. Para publicar, sigue [la guía de Google Play](entregas/google-play/GUIA_GOOGLE_PLAY.md). No se ha publicado la aplicación ni creado una cuenta de desarrollador.
 
 El APK usa la variante `presentation`, con la firma de pruebas de este entorno. La variante `release` deja de utilizar esa firma automáticamente y admite una clave de subida propia mediante Android Studio o un archivo local ignorado `casa-upload.properties`. Sin esa clave, el AAB se genera sin firmar y **no se puede enviar a Play Console**.
 
@@ -26,11 +28,11 @@ Desde5.4, activar notificaciones autoriza consultas mínimas en segundo plano in
 
 Kotlin, Jetpack Compose Material 3, Navigation Compose y MVVM; azul eléctrico, coral y turquesa; tema claro/oscuro y texto ampliable. Se conservan Supabase, sesiones cifradas con Android Keystore, pagos parciales, QR privado, comprobantes, familias, asignaciones, propuestas, avisos, auditoría y reportes PDF/Excel. El WebView invisible y temporal solo intenta recuperar una sesión antigua; no presenta la interfaz.
 
-El ciclo semanal sigue **Choque → Galarza → Salinas → David → Acha**. Salinas y Salinas2 comparten limpieza y conservan sus identidades contables separadas. No se modificaron la rotación ni las funciones de permisos de la comunidad.
+El ciclo semanal sigue **Choque → Galarza → Salinas → David → Acha**. Salinas y Salinas2 comparten limpieza y conservan sus identidades contables separadas. Se conserva la rotación. La migración008 limita los intercambios a participantes del hogar: solo otra persona de la familia receptora puede responder. El administrador sin familia asignada consulta los acuerdos.
 
 ## Verificación y pendientes
 
-Consulta [la verificación de 5.4](entregas/casa-familias-5.4/VERIFICACION.md) para la compilación actual. Las verificaciones de5.2 y5.3 son históricas. No se modificó el backend ni se escribieron registros financieros para esta actualización.
+Consulta [la verificación de 5.5](entregas/casa-familias-5.5/VERIFICACION.md) para la compilación actual. Las verificaciones de5.2 y5.3 son históricas. Se actualizaron las funciones de intercambios en Supabase sin modificar registros de turnos, rotación, familias, cuentas ni finanzas.
 
 No se ha probado esta versión en un teléfono físico ni ejecutado en Android 16 o en un dispositivo de páginas de 16 KB. Las capturas usan datos ficticios; no demuestran pagos reales. Antes de publicar faltan tu clave de subida, la cuenta de Google Play, privacidad y eliminación de cuentas, recursos de tienda y las pruebas/revisión correspondientes. Las guías y borradores señalan esos pendientes expresamente.
 

@@ -64,4 +64,35 @@ class NativeRulesTest {
         assertEquals("No especificada",row("kind" to "manual").paymentMethodLabel())
     }
 
+    @Test fun administratorVisibilityDoesNotMeanHouseholdParticipation() {
+        val admin=data().copy(profile=data().profile.copy(familyId=null,secondFamilyId=null))
+        assertTrue(admin.ownsCleaning(1));assertFalse(admin.representsCleaning(1));assertFalse(admin.representsCleaning(null))
+        assertFalse(admin.canAnswerSwap(row("status" to "pending","target_family_id" to 1,"created_by" to "other")))
+    }
+    @Test fun swapReplyRequiresRecipientHouseholdAndDifferentUser() {
+        val family=data(Role.FAMILY)
+        val request=row("status" to "pending","target_family_id" to 2,"created_by" to "other")
+        assertTrue(family.canAnswerSwap(request))
+        assertFalse(family.canAnswerSwap(row("status" to "pending","target_family_id" to 3,"created_by" to "other")))
+        assertFalse(family.canAnswerSwap(row("status" to "pending","target_family_id" to 2,"created_by" to "u")))
+        assertFalse(family.canAnswerSwap(row("status" to "accepted","target_family_id" to 2,"created_by" to "other")))
+        assertFalse(data(Role.RESTAURANT).canAnswerSwap(request))
+    }
+    @Test fun payerCanExchangeOnlyRepresentedHouseholds() {
+        val payer=data(Role.PAYER).copy(profile=data(Role.PAYER).profile.copy(secondFamilyId=3))
+        assertTrue(payer.representsCleaning(2));assertTrue(payer.representsCleaning(3));assertFalse(payer.representsCleaning(4))
+    }
+    @Test fun weekAtMonthBoundaryAppearsInBothMonthsAndOnSunday() {
+        val s=data().copy(tables=mapOf("cleaning_turns" to listOf(
+            row("id" to "a","turn_date" to "2026-09-28"),row("id" to "b","turn_date" to "2026-10-05"))))
+        assertEquals(listOf("a"),s.cleaningMonth("2026-09").map{it.id})
+        assertEquals(listOf("a","b"),s.cleaningMonth("2026-10").map{it.id})
+        assertEquals(listOf("a"),s.cleaningWeek("2026-10-04").map{it.id})
+        assertEquals(listOf("b"),s.cleaningWeek("2026-10-05").map{it.id})
+    }
+    @Test fun weekLabelsIncludeBothDatesAndYearBoundary() {
+        val label=Dates.weekLabel("2027-01-01")
+        assertTrue(label.contains("2026"));assertTrue(label.contains("2027"));assertTrue(label.contains(" al "))
+    }
+
 }

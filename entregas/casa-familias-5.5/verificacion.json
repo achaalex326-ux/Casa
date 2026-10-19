@@ -1,0 +1,110 @@
+{
+  "versionName": "5.5",
+  "versionCode": 11,
+  "minSdk": 26,
+  "targetSdk": 36,
+  "unitTests": {
+    "passed": 59,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "suites": [
+      {
+        "name": "com.casafamilias.app.DeviceAlertRulesTest",
+        "tests": "10",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "timestamp": "2026-10-19T02:38:39"
+      },
+      {
+        "name": "com.casafamilias.app.LocalAccessPolicyTest",
+        "tests": "7",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "timestamp": "2026-10-19T02:38:39"
+      },
+      {
+        "name": "com.casafamilias.app.NativeRulesTest",
+        "tests": "29",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "timestamp": "2026-10-19T02:38:39"
+      },
+      {
+        "name": "com.casafamilias.app.RepositoryContractTest",
+        "tests": "13",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "timestamp": "2026-10-19T02:38:39"
+      }
+    ]
+  },
+  "androidTests": {
+    "passed": 21,
+    "failures": 0,
+    "device": "Android 11/API30 emulator",
+    "data": "Fictional local accounts and server only",
+    "biometricResults": "System callback results simulated in six gate integration tests; no physical sensor tested",
+    "display": "320x800, system font 130%; dark app large font adds 130%"
+  },
+  "notifications": {
+    "transport": "WorkManager periodic sync",
+    "minimumIntervalMinutes": 15,
+    "instantPush": false,
+    "firebaseConfigured": false,
+    "realAndroidNotificationManagerTested": true,
+    "workerSource": "Fictional injected account/server",
+    "android13PermissionRuntimeTested": false
+  },
+  "lint": {
+    "errors": 0,
+    "warnings": 24
+  },
+  "apkCertificateSha256": "be231e4d4f51af408cdc3728c18aacd76b1f3758b2fe452674294df4cbad2b5c",
+  "matchesPreviousApkCertificate": true,
+  "zipalign16k": true,
+  "presentationSmoke": {
+    "updateInstall": "PASS",
+    "versionName": "5.5",
+    "versionCode": 11,
+    "nativeLoginRendered": true,
+    "presentationIgnoresPreviewExtras": true,
+    "physicalPhoneTested": false,
+    "android16RuntimeTested": false
+  },
+  "backendChanged": true,
+  "backendChecks": 223,
+  "backendDeployment": {
+    "result": "PASS",
+    "migration": "202610190008_household_cleaning_swaps",
+    "helperInstalled": true,
+    "applicationTablesUnchanged": 14
+  },
+  "backendReadback": {
+    "mode": "Read-only SQL with authenticated role and existing profile claims; no user password/sign-in tested",
+    "calendarRoleChecks": [
+      {
+        "role": "sysadmin",
+        "visibleTurns": 17,
+        "visibleHouseholds": 5,
+        "representsAnyHousehold": false
+      },
+      {
+        "role": "payer",
+        "visibleTurns": 17,
+        "visibleHouseholds": 5,
+        "representsAnyHousehold": true
+      }
+    ],
+    "allStaffCanReadWholeCalendar": true,
+    "privateRowsExported": false,
+    "applicationRowsWritten": false
+  },
+  "biometricEnrollmentAndSensorTestedOnPhysicalPhone": false,
+  "android16RuntimeTested": false,
+  "publishedOnGooglePlay": false
+}

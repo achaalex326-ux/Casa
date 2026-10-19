@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.casafamilias.app.RepositoryContractTest" tests="13" skipped="0" failures="0" errors="0" timestamp="2026-10-19T02:38:39" hostname="75fffd33678d" time="1.589">
+  <properties/>
+  <testcase name="anotherRepositoryReusesTheLatestRotatedSession" classname="com.casafamilias.app.RepositoryContractTest" time="0.594"/>
+  <testcase name="failedSignOutKeepsSessionForRetry" classname="com.casafamilias.app.RepositoryContractTest" time="0.024"/>
+  <testcase name="rejectedAccessTokenForcesARefreshEvenBeforeItsExpiry" classname="com.casafamilias.app.RepositoryContractTest" time="0.103"/>
+  <testcase name="loginUsesExistingAuthContract" classname="com.casafamilias.app.RepositoryContractTest" time="0.012"/>
+  <testcase name="legacyMissingUserIdKeepsRefreshedTokensDuringLoad" classname="com.casafamilias.app.RepositoryContractTest" time="0.168"/>
+  <testcase name="familyLoadNeverRequestsOtherFamilyFinancialTables" classname="com.casafamilias.app.RepositoryContractTest" time="0.237"/>
+  <testcase name="selectFetchesEveryPageWithoutDroppingRows" classname="com.casafamilias.app.RepositoryContractTest" time="0.076"/>
+  <testcase name="recoveryUsesRegisteredAndroidDeepLink" classname="com.casafamilias.app.RepositoryContractTest" time="0.008"/>
+  <testcase name="rpcPreservesArgumentsAndUserAuthorization" classname="com.casafamilias.app.RepositoryContractTest" time="0.016"/>
+  <testcase name="rejectedRefreshClearsSession" classname="com.casafamilias.app.RepositoryContractTest" time="0.007"/>
+  <testcase name="expiredSessionsRefreshBeforeBusinessCall" classname="com.casafamilias.app.RepositoryContractTest" time="0.055"/>
+  <testcase name="oldRepositoryCannotEraseTheNewAccountsSession" classname="com.casafamilias.app.RepositoryContractTest" time="0.002"/>
+  <testcase name="backgroundSyncReadsOnlyItsOwnNotificationsAndDoesNotGenerateOrChangeData" classname="com.casafamilias.app.RepositoryContractTest" time="0.284"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

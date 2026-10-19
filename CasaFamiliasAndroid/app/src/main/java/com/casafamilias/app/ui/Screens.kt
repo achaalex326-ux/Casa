@@ -39,7 +39,8 @@ typealias Go = (String)->Unit
                 MetricButton("payments","Pagos por revisar","${pending.size}","Ver pagos",Modifier.weight(1f).fillMaxHeight()){go("payments")}
                 MetricButton("families","Familias con deuda","${s.rows("families").count {s.balance(it.number("id"))>BigDecimal.ZERO}} de ${s.rows("families").size}","Ver familias",Modifier.weight(1f).fillMaxHeight()){go("families")}
             }}
-            item {NavRow("cleaning","${cleaning.size} turnos pendientes","Consultar el calendario de limpieza"){go("cleaning")}}
+            item {CleaningThisWeek(s,go)}
+            item {NavRow("cleaning","Calendario de todas las familias","Consultar semanas anteriores y próximas"){go("cleaning")}}
             item {Text("Actividad reciente",style=MaterialTheme.typography.titleLarge)}
             val recent=s.ownPayments().sortedByDescending {it.text("created_at")}.take(4)
             items(recent){r->NavRow("payments",s.family(r.number("family_id")),Amounts.format(r.money("amount"))+" · "+statusLabel(r.text("status"))){go("payment/${r.id}")}}
@@ -118,13 +119,31 @@ fun serviceLabel(s: String)=mapOf("water" to "Agua","electricity" to "Luz","gas"
     }
 }
 @Composable fun CleaningScreen(s: Snapshot,go: Go) {
-    var month by rememberSaveable {mutableStateOf(Dates.month())};val rows=s.rows("cleaning_turns").filter {it.text("turn_date").startsWith(month)}.sortedBy {it.text("turn_date")}
-    ContentList {item{Title("Limpieza","Un hogar cuidado entre todos")};item{MonthPicker(month,{month=it})}
+    var month by rememberSaveable {mutableStateOf(Dates.month())};var scope by rememberSaveable {mutableStateOf("all")}
+    val rows=s.cleaningMonth(month).filter {scope=="all" || s.representsCleaning(it.number("family_id"))}
+    ContentList {item{Title("Limpieza",if(s.profile.role.staff)"Calendario de todas las familias" else "Los turnos de tu familia")}
+        item{CleaningThisWeek(s,go)}
+        item{MonthPicker(month,{month=it})}
+        if(month!=Dates.month())item{Secondary("Volver al mes actual"){month=Dates.month()}}
+        if(s.profile.role.staff)item{Filters(listOf(Choice("all","Todas las familias"),Choice("mine","Mis familias")),scope,{scope=it})}
         if(s.profile.role==Role.ADMIN){item{NavRow("refresh","Repetición semanal",if(s.rows("cleaning_rotation_settings").firstOrNull()?.flag("enabled")==true)"Activa: se conservan las semanas asignadas" else "Revisar el orden y la repetición"){go("form/rotation")}};item{Secondary("Asignar una semana"){go("form/turn")}}}
-        item{NavRow("cleaning","Solicitudes de intercambio","Consultar solicitudes y respuestas"){go("swaps")}}
-        items(rows){r->Panel{Text(s.family(s.household(r.number("family_id"))),style=MaterialTheme.typography.titleMedium);Text("Semana del "+Dates.label(r.text("turn_date")));Badge(r.text("status"));Secondary("Ver turno y tareas"){go("turn/${r.id}")}}}
+        item{NavRow("cleaning","Solicitudes de intercambio","Acuerdos entre las familias involucradas"){go("swaps")}}
+        items(rows){r->Panel{Text(s.family(s.household(r.number("family_id"))),style=MaterialTheme.typography.titleMedium);Text(Dates.weekLabel(r.text("turn_date")));if(Dates.monday(r.text("turn_date"))==Dates.monday(Dates.today()))Text("Esta semana",color=MaterialTheme.colorScheme.primary,style=MaterialTheme.typography.labelLarge);Text(if(r.text("status")=="done")"Limpieza completada" else "Limpieza pendiente");Secondary("Ver turno y tareas"){go("turn/${r.id}")}}}
         if(rows.isEmpty())item{Empty("No hay turnos en este mes")}
         if(s.rows("cleaning_family_aliases").isNotEmpty())item{Text("Las cuentas de una misma familia comparten el turno de limpieza.",style=MaterialTheme.typography.bodySmall,color=MaterialTheme.colorScheme.onSurfaceVariant)}
+    }
+}
+@Composable private fun CleaningThisWeek(s: Snapshot,go: Go) {
+    val turns=s.cleaningWeek()
+    Panel {
+        Text("¿Quién limpia esta semana?",style=MaterialTheme.typography.titleMedium)
+        Text(Dates.weekLabel(Dates.today()),style=MaterialTheme.typography.bodyMedium)
+        if(turns.isEmpty())Text(if(s.profile.role.staff)"Todavía no hay una familia asignada." else "Tu familia no tiene turno esta semana.")
+        turns.forEach {r->
+            Text(s.family(s.household(r.number("family_id"))),style=MaterialTheme.typography.titleLarge,color=MaterialTheme.colorScheme.primary)
+            Text(if(r.text("status")=="done")"Limpieza completada" else "Limpieza pendiente")
+            Secondary("Ver tareas de esta semana"){go("turn/${r.id}")}
+        }
     }
 }
 @Composable fun TurnDetail(s: Snapshot,id: String,go: Go,vm: CasaViewModel) {
@@ -135,13 +154,27 @@ fun serviceLabel(s: String)=mapOf("water" to "Agua","electricity" to "Luz","gas"
         if(r.text("completion_receipt_path").isNotBlank())item{ImageReceipt(vm,r.text("completion_receipt_path"))}
         if(can && r.text("status")=="pending"){
             item{Action("Completar turno",checks.all {it}){go("form/complete?id=$id")}}
-            item{Secondary("Solicitar intercambio"){go("form/swap?id=$id")}}
+            if(s.representsCleaning(r.number("family_id")))item{Secondary("Solicitar intercambio"){go("form/swap?id=$id")}}
         }
     }
 }
 @Composable fun SwapsScreen(s: Snapshot,vm: CasaViewModel) {
     var decision by remember {mutableStateOf<Pair<String,Boolean>?>(null)}
-    ContentList {item{Title("Intercambios","Solicitudes de cambio de turno")};items(s.rows("cleaning_swap_requests")){r->Panel{Text(s.family(s.household(r.number("requester_family_id")))+" → "+s.family(s.household(r.number("target_family_id"))),style=MaterialTheme.typography.titleMedium);Badge(r.text("status"));if(r.text("status")=="pending" && (s.profile.role.staff || s.ownsCleaning(r.number("target_family_id")))){Secondary("Aceptar intercambio"){decision=r.id to true};Secondary("Rechazar intercambio"){decision=r.id to false}}}};if(s.rows("cleaning_swap_requests").isEmpty())item{Empty("No hay solicitudes")}}
+    var scope by rememberSaveable {mutableStateOf("all")}
+    val rows=s.rows("cleaning_swap_requests").sortedByDescending {it.text("created_at")}.filter {r->when(scope){"received"->s.representsCleaning(r.number("target_family_id"));"sent"->s.representsCleaning(r.number("requester_family_id"));else->true}}
+    ContentList {
+        item{Title("Intercambios","Cada cambio se acuerda entre dos familias")}
+        item{Text("La familia receptora acepta o rechaza. Hasta que acepte, las semanas no cambian. Solo puedes solicitar cambios para tus familias.")}
+        if(s.profile.familyIds.isNotEmpty())item{Filters(listOf(Choice("all","Todos"),Choice("received","Recibidos"),Choice("sent","Enviados")),scope,{scope=it})}
+        items(rows){r->Panel{
+            DataLine("Solicita",s.family(s.household(r.number("requester_family_id"))))
+            DataLine("Recibe",s.family(s.household(r.number("target_family_id"))))
+            Text(when(r.text("status")){"pending"->"Esperando respuesta de la familia receptora";"accepted"->"Intercambio aceptado";"rejected"->"Intercambio rechazado";else->"Solicitud cerrada"},style=MaterialTheme.typography.labelLarge)
+            if(s.canAnswerSwap(r)){Secondary("Aceptar intercambio"){decision=r.id to true};Secondary("Rechazar intercambio"){decision=r.id to false}}
+            else if(r.text("status")=="pending" && s.profile.role.staff && !s.representsCleaning(r.number("target_family_id")))Text("Consulta del acuerdo: responde la familia receptora.",style=MaterialTheme.typography.bodySmall)
+        }}
+        if(rows.isEmpty())item{Empty("No hay solicitudes")}
+    }
     decision?.let {d->Confirm(if(d.second)"Aceptar intercambio" else "Rechazar intercambio","¿Confirmas esta respuesta?",onDismiss={decision=null}){decision=null;vm.mutate("review_cleaning_swap",json("p_request" to d.first,"p_accept" to d.second))}}
 }
 @Composable fun UsersScreen(s: Snapshot,go: Go) {

@@ -1,0 +1,6 @@
+{
+  "result": "PASS",
+  "migration": "202610190008_household_cleaning_swaps",
+  "helperInstalled": true,
+  "applicationTablesUnchanged": 14
+}

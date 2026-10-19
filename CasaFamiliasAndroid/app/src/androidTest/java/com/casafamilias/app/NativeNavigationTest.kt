@@ -116,4 +116,47 @@ class NativeNavigationTest {
         screenshot("13-familia-oscuro-texto-grande")
     }
 
+    @Test fun engineerAdministratorSeesCurrentFamilyAndWholeCalendarWithoutSwapAuthority() {
+        launch("sysadmin")
+        scroll("¿Quién limpia esta semana?").assertExists()
+        scroll("Ver tareas de esta semana").performClick()
+        compose.onNodeWithText("Familia Choque").assertExists()
+        compose.onNodeWithText("Solicitar intercambio").assertDoesNotExist()
+        compose.onNodeWithContentDescription("Volver").performClick()
+        scroll("Calendario de todas las familias").performClick()
+        scroll("Todas las familias").assertExists()
+        screenshot("16-calendario-administrador")
+        scroll("Solicitudes de intercambio").performClick()
+        compose.onNodeWithText("Aceptar intercambio").assertDoesNotExist()
+        compose.onNodeWithText("Rechazar intercambio").assertDoesNotExist()
+        screenshot("17-intercambios-consulta-administrador")
+    }
+    @Test fun payerSeesOtherFamilyWeekButCannotRequestTheirExchange() {
+        launch("payer")
+        scroll("Ver tareas de esta semana").performClick()
+        compose.onNodeWithText("Familia Choque").assertExists()
+        compose.onNodeWithText("Completar turno").assertDoesNotExist()
+        compose.onNodeWithText("Solicitar intercambio").assertDoesNotExist()
+        compose.onNodeWithContentDescription("Volver").performClick()
+        scroll("Calendario de todas las familias").performClick()
+        scroll("Todas las familias").assertExists()
+        screenshot("18-calendario-encargado")
+    }
+    @Test fun recipientFamilyCanAnswerIncomingExchangeAndSenderCannotAnswerOutgoing() {
+        launch("family")
+        compose.onNodeWithText("Limpieza").performClick()
+        scroll("Solicitudes de intercambio").performClick()
+        scroll("Recibidos").performClick()
+        scroll("Aceptar intercambio").performClick()
+        compose.onNodeWithText("¿Confirmas esta respuesta?").assertExists()
+        compose.onNodeWithText("Cancelar").performClick()
+        scroll("Rechazar intercambio").assertExists()
+        screenshot("19-intercambio-recibido")
+        scroll("Enviados").performClick()
+        compose.onNodeWithText("Aceptar intercambio").assertDoesNotExist()
+        compose.onNodeWithText("Rechazar intercambio").assertDoesNotExist()
+        scroll("Esperando respuesta de la familia receptora").assertExists()
+        screenshot("20-intercambio-enviado")
+    }
+
 }

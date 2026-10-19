@@ -1,0 +1,20 @@
+{
+  "mode": "Read-only SQL with authenticated role and existing profile claims; no user password/sign-in tested",
+  "calendarRoleChecks": [
+    {
+      "role": "sysadmin",
+      "visibleTurns": 17,
+      "visibleHouseholds": 5,
+      "representsAnyHousehold": false
+    },
+    {
+      "role": "payer",
+      "visibleTurns": 17,
+      "visibleHouseholds": 5,
+      "representsAnyHousehold": true
+    }
+  ],
+  "allStaffCanReadWholeCalendar": true,
+  "privateRowsExported": false,
+  "applicationRowsWritten": false
+}

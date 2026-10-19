@@ -53,6 +53,7 @@ object Dates {
     fun monday(date: String): String = LocalDate.parse(date).let { it.minusDays(it.dayOfWeek.value.toLong()-1) }.toString()
     fun label(date: String): String = runCatching { LocalDate.parse(date.take(10)).format(java.time.format.DateTimeFormatter.ofPattern("d MMM yyyy",Locale("es","BO"))) }.getOrDefault(date)
     fun monthLabel(month: String): String = runCatching { YearMonth.parse(month).format(java.time.format.DateTimeFormatter.ofPattern("MMMM yyyy",Locale("es","BO"))) }.getOrDefault(month)
+    fun weekLabel(date: String): String = runCatching { val start=LocalDate.parse(monday(date)); "${label(start.toString())} al ${label(start.plusDays(6).toString())}" }.getOrDefault(date)
 }
 object Amounts {
     fun parse(input: String): BigDecimal? {
@@ -71,6 +72,14 @@ data class Snapshot(val profile: Profile, val tables: Map<String,List<Record>>, 
     fun family(id: Long?) = rows("families").firstOrNull { it.number("id")==id }?.text("name") ?: "Familia"
     fun household(id: Long?) = rows("cleaning_family_aliases").firstOrNull { it.number("family_id")==id }?.number("household_id") ?: id
     fun ownsCleaning(id: Long?) = profile.role==Role.ADMIN || profile.familyIds.any { household(it)==household(id) }
+    /** Representing a household is separate from administering its cleaning records. */
+    fun representsCleaning(id: Long?) = id!=null && profile.role!=Role.RESTAURANT && profile.familyIds.any { household(it)==household(id) }
+    fun canAnswerSwap(request: Record) = request.text("status")=="pending" && request.text("created_by")!=profile.id && representsCleaning(request.number("target_family_id"))
+    fun cleaningWeek(date: String=Dates.today()) = rows("cleaning_turns").filter { Dates.monday(it.text("turn_date"))==Dates.monday(date) }.sortedBy { it.text("turn_date") }
+    fun cleaningMonth(month: String) = rows("cleaning_turns").filter { r ->
+        val start=LocalDate.parse(Dates.monday(r.text("turn_date")));val selected=YearMonth.parse(month)
+        !start.isAfter(selected.atEndOfMonth()) && !start.plusDays(6).isBefore(selected.atDay(1))
+    }.sortedBy { it.text("turn_date") }
     fun credit(id: Long?) = rows("family_credits").firstOrNull { it.number("family_id")==id }?.money("balance") ?: BigDecimal.ZERO
     fun shareBalance(share: Record): BigDecimal {
         val paid=rows("payments").filter { it.text("share_id")==share.id && it.text("status")=="approved" }.fold(BigDecimal.ZERO) { a,p -> a+p.money("applied_amount") }
