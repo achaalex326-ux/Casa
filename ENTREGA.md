@@ -1,8 +1,12 @@
-# Casa Familias 5.7 — fotos y estado de cuenta por mes
+# Casa Familias 5.8 — facturas completas y meses claros
 
-Versión **5.7**, código **13**, paquete `com.casafamilias.app`. Compatible con Android 8 o posterior, con destino Android 16/API 36. Mantiene la interfaz de 5.1 y las cuentas de la casa actual; el registro de comunidades independientes queda para otra etapa.
+Versión **5.8**, código **14**, paquete `com.casafamilias.app`. Compatible con Android 8 o posterior, con destino Android 16/API 36. Mantiene la interfaz de 5.1 y las cuentas de la casa actual; el registro de comunidades independientes queda para otra etapa.
 
-Esta versión incorpora captura de fotos desde los formularios mediante la cámara del teléfono, archivos privados y reducción/orientación antes de guardar. Renueva la cuenta de las familias con agrupación por mes, estados claros, saldo aprobado, importes en revisión, meses sin registro y fechas del último gasto publicado y primer mes pendiente. Los comprobantes indican los meses cubiertos. No hay migración ni modificación de datos en Supabase en5.7. La migración009 y sus verificaciones financieras pertenecen a5.6.
+Esta versión corrige la regla preparada para servicios: usa la suma completa de las facturas, menos descuentos explícitos, entre las seis cuentas. El promedio histórico ya no separa automáticamente dinero para el restaurante. La suma de enero de la hoja es Bs396,50 y la de enero a junio Bs2.250,50, con gas cero. Los centavos de redondeo se asignan una vez para que el total de las seis cuentas cierre exactamente. Se mantiene la cobertura del encargado.
+
+Gastos muestra arriba el último mes registrado y abre todos los meses en orden descendente. Los botones separan facturas, otros gastos y descuentos; cada factura distingue el total original del total repartido y permite abrir su cálculo. El formulario muestra la suma, el descuento, la cantidad de cuentas y el reparto antes de confirmar. La fecha límite inicial sigue al mes elegido. Mi cuenta muestra el último registro, saldo y meses pendientes con tarjetas breves; los comprobantes y el cálculo detallado se abren desde botones con texto. El código Kotlin móvil está formateado con ktfmt0.54 y el cálculo y las pantallas financieras tienen archivos propios.
+
+**Pendiente de aplicar en Supabase:** se intentó una lectura administrativa, rechazada con HTTP401. No se escribieron datos reales. La migración010 y `supabase/repair_worksheet_2026.sql` están preparados y probados fuera del servidor real. El script de datos conserva pagos, fotos, fechas existentes y ajustes previos, guarda una copia privada y se revierte si detecta pagos superiores al nuevo importe o descuentos que requieren conciliación. No interpreta colores como pagos. Es necesario restaurar el acceso, leer el estado actual y aplicar/verificar la corrección; instalar el APK no sustituye ese paso.
 
 Añade un depósito con una sola foto para varias deudas: vista previa por mes, revisión conjunta y reparto definitivo de más antiguo a más reciente al aprobar. Bs200 frente a tres meses de Bs80 se aplica 80/80/40. El sobrante de las deudas seleccionadas queda a favor. El historial agrupa el depósito, la contabilidad conserva sus asignaciones y las solicitudes repetidas con la misma clave no duplican el dinero. Se mantiene el modo de deuda individual y los pagos anteriores. La migración009 se aplica sin crear ni cambiar registros comerciales.
 
@@ -12,7 +16,7 @@ Incorpora avisos nativos de Android mediante WorkManager: limpieza de la semana,
 
 ## Descargar y revisar
 
-Los archivos actuales están en [entregas/casa-familias-5.7](entregas/casa-familias-5.7): APK optimizado, código fuente e instrucciones para activar notificaciones y huella. La [entrega 5.2](entregas/casa-familias-5.2) conserva su AAB sin firmar y sus verificaciones históricas. Para publicar, sigue [la guía de Google Play](entregas/google-play/GUIA_GOOGLE_PLAY.md). No se ha publicado la aplicación ni creado una cuenta de desarrollador.
+Los archivos actuales están en [entregas/casa-familias-5.8](entregas/casa-familias-5.8): APK optimizado, código fuente e instrucciones para activar notificaciones y huella. La [entrega 5.2](entregas/casa-familias-5.2) conserva su AAB sin firmar y sus verificaciones históricas. Para publicar, sigue [la guía de Google Play](entregas/google-play/GUIA_GOOGLE_PLAY.md). No se ha publicado la aplicación ni creado una cuenta de desarrollador.
 
 El APK usa la variante `presentation`, con la firma de pruebas de este entorno. La variante `release` deja de utilizar esa firma automáticamente y admite una clave de subida propia mediante Android Studio o un archivo local ignorado `casa-upload.properties`. Sin esa clave, el AAB se genera sin firmar y **no se puede enviar a Play Console**.
 
@@ -36,7 +40,7 @@ El ciclo semanal sigue **Choque → Galarza → Salinas → David → Acha**. Sa
 
 ## Verificación y pendientes
 
-Consulta [la verificación de 5.7](entregas/casa-familias-5.7/VERIFICACION.md) para la compilación actual. Las verificaciones de5.2 y5.3 son históricas. Esta entrega modifica la interfaz, la captura y la conservación de formularios. No se escribieron datos comerciales ni se ejecutaron migraciones.
+Consulta [la verificación de 5.8](entregas/casa-familias-5.8/VERIFICACION.md) para la compilación actual. Las verificaciones de5.2 y5.3 son históricas. Esta entrega modifica el cálculo preparado del servidor y simplifica los formularios y pantallas. Las migraciones y la carga histórica aún no se ejecutaron en Supabase.
 
 No se ha probado esta versión en un teléfono físico ni ejecutado en Android 16 o en un dispositivo de páginas de 16 KB. Las capturas usan datos ficticios; no demuestran pagos reales. Antes de publicar faltan tu clave de subida, la cuenta de Google Play, privacidad y eliminación de cuentas, recursos de tienda y las pruebas/revisión correspondientes. Las guías y borradores señalan esos pendientes expresamente.
 

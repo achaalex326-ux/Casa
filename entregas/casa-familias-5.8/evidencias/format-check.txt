@@ -1,0 +1,2 @@
+ktfmt0.54 --kotlinlang-style --dry-run: PASS
+All34 Kotlin source and test files are formatted.

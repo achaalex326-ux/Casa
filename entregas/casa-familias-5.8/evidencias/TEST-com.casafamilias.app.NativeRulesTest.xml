@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.casafamilias.app.NativeRulesTest" tests="29" skipped="0" failures="0" errors="0" timestamp="2026-10-28T23:34:22" hostname="84c4f355ed0f" time="0.063">
+  <properties/>
+  <testcase name="moreDoesNotRepeatMainDestinations" classname="com.casafamilias.app.NativeRulesTest" time="0.0"/>
+  <testcase name="rotationRejectsDuplicateHouseholdsAndNonMonday" classname="com.casafamilias.app.NativeRulesTest" time="0.012"/>
+  <testcase name="administratorVisibilityDoesNotMeanHouseholdParticipation" classname="com.casafamilias.app.NativeRulesTest" time="0.0"/>
+  <testcase name="householdCanReadTurnButCannotCreateAssignments" classname="com.casafamilias.app.NativeRulesTest" time="0.001"/>
+  <testcase name="decimalMoneyDoesNotAccumulateFloatingError" classname="com.casafamilias.app.NativeRulesTest" time="0.0"/>
+  <testcase name="cleaningTaskBoundaries" classname="com.casafamilias.app.NativeRulesTest" time="0.002"/>
+  <testcase name="onlyAppliedApprovedMoneyReducesBalance" classname="com.casafamilias.app.NativeRulesTest" time="0.002"/>
+  <testcase name="invalidAndNonPositiveAmountsAreRejected" classname="com.casafamilias.app.NativeRulesTest" time="0.001"/>
+  <testcase name="weekLabelsIncludeBothDatesAndYearBoundary" classname="com.casafamilias.app.NativeRulesTest" time="0.0"/>
+  <testcase name="familyDebtUsesServerPortal" classname="com.casafamilias.app.NativeRulesTest" time="0.0"/>
+  <testcase name="longFormsUseMultipleSteps" classname="com.casafamilias.app.NativeRulesTest" time="0.0"/>
+  <testcase name="legacyMethodsUseStoredNotesAndNeverGuessQr" classname="com.casafamilias.app.NativeRulesTest" time="0.0"/>
+  <testcase name="weekAtMonthBoundaryAppearsInBothMonthsAndOnSunday" classname="com.casafamilias.app.NativeRulesTest" time="0.001"/>
+  <testcase name="navigationHasAtMostFiveUniqueTabs" classname="com.casafamilias.app.NativeRulesTest" time="0.0"/>
+  <testcase name="payerBillCoverageKeepsBothFamiliesAtZeroWithoutErasingOtherDebt" classname="com.casafamilias.app.NativeRulesTest" time="0.0"/>
+  <testcase name="partialPaymentRequiresReceiptOnlyForQR" classname="com.casafamilias.app.NativeRulesTest" time="0.004"/>
+  <testcase name="familyNameBoundaries" classname="com.casafamilias.app.NativeRulesTest" time="0.002"/>
+  <testcase name="cleaningAliasesNeverMergeAccountingFamilies" classname="com.casafamilias.app.NativeRulesTest" time="0.0"/>
+  <testcase name="unknownRoleIsRejected" classname="com.casafamilias.app.NativeRulesTest" time="0.0"/>
+  <testcase name="swapReplyRequiresRecipientHouseholdAndDifferentUser" classname="com.casafamilias.app.NativeRulesTest" time="0.001"/>
+  <testcase name="shortAndMismatchedPasswordsFail" classname="com.casafamilias.app.NativeRulesTest" time="0.0"/>
+  <testcase name="payerCanExchangeOnlyRepresentedHouseholds" classname="com.casafamilias.app.NativeRulesTest" time="0.0"/>
+  <testcase name="automaticCoverageIsNotShownAsAnotherQrOrCashPayment" classname="com.casafamilias.app.NativeRulesTest" time="0.0"/>
+  <testcase name="workbookPreservesAllReportSheets" classname="com.casafamilias.app.NativeRulesTest" time="0.032"/>
+  <testcase name="localeMoneyInputsAreParsed" classname="com.casafamilias.app.NativeRulesTest" time="0.0"/>
+  <testcase name="roleRoutesFailClosedForPrivateSections" classname="com.casafamilias.app.NativeRulesTest" time="0.0"/>
+  <testcase name="restaurantCannotOpenFinancialAdministration" classname="com.casafamilias.app.NativeRulesTest" time="0.0"/>
+  <testcase name="xlsxUsesLiteralStringsAndValidXml" classname="com.casafamilias.app.NativeRulesTest" time="0.003"/>
+  <testcase name="payerMustHaveDifferentFamilies" classname="com.casafamilias.app.NativeRulesTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

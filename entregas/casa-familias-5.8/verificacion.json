@@ -1,0 +1,117 @@
+{
+  "versionName": "5.8",
+  "versionCode": 14,
+  "minSdk": 26,
+  "targetSdk": 36,
+  "unitTests": {
+    "passed": 92,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "suites": [
+      {
+        "name": "com.casafamilias.app.DeviceAlertRulesTest",
+        "tests": "10",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "timestamp": "2026-10-28T23:34:21"
+      },
+      {
+        "name": "com.casafamilias.app.FamilyAccountTest",
+        "tests": "13",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "timestamp": "2026-10-28T23:34:22"
+      },
+      {
+        "name": "com.casafamilias.app.LocalAccessPolicyTest",
+        "tests": "7",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "timestamp": "2026-10-28T23:34:22"
+      },
+      {
+        "name": "com.casafamilias.app.NativeRulesTest",
+        "tests": "29",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "timestamp": "2026-10-28T23:34:22"
+      },
+      {
+        "name": "com.casafamilias.app.PaymentPlansTest",
+        "tests": "10",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "timestamp": "2026-10-28T23:34:22"
+      },
+      {
+        "name": "com.casafamilias.app.RepositoryContractTest",
+        "tests": "15",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "timestamp": "2026-10-28T23:34:22"
+      },
+      {
+        "name": "com.casafamilias.app.ServiceCalculationTest",
+        "tests": "8",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "timestamp": "2026-10-28T23:34:23"
+      }
+    ]
+  },
+  "androidTests": {
+    "passed": 36,
+    "failures": 0,
+    "device": "Android11/API30 emulator",
+    "data": "Fictional local accounts, uploader and server only",
+    "cameraFixtures": "Real provider, files and JPEG processing; camera results injected by registry in five automated tests",
+    "physicalCameraTested": false,
+    "biometricSensorTested": false,
+    "display": "320x800/system font130%; additional app130% in dark-mode test"
+  },
+  "cameraSmoke": {
+    "virtualCameraCapture": false,
+    "physicalCameraTested": false,
+    "note": "Five photo tests use real provider/JPEG with injected camera results. Manual virtual-camera smoke is historical5.7; not rerun5.8"
+  },
+  "presentationSmoke": {
+    "updateInstall": "PASS",
+    "versionName": "5.8",
+    "versionCode": 14,
+    "nativeLoginRendered": true,
+    "presentationIgnoresPreviewExtras": true,
+    "physicalPhoneTested": false,
+    "android16RuntimeTested": false
+  },
+  "lint": {
+    "errors": 0,
+    "warnings": 30
+  },
+  "apkCertificateSha256": "be231e4d4f51af408cdc3728c18aacd76b1f3758b2fe452674294df4cbad2b5c",
+  "matchesPreviousApkCertificate": true,
+  "zipalign16k": true,
+  "backendSourceChanged": true,
+  "backendDeployed": false,
+  "realDataModified": false,
+  "backendAccess": "HTTP401 Invalid access token; secure renewal required",
+  "isolatedFinancialChecks": {
+    "invoiceRule": 55,
+    "repair": 7,
+    "repairRollback": 2
+  },
+  "realReceiptUploaded": false,
+  "realPaymentCreated": false,
+  "currentFinancialSqlSuiteRun": true,
+  "historicalFinancialValidation": "5.6:277 checks and3 races; 5.8 ran64 new isolated checks, not the full historical suite",
+  "android13NotificationRuntimeTested": false,
+  "android16RuntimeTested": false,
+  "publishedOnGooglePlay": false
+}

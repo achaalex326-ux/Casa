@@ -1,0 +1,3 @@
+671a0e993f1e11dbb9c3573da4102ad18f9f887e903ab7384e9f525b2ca2f18f  CasaFamilias-5.8-proyecto.zip
+87384dea88b6d0633a8ee73f7b7a2194535efad18ffc8cfee479433146d586b5  CasaFamilias-5.8-pruebas.apk
+a4d44ba524df209d1cf173ffd1308ee9cb13074ee9e34922815bb738f95a5e53  verificacion.json

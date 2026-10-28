@@ -1,0 +1,3 @@
+{"invoiceTotalChecks" : 55, "status" : "PASS"}
+{"repairChecks":7,"idempotent":true,"existingPaymentsPreserved":true,"status":"PASS"}
+{"repairRollbackChecks":2,"status":"PASS"}

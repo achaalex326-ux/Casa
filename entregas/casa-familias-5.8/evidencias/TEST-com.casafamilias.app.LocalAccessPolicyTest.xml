@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.casafamilias.app.LocalAccessPolicyTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2026-10-28T23:34:22" hostname="84c4f355ed0f" time="0.005">
+  <properties/>
+  <testcase name="savedOptInRequiresAuthenticationAfterProcessRestart" classname="com.casafamilias.app.LocalAccessPolicyTest" time="0.004"/>
+  <testcase name="disablingRemovesTheOptInAndBackgroundLock" classname="com.casafamilias.app.LocalAccessPolicyTest" time="0.001"/>
+  <testcase name="briefFilePickerOrCameraVisitDoesNotRelockTheForm" classname="com.casafamilias.app.LocalAccessPolicyTest" time="0.0"/>
+  <testcase name="aDifferentAccountCannotInheritBiometricOptIn" classname="com.casafamilias.app.LocalAccessPolicyTest" time="0.0"/>
+  <testcase name="savedOptInDoesNotCreateASession" classname="com.casafamilias.app.LocalAccessPolicyTest" time="0.0"/>
+  <testcase name="thirtySecondsInBackgroundRequiresNewAuthentication" classname="com.casafamilias.app.LocalAccessPolicyTest" time="0.0"/>
+  <testcase name="passwordAuthenticatesOnlyAfterTheCallerHasVerifiedCredentials" classname="com.casafamilias.app.LocalAccessPolicyTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

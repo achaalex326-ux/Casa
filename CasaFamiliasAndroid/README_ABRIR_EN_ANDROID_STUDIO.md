@@ -1,4 +1,4 @@
-# Abrir Casa Familias 5.7 en Android Studio
+# Abrir Casa Familias 5.8 en Android Studio
 
 1. Actualiza el repositorio desde GitHub Desktop: Fetch origin → Pull origin.
 2. Abre la carpeta **CasaFamiliasAndroid**, que contiene settings.gradle. No abras el ZIP histórico.
@@ -34,3 +34,7 @@ La aplicación necesita internet para autenticarse y sincronizar registros. ML K
 Conserva la interfaz y las cuentas de la casa actual. Usa SDK 36/AGP 8.10.1 y Gradle 8.11.1. `assemblePresentation` genera el APK de pruebas firmado con la clave de pruebas anterior. `bundleRelease` genera el AAB: queda sin firmar hasta configurar una clave de subida propia en Android Studio o en el archivo local ignorado `casa-upload.properties`. No subir claves ni contraseñas a GitHub.
 
 Sigue [la guía de Google Play](../entregas/google-play/GUIA_GOOGLE_PLAY.md). La publicación requiere además completar privacidad, eliminación de cuenta, datos de la tienda, pruebas y revisión de Google.
+
+## Cálculo e interfaz de5.8
+
+`domain/ServiceTotals.kt` concentra sumas y redondeo decimal; `ui/ExpensesScreen.kt` separa facturas, reparto y resumen de registro; `ui/AccountScreens.kt` presenta los meses pendientes. Los fuentes Kotlin usan ktfmt0.54, estilo kotlinlang. El formateador es una herramienta de mantenimiento, no una dependencia de compilación. La migración010 cambia la regla futura y el script de la hoja corrige solo enero-junio2026. Están pendientes de desplegar por acceso administrativo401; no los ejecutes durante setup. Ver ../supabase/README_CORRECCION_2026.md.

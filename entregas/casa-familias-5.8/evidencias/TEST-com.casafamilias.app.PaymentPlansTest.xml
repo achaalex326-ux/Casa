@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.casafamilias.app.PaymentPlansTest" tests="10" skipped="0" failures="0" errors="0" timestamp="2026-10-28T23:34:22" hostname="84c4f355ed0f" time="0.012">
+  <properties/>
+  <testcase name="smallerDepositStillMakesPartialPayment" classname="com.casafamilias.app.PaymentPlansTest" time="0.005"/>
+  <testcase name="singleDebtModePreservesOtherMonths" classname="com.casafamilias.app.PaymentPlansTest" time="0.001"/>
+  <testcase name="noDebtAndZeroAmountDoNotInventAllocations" classname="com.casafamilias.app.PaymentPlansTest" time="0.0"/>
+  <testcase name="twoHundredCoversTwoMonthsAndPartOfThird" classname="com.casafamilias.app.PaymentPlansTest" time="0.0"/>
+  <testcase name="centsNeverUseFloatingPoint" classname="com.casafamilias.app.PaymentPlansTest" time="0.0"/>
+  <testcase name="paymentBatchShowsOnceWithoutChangingLedgerSum" classname="com.casafamilias.app.PaymentPlansTest" time="0.005"/>
+  <testcase name="exactThreeMonthPaymentClearsAllDebt" classname="com.casafamilias.app.PaymentPlansTest" time="0.001"/>
+  <testcase name="priorPartialPaymentsAreRespected" classname="com.casafamilias.app.PaymentPlansTest" time="0.0"/>
+  <testcase name="cleaningAliasNeverMergesFinancialPaymentFamilies" classname="com.casafamilias.app.PaymentPlansTest" time="0.0"/>
+  <testcase name="excessOnlyBecomesCreditAfterEverySelectedDebt" classname="com.casafamilias.app.PaymentPlansTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

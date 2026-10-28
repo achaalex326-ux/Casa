@@ -1,0 +1,9 @@
+{
+  "updateInstall": "PASS",
+  "versionName": "5.8",
+  "versionCode": 14,
+  "nativeLoginRendered": true,
+  "presentationIgnoresPreviewExtras": true,
+  "physicalPhoneTested": false,
+  "android16RuntimeTested": false
+}
