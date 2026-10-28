@@ -1,4 +1,4 @@
-# Abrir Casa Familias 5.6 en Android Studio
+# Abrir Casa Familias 5.7 en Android Studio
 
 1. Actualiza el repositorio desde GitHub Desktop: Fetch origin → Pull origin.
 2. Abre la carpeta **CasaFamiliasAndroid**, que contiene settings.gradle. No abras el ZIP histórico.

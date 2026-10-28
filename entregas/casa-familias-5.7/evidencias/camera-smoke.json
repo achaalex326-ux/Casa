@@ -1,0 +1,12 @@
+{
+  "cameraApp": "com.android.camera2",
+  "virtualCameraCapture": true,
+  "returnedToForm": true,
+  "photoAttached": true,
+  "jpegBytes": 35242,
+  "attachmentVerifiedAfterScrolling": true,
+  "emulatorSystemUiRecovery": "Wait after display/font change; no app data cleared",
+  "realReceiptUploaded": false,
+  "physicalCameraTested": false,
+  "data": "Debug read-only design fixture and synthetic emulator scene"
+}

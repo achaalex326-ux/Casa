@@ -14,6 +14,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.ui.unit.dp
@@ -23,17 +24,23 @@ import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import kotlinx.coroutines.launch
+import com.casafamilias.app.data.ReceiptPhotos
+import com.casafamilias.app.data.ReceiptCaptureContract
 import kotlinx.coroutines.tasks.await
 import java.time.LocalDate
 import java.time.YearMonth
 
 @Composable fun FormScreen(vm: CasaViewModel,s: Snapshot,form: Form,onBack: ()->Unit) {
-    val state by vm.state.collectAsState();val context=LocalContext.current;val scope=rememberCoroutineScope()
+    val state by vm.state.collectAsState();val context=LocalContext.current;val scope=rememberCoroutineScope();val focus=LocalFocusManager.current
     val saver=mapSaver<Map<String,String>>(save={ it.filterKeys { key -> key !in setOf("password","confirmation") } },restore={ it.mapValues { v->v.value.toString() } })
     var values by rememberSaveable(form.kind,form.recordId,stateSaver=saver){mutableStateOf(form.fields.associate { it.key to it.initial } + if(form.kind=="payment")mapOf("request_id" to java.util.UUID.randomUUID().toString()) else emptyMap())}
     var page by rememberSaveable(form.kind,form.recordId){mutableIntStateOf(0)}
     var localError by remember {mutableStateOf<String?>(null)}
-    var imageKey by remember {mutableStateOf("receipt")};var reading by remember {mutableStateOf(false)}
+    var imageKey by rememberSaveable {mutableStateOf("receipt")};var reading by remember {mutableStateOf(false)}
+    var cameraUri by rememberSaveable {mutableStateOf<String?>(null)}
+    var cameraField by rememberSaveable {mutableStateOf("receipt")}
+    var captureAccepted by rememberSaveable {mutableStateOf(false)}
+    val preparing=captureAccepted || cameraUri in state.preparingPhotos
     var confirm by remember {mutableStateOf(false)}
     fun update(key: String,value: String){values=values+(key to value);localError=null
         if(form.kind=="payment"){
@@ -44,6 +51,22 @@ import java.time.YearMonth
     }
     val picker=rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()){ uri ->
         if(uri!=null){runCatching {context.contentResolver.takePersistableUriPermission(uri,Intent.FLAG_GRANT_READ_URI_PERMISSION)};update(imageKey,uri.toString())}
+    }
+    val camera=rememberLauncherForActivityResult(ReceiptCaptureContract()){success->
+        val captured=cameraUri?.let(Uri::parse)
+        if(captured!=null && success){captureAccepted=true;vm.prepareCameraPhoto(captured.toString())}
+        else {captured?.let {ReceiptPhotos.deleteIfOwned(context,it)};cameraUri=null;captureAccepted=false}
+    }
+    LaunchedEffect(cameraUri,captureAccepted,state.preparedPhotos,state.data?.profile?.id){
+        val uri=cameraUri
+        if(uri!=null && captureAccepted){
+            val result=state.preparedPhotos[uri]
+            if(result!=null){
+                result.uri?.let {update(cameraField,it);vm.inform("Foto lista. Revisa que los datos se lean antes de guardar.")}
+                result.error?.let {vm.inform(it)}
+                vm.consumeCameraPhoto(uri);cameraUri=null;captureAccepted=false
+            } else vm.prepareCameraPhoto(uri)
+        }
     }
     Column(Modifier.fillMaxSize().imePadding().verticalScroll(rememberScrollState()).padding(20.dp),verticalArrangement=Arrangement.spacedBy(16.dp)) {
         Title(form.title)
@@ -61,9 +84,16 @@ import java.time.YearMonth
                     Text(field.label,style=MaterialTheme.typography.titleSmall)
                     if(value.isNotBlank()){
                         AsyncImage(Uri.parse(value),field.label,Modifier.fillMaxWidth().heightIn(min=120.dp,max=220.dp))
-                        TextButton(onClick={update(field.key,"")},enabled=!state.busy){Text("Quitar imagen")}
+                        TextButton(onClick={update(field.key,"")},enabled=!state.busy && !preparing){Text("Quitar imagen")}
                     }
-                    Secondary(if(value.isBlank()) "Seleccionar imagen" else "Cambiar imagen",!state.busy && !reading){imageKey=field.key;picker.launch(arrayOf("image/png","image/jpeg","image/webp"))}
+                    Secondary(if(preparing)"Preparando foto…" else "Tomar foto",!state.busy && !reading && !preparing){
+                        focus.clearFocus()
+                        var output: Uri?=null
+                        try {output=ReceiptPhotos.create(context);cameraUri=output.toString();cameraField=field.key;captureAccepted=false;camera.launch(output)}
+                        catch(e: Exception){output?.let {ReceiptPhotos.deleteIfOwned(context,it)};cameraUri=null;vm.inform("No se pudo abrir la cámara. Puedes elegir una imagen de la galería.")}
+                    }
+                    Secondary(if(value.isBlank()) "Elegir de galería" else "Cambiar desde galería",!state.busy && !reading && !preparing){imageKey=field.key;picker.launch(arrayOf("image/png","image/jpeg","image/webp"))}
+                    Text("La foto se adjunta al formulario. Se envía cuando guardas.",style=MaterialTheme.typography.bodySmall)
                     if(value.isNotBlank() && form.kind in setOf("payment","expense","services","credit"))Secondary(if(reading)"Leyendo imagen…" else "Leer importe de la foto",!reading && !state.busy){
                         scope.launch {reading=true
                             val reader=TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
@@ -101,7 +131,7 @@ import java.time.YearMonth
         val error=localError ?: state.error
         if(error!=null)Text(error,color=MaterialTheme.colorScheme.error)
         if(page>0)Secondary("Paso anterior",!state.busy){page--}
-        Action(if(state.busy)"Guardando…" else if(page<form.pages-1)"Continuar" else if(form.kind=="payment")if(s.profile.role.staff)"Registrar depósito" else "Enviar depósito a revisión" else "Guardar",!state.busy && !reading){
+        Action(if(state.busy)"Guardando…" else if(page<form.pages-1)"Continuar" else if(form.kind=="payment")if(s.profile.role.staff)"Registrar depósito" else "Enviar depósito a revisión" else "Guardar",!state.busy && !reading && !preparing){
             localError=form.error(values,if(page<form.pages-1)page else null)
             if(localError==null){if(page<form.pages-1)page++ else if(form.kind in setOf("services","expense","credit","external-paid","rotation","complete","payment"))confirm=true else vm.submit(form,values,onBack)}
         }

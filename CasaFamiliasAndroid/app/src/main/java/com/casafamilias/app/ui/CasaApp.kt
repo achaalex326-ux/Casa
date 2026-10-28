@@ -12,6 +12,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.saveable.rememberSaveableStateHolder
 import androidx.compose.ui.*
 import androidx.compose.ui.platform.*
 import androidx.compose.ui.text.font.FontWeight
@@ -41,6 +42,13 @@ val LocalDeviceAlerts=staticCompositionLocalOf<DeviceAlerts?> {null}
 @Composable fun CasaApp(vm: CasaViewModel,biometrics: BiometricAccess?=null,alerts: DeviceAlerts?=null) {
     val state by vm.state.collectAsStateWithLifecycle()
     val density=LocalDensity.current
+    val savedScreens=rememberSaveableStateHolder()
+    var savedOwner by rememberSaveable {mutableStateOf<String?>(null)}
+    val currentOwner=state.data?.profile?.let {"${it.id}:${it.role}:${it.familyId}:${it.secondFamilyId}"}
+    LaunchedEffect(currentOwner,state.starting,state.locked){
+        if(currentOwner!=null){if(savedOwner!=null && savedOwner!=currentOwner)savedScreens.removeState(savedOwner!!);savedOwner=currentOwner}
+        else if(!state.starting && !state.locked){savedOwner?.let {savedScreens.removeState(it)};savedOwner=null}
+    }
     val activity=LocalContext.current as? Activity
     SideEffect {activity?.window?.let {window->
         if(state.biometricEnabled)window.addFlags(android.view.WindowManager.LayoutParams.FLAG_SECURE)
@@ -55,7 +63,7 @@ val LocalDeviceAlerts=staticCompositionLocalOf<DeviceAlerts?> {null}
                     state.recovery -> RecoveryScreen(vm,state)
                     state.locked -> if(state.passwordEntry)LoginScreen(vm,state) else BiometricLockScreen(vm,state)
                     state.data==null -> LoginScreen(vm,state)
-                    else -> key(state.data!!.profile.id,state.data!!.profile.role,state.data!!.profile.familyId,state.data!!.profile.secondFamilyId){SignedApp(vm,state.data!!)}
+                    else -> key(state.data!!.profile.id,state.data!!.profile.role,state.data!!.profile.familyId,state.data!!.profile.secondFamilyId){savedScreens.SaveableStateProvider(currentOwner!!){SignedApp(vm,state.data!!)}}
                 }
             }
         }

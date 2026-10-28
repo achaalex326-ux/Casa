@@ -5,7 +5,7 @@ import com.casafamilias.app.domain.*
 import org.json.JSONObject
 
 /** Read-only design fixtures, enabled only by an explicit intent on a debuggable APK. */
-class PreviewRepository(private val role: Role): CasaDataSource {
+class PreviewRepository(private val role: Role,private val accountDemo: Boolean=false): CasaDataSource {
     override val session=Session("design-only","design-only",Long.MAX_VALUE,"preview","vista@example.test")
     override suspend fun restore(legacy: String?){}
     override suspend fun login(email: String,password: String){}
@@ -26,6 +26,13 @@ class PreviewRepository(private val role: Role): CasaDataSource {
             row("id" to "swap-incoming","requester_family_id" to 4,"target_family_id" to 1,"requester_turn_id" to "t0","target_turn_id" to "t2","status" to "pending","created_by" to "another-user","created_at" to Dates.today()),
             row("id" to "swap-outgoing","requester_family_id" to 1,"target_family_id" to 5,"requester_turn_id" to "t2","target_turn_id" to "t1","status" to "pending","created_by" to "preview","created_at" to Dates.today()))
         val tables=mapOf("payment_batches" to listOf(demoBatch),"cleaning_swap_requests" to swaps,"families" to families,"profiles" to listOf(row("id" to "preview","display_name" to profile.name,"role" to role.code,"contact_email" to profile.email,"family_id" to profile.familyId),row("id" to "u1","display_name" to "Cuenta de prueba","role" to "family","family_id" to 4,"contact_email" to "familia@example.test")),"expenses" to expenses,"payments" to ((if(role==Role.FAMILY)payments.filter {it.number("family_id")==1L} else payments)+demoAnchor),"expense_shares" to shares,"family_debts" to demoDebts,"cleaning_turns" to if(role==Role.FAMILY)cleaning.filter {it.number("family_id")==1L} else cleaning,"cleaning_family_aliases" to listOf(row("family_id" to 2,"household_id" to 1)),"cleaning_rotation_settings" to listOf(row("enabled" to true,"family_order" to org.json.JSONArray(listOf(4,5,1,6,3)),"anchor_monday" to monday,"default_checklist" to org.json.JSONArray(listOf("Baño","Cocina","Áreas comunes")))),"notices" to listOf(row("id" to "n1","title" to "Organización de la limpieza","body" to "Revisa el turno de tu familia en el calendario.","created_at" to Dates.today())),"external_utility_debts" to listOf(row("id" to "d1","service" to "electricity","amount_due" to 100,"amount_paid" to 40,"month_start" to "$month-01")))
+        if(accountDemo){
+            val accountRows=listOf(
+                row("share_id" to "demo-share-1","expense_id" to "demo-expense-1","concept" to "Servicios de la casa","month_start" to "2026-08-01","expense_date" to "2026-08-01","amount_due" to 80,"amount_paid" to 80,"balance" to 0),
+                row("share_id" to "demo-share-2","expense_id" to "demo-expense-2","concept" to "Servicios de la casa","month_start" to "2026-09-01","expense_date" to "2026-09-01","amount_due" to 80,"amount_paid" to 40,"balance" to 40),
+                row("share_id" to "demo-share-3","expense_id" to "demo-expense-3","concept" to "Servicios de la casa","month_start" to "2026-10-01","expense_date" to "2026-10-01","amount_due" to 80,"amount_paid" to 0,"balance" to 80))
+            return Snapshot(profile,tables+("family_debts" to accountRows),preview=true)
+        }
         return Snapshot(profile,tables,preview=true)
     }
     private fun blocked(): Nothing=error("Vista de diseño: no se guardan datos.")

@@ -12,7 +12,8 @@ import kotlinx.coroutines.flow.*
 import org.json.JSONArray
 import org.json.JSONObject
 
-data class CasaState(val starting: Boolean=true,val data: Snapshot?=null,val busy: Boolean=false,val error: String?=null,val info: String?=null,val recovery: Boolean=false,val dark: Boolean=false,val textScale: Float=1f,val extras: Map<String,List<Record>> = emptyMap(),val locked: Boolean=false,val passwordEntry: Boolean=false,val biometricEnabled: Boolean=false,val biometricPrompting: Boolean=false,val securityRevision: Int=0)
+data class PreparedPhoto(val uri: String?=null,val error: String?=null)
+data class CasaState(val starting: Boolean=true,val data: Snapshot?=null,val busy: Boolean=false,val error: String?=null,val info: String?=null,val recovery: Boolean=false,val dark: Boolean=false,val textScale: Float=1f,val extras: Map<String,List<Record>> = emptyMap(),val locked: Boolean=false,val passwordEntry: Boolean=false,val biometricEnabled: Boolean=false,val biometricPrompting: Boolean=false,val securityRevision: Int=0,val preparingPhotos: Set<String> = emptySet(),val preparedPhotos: Map<String,PreparedPhoto> = emptyMap())
 class CasaViewModel(app: Application,private val source: CasaDataSource,private val clock: ()->Long = SystemClock::elapsedRealtime): AndroidViewModel(app) {
     private val prefs=app.getSharedPreferences("casa_preferences",0)
     private val accessPrefs=app.getSharedPreferences("casa_local_access",0)
@@ -23,6 +24,18 @@ class CasaViewModel(app: Application,private val source: CasaDataSource,private 
     val state=mutable.asStateFlow()
     private val events=MutableSharedFlow<String>(extraBufferCapacity=8);val messages=events.asSharedFlow()
     var hasStarted=false; private set
+    fun prepareCameraPhoto(uri: String) {
+        if(uri in state.value.preparingPhotos || uri in state.value.preparedPhotos)return
+        val owner=state.value.data?.profile?.id ?: return
+        mutable.update {it.copy(preparingPhotos=it.preparingPhotos+uri)}
+        viewModelScope.launch {
+            val result=try {val prepared=withContext(Dispatchers.IO){ReceiptPhotos.prepare(getApplication(),Uri.parse(uri))};PreparedPhoto(uri=prepared.toString())}
+            catch(e: Exception){if(e is CancellationException)throw e;ReceiptPhotos.deleteIfOwned(getApplication(),Uri.parse(uri));PreparedPhoto(error=e.message ?: "No se pudo preparar la foto.")}
+            if(state.value.data?.profile?.id==owner && source.session?.userId==owner)mutable.update {it.copy(preparingPhotos=it.preparingPhotos-uri,preparedPhotos=it.preparedPhotos+(uri to result))}
+            else {ReceiptPhotos.deleteIfOwned(getApplication(),Uri.parse(uri));mutable.update {it.copy(preparingPhotos=it.preparingPhotos-uri)}}
+        }
+    }
+    fun consumeCameraPhoto(uri: String){mutable.update {it.copy(preparedPhotos=it.preparedPhotos-uri)}}
     fun deviceSettingsChanged(){mutable.update {it.copy(securityRevision=it.securityRevision+1)}}
     private fun resumeDeviceAlerts(data: Snapshot?) {
         if(source !is CasaRepository)return
@@ -183,6 +196,7 @@ class CasaViewModel(app: Application,private val source: CasaDataSource,private 
                 "password" -> {source.password(values["password"].orEmpty());mutable.update { it.copy(recovery=false) }}
                 else -> error("Operación no disponible.")
             }
+            form.fields.filter {it.type==InputType.IMAGE}.forEach {field->values[field.key]?.takeIf {it.isNotBlank()}?.let {ReceiptPhotos.deleteIfOwned(getApplication(),Uri.parse(it))}}
             events.emit(if(form.kind=="payment")if(s.profile.role.staff)"Depósito registrado y aprobado." else "Depósito enviado para revisión." else "Cambio guardado.");done();val refreshed=runCatching {source.load()};mutable.update { it.copy(data=refreshed.getOrNull() ?: it.data,error=if(refreshed.isFailure) "Guardado. No se pudo actualizar la vista; usa Actualizar datos." else null) }
         }
     }

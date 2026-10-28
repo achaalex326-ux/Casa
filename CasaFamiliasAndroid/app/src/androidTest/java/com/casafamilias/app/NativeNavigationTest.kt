@@ -17,9 +17,9 @@ import androidx.compose.ui.text.TextLayoutResult
 class NativeNavigationTest {
     @get:Rule val compose=createEmptyComposeRule()
     private var scenario: ActivityScenario<MainActivity>?=null
-    private fun launch(role: String) {
+    private fun launch(role: String,account: Boolean=false) {
         val context=InstrumentationRegistry.getInstrumentation().targetContext
-        val intent=Intent(context,MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK).putExtra("design_preview",true).putExtra("preview_role",role)
+        val intent=Intent(context,MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK).putExtra("design_preview",true).putExtra("preview_role",role).putExtra("preview_account",account)
         scenario=ActivityScenario.launch(intent)
         compose.waitUntil(90000){compose.onAllNodesWithText("Vista de diseño · Datos de ejemplo").fetchSemanticsNodes().isNotEmpty()}
     }
@@ -56,7 +56,7 @@ class NativeNavigationTest {
     }
     @Test fun familyCannotSeeOtherFamilyAdministration() {
         launch("family")
-        compose.onAllNodesWithText("Mis cuotas").onFirst().assertExists()
+        compose.onAllNodesWithText("Mi\ncuenta").onFirst().assertExists()
         compose.onNodeWithText("Familias").assertDoesNotExist()
         compose.onNodeWithText("Más").performClick()
         compose.onNodeWithText("Usuarios").assertDoesNotExist()
@@ -111,7 +111,7 @@ class NativeNavigationTest {
         scroll("Extra grande").assertIsSelected()
         compose.onNode(isToggleable()).assertIsOn()
         compose.onNodeWithContentDescription("Volver").performClick()
-        compose.onAllNodesWithText("Mis cuotas").onFirst().assertExists()
+        compose.onAllNodesWithText("Mi\ncuenta").onFirst().assertExists()
         compose.onNodeWithText("Limpieza").performSemanticsAction(SemanticsActions.GetTextLayoutResult){action->val layouts=mutableListOf<TextLayoutResult>();assertTrue(action(layouts));assertEquals(1,layouts.single().lineCount);assertFalse(layouts.single().hasVisualOverflow)}
         screenshot("13-familia-oscuro-texto-grande")
     }
@@ -185,6 +185,33 @@ class NativeNavigationTest {
         compose.onNodeWithText("Cancelar").performClick()
         scroll("Rechazar depósito completo").assertExists()
         screenshot("23-aprobacion-deposito-completo")
+    }
+
+    @Test fun accountMakesPaidPartialAndPendingMonthsUnderstandable() {
+        launch("family",account=true)
+        compose.onNodeWithText("Mi\ncuenta").performClick()
+        scroll("Gastos registrados hasta").assertExists()
+        scroll("2 meses con saldo pendiente").assertExists()
+        compose.onNode(hasScrollToIndexAction()).performScrollToNode(hasTestTag("account-month-2026-09"))
+        compose.onNodeWithTag("account-month-2026-09").assertExists()
+        compose.onNodeWithText("Pago parcial").assertExists()
+        screenshot("24-cuenta-mes-pago-parcial")
+        compose.onNode(hasScrollToIndexAction()).performScrollToNode(hasTestTag("account-month-2026-10"))
+        screenshot("25-cuenta-mes-pendiente")
+        scroll("Al día").performClick()
+        compose.onNode(hasScrollToIndexAction()).performScrollToNode(hasTestTag("account-month-2026-08"))
+        compose.onNodeWithTag("account-month-2026-08").assertExists()
+        compose.onAllNodesWithText("Al día").onLast().assertExists()
+        screenshot("26-cuenta-mes-cubierto")
+    }
+    @Test fun paymentListIdentifiesMonthsAndLinksToAccount() {
+        launch("family");compose.onNodeWithText("Pagos").performClick()
+        scroll("¿Qué meses me faltan pagar?").assertExists()
+        scroll("2 comprobantes por revisar").assertExists()
+        scroll("Registrar pago").assertExists()
+        compose.onNode(hasScrollToIndexAction()).performScrollToNode(hasText("Previsto para: enero 2030, febrero 2030, marzo 2030"))
+        compose.onNodeWithText("Previsto para: enero 2030, febrero 2030, marzo 2030").assertExists()
+        screenshot("27-pagos-meses-y-revision")
     }
 
 }

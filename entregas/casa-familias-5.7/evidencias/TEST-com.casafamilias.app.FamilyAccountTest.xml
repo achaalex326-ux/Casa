@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.casafamilias.app.FamilyAccountTest" tests="13" skipped="0" failures="0" errors="0" timestamp="2026-10-28T22:35:31" hostname="84c4f355ed0f" time="0.008">
+  <properties/>
+  <testcase name="pendingReceiptMonthLabelsAreDerivedFromPlan" classname="com.casafamilias.app.FamilyAccountTest" time="0.002"/>
+  <testcase name="onePendingBatchIsAllocatedToAllThreeMonthsWithoutReducingBalance" classname="com.casafamilias.app.FamilyAccountTest" time="0.003"/>
+  <testcase name="creditOnlyPaymentDoesNotClaimToCoverAnyMonth" classname="com.casafamilias.app.FamilyAccountTest" time="0.0"/>
+  <testcase name="differentDebtsInSameMonthAreCombined" classname="com.casafamilias.app.FamilyAccountTest" time="0.0"/>
+  <testcase name="monthsShowLatestIssuedAndFirstUnpaidWithoutAssumingCurrentMonth" classname="com.casafamilias.app.FamilyAccountTest" time="0.001"/>
+  <testcase name="emptyAccountDoesNotClaimMonthsPaid" classname="com.casafamilias.app.FamilyAccountTest" time="0.0"/>
+  <testcase name="oldPendingPaymentIsCountedOnce" classname="com.casafamilias.app.FamilyAccountTest" time="0.001"/>
+  <testcase name="zeroAssignedDebtIsCalledUpToDateWithoutInventingCashPayment" classname="com.casafamilias.app.FamilyAccountTest" time="0.0"/>
+  <testcase name="paymentDateDoesNotReplaceTheMonthBeingPaid" classname="com.casafamilias.app.FamilyAccountTest" time="0.0"/>
+  <testcase name="approvedAndRejectedBatchesAreNotCountedAsPending" classname="com.casafamilias.app.FamilyAccountTest" time="0.0"/>
+  <testcase name="missingMonthIsNotAssumedPaid" classname="com.casafamilias.app.FamilyAccountTest" time="0.001"/>
+  <testcase name="familyCannotRequestAnotherAccountingFamilyEvenWithCleaningAlias" classname="com.casafamilias.app.FamilyAccountTest" time="0.0"/>
+  <testcase name="staffUsesApprovedAppliedMoneyAndDoesNotSubtractPendingMoney" classname="com.casafamilias.app.FamilyAccountTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,0 +1,623 @@
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.BatchPaymentSubmissionTest
+INSTRUMENTATION_STATUS: current=1
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=33
+INSTRUMENTATION_STATUS: stream=
+com.casafamilias.app.BatchPaymentSubmissionTest:
+INSTRUMENTATION_STATUS: test=lostReplyRetriesSameDepositAndUploadsReceiptOnlyOnce
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.BatchPaymentSubmissionTest
+INSTRUMENTATION_STATUS: current=1
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=33
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=lostReplyRetriesSameDepositAndUploadsReceiptOnlyOnce
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.BatchPaymentSubmissionTest
+INSTRUMENTATION_STATUS: current=2
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=33
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=doubleTapWhileSubmittingDoesNotCreateTwoRequests
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.BatchPaymentSubmissionTest
+INSTRUMENTATION_STATUS: current=2
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=33
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=doubleTapWhileSubmittingDoesNotCreateTwoRequests
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.BiometricGateTest
+INSTRUMENTATION_STATUS: current=3
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=33
+INSTRUMENTATION_STATUS: stream=
+com.casafamilias.app.BiometricGateTest:
+INSTRUMENTATION_STATUS: test=correctPasswordWorksWhenBiometricsAreUnavailableAndLogoutDisablesOptIn
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.BiometricGateTest
+INSTRUMENTATION_STATUS: current=3
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=33
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=correctPasswordWorksWhenBiometricsAreUnavailableAndLogoutDisablesOptIn
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.BiometricGateTest
+INSTRUMENTATION_STATUS: current=4
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=33
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=coldStartAndRetryCannotReadOrMutateBeforeUnlock
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.BiometricGateTest
+INSTRUMENTATION_STATUS: current=4
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=33
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=coldStartAndRetryCannotReadOrMutateBeforeUnlock
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.BiometricGateTest
+INSTRUMENTATION_STATUS: current=5
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=33
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=verifiedBiometricUnlocksAndLongBackgroundLocksAgain
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.BiometricGateTest
+INSTRUMENTATION_STATUS: current=5
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=33
+INSTRUMENTATION_STATUS: stack=java.lang.AssertionError: Failed: assertExists.
+Can't retrieve node at index '0' of 'Text + EditableText contains 'Mi cuenta' (ignoreCase: false)'
+There are no existing nodes for that selector.
+
+	at androidx.compose.ui.test.SemanticsNodeInteraction.fetchOneOrThrow(SemanticsNodeInteraction.kt:175)
+	at androidx.compose.ui.test.SemanticsNodeInteraction.fetchOneOrThrow$default(SemanticsNodeInteraction.kt:150)
+	at androidx.compose.ui.test.SemanticsNodeInteraction.assertExists(SemanticsNodeInteraction.kt:125)
+	at androidx.compose.ui.test.SemanticsNodeInteraction.assertExists$default(SemanticsNodeInteraction.kt:124)
+	at com.casafamilias.app.BiometricGateTest.verifiedBiometricUnlocksAndLongBackgroundLocksAgain(BiometricGateTest.kt:67)
+
+INSTRUMENTATION_STATUS: stream=
+Error in verifiedBiometricUnlocksAndLongBackgroundLocksAgain(com.casafamilias.app.BiometricGateTest):
+java.lang.AssertionError: Failed: assertExists.
+Can't retrieve node at index '0' of 'Text + EditableText contains 'Mi cuenta' (ignoreCase: false)'
+There are no existing nodes for that selector.
+
+	at androidx.compose.ui.test.SemanticsNodeInteraction.fetchOneOrThrow(SemanticsNodeInteraction.kt:175)
+	at androidx.compose.ui.test.SemanticsNodeInteraction.fetchOneOrThrow$default(SemanticsNodeInteraction.kt:150)
+	at androidx.compose.ui.test.SemanticsNodeInteraction.assertExists(SemanticsNodeInteraction.kt:125)
+	at androidx.compose.ui.test.SemanticsNodeInteraction.assertExists$default(SemanticsNodeInteraction.kt:124)
+	at com.casafamilias.app.BiometricGateTest.verifiedBiometricUnlocksAndLongBackgroundLocksAgain(BiometricGateTest.kt:67)
+
+INSTRUMENTATION_STATUS: test=verifiedBiometricUnlocksAndLongBackgroundLocksAgain
+INSTRUMENTATION_STATUS_CODE: -2
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.BiometricGateTest
+INSTRUMENTATION_STATUS: current=6
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=33
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=expiredServerSessionRequiresPasswordEvenAfterVerifiedBiometric
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.BiometricGateTest
+INSTRUMENTATION_STATUS: current=6
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=33
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=expiredServerSessionRequiresPasswordEvenAfterVerifiedBiometric
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.BiometricGateTest
+INSTRUMENTATION_STATUS: current=7
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=33
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=cancellationAndWrongPasswordNeverUnlockTheStoredSession
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.BiometricGateTest
+INSTRUMENTATION_STATUS: current=7
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=33
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=cancellationAndWrongPasswordNeverUnlockTheStoredSession
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.BiometricGateTest
+INSTRUMENTATION_STATUS: current=8
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=33
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=enablingRequiresSuccessfulVerificationAndCanBeDisabled
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.BiometricGateTest
+INSTRUMENTATION_STATUS: current=8
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=33
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=enablingRequiresSuccessfulVerificationAndCanBeDisabled
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.DeviceNotificationsTest
+INSTRUMENTATION_STATUS: current=9
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=33
+INSTRUMENTATION_STATUS: stream=
+com.casafamilias.app.DeviceNotificationsTest:
+INSTRUMENTATION_STATUS: test=accountMismatchAndLogoutDoNotFetchOrNotify
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.DeviceNotificationsTest
+INSTRUMENTATION_STATUS: current=9
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=33
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=accountMismatchAndLogoutDoNotFetchOrNotify
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.DeviceNotificationsTest
+INSTRUMENTATION_STATUS: current=10
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=33
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=disabledAlertsCancelDeliveryAndSchedulingUsesOnePeriodicJob
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.DeviceNotificationsTest
+INSTRUMENTATION_STATUS: current=10
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=33
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=disabledAlertsCancelDeliveryAndSchedulingUsesOnePeriodicJob
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.DeviceNotificationsTest
+INSTRUMENTATION_STATUS: current=11
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=33
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=paidDebtWithdrawsAnAlreadyDisplayedReminder
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.DeviceNotificationsTest
+INSTRUMENTATION_STATUS: current=11
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=33
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=paidDebtWithdrawsAnAlreadyDisplayedReminder
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.DeviceNotificationsTest
+INSTRUMENTATION_STATUS: current=12
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=33
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=workerPostsToAndroidWithoutAnActivityAndDoesNotRepeat
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.DeviceNotificationsTest
+INSTRUMENTATION_STATUS: current=12
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=33
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=workerPostsToAndroidWithoutAnActivityAndDoesNotRepeat
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.NativeNavigationTest
+INSTRUMENTATION_STATUS: current=13
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=33
+INSTRUMENTATION_STATUS: stream=
+com.casafamilias.app.NativeNavigationTest:
+INSTRUMENTATION_STATUS: test=administratorReviewsWholeDepositWithOneDecision
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.NativeNavigationTest
+INSTRUMENTATION_STATUS: current=13
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=33
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=administratorReviewsWholeDepositWithOneDecision
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.NativeNavigationTest
+INSTRUMENTATION_STATUS: current=14
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=33
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=adminDesignScreensAreImplementedInNativeAndroid
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.NativeNavigationTest
+INSTRUMENTATION_STATUS: current=14
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=33
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=adminDesignScreensAreImplementedInNativeAndroid
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.NativeNavigationTest
+INSTRUMENTATION_STATUS: current=15
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=33
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=administratorHasFiveTabsAndUniqueMoreMenu
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.NativeNavigationTest
+INSTRUMENTATION_STATUS: current=15
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=33
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=administratorHasFiveTabsAndUniqueMoreMenu
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.NativeNavigationTest
+INSTRUMENTATION_STATUS: current=16
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=33
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=familyCanOpenItsTurnAndLargeTextDarkMode
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.NativeNavigationTest
+INSTRUMENTATION_STATUS: current=16
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=33
+INSTRUMENTATION_STATUS: stack=java.lang.AssertionError: Failed: assertExists.
+Can't retrieve node at index '0' of 'Text + EditableText contains 'Mi cuenta' (ignoreCase: false)'
+There are no existing nodes for that selector.
+
+	at androidx.compose.ui.test.SemanticsNodeInteraction.fetchOneOrThrow(SemanticsNodeInteraction.kt:175)
+	at androidx.compose.ui.test.SemanticsNodeInteraction.fetchOneOrThrow$default(SemanticsNodeInteraction.kt:150)
+	at androidx.compose.ui.test.SemanticsNodeInteraction.assertExists(SemanticsNodeInteraction.kt:125)
+	at androidx.compose.ui.test.SemanticsNodeInteraction.assertExists$default(SemanticsNodeInteraction.kt:124)
+	at com.casafamilias.app.NativeNavigationTest.familyCanOpenItsTurnAndLargeTextDarkMode(NativeNavigationTest.kt:114)
+
+INSTRUMENTATION_STATUS: stream=
+Error in familyCanOpenItsTurnAndLargeTextDarkMode(com.casafamilias.app.NativeNavigationTest):
+java.lang.AssertionError: Failed: assertExists.
+Can't retrieve node at index '0' of 'Text + EditableText contains 'Mi cuenta' (ignoreCase: false)'
+There are no existing nodes for that selector.
+
+	at androidx.compose.ui.test.SemanticsNodeInteraction.fetchOneOrThrow(SemanticsNodeInteraction.kt:175)
+	at androidx.compose.ui.test.SemanticsNodeInteraction.fetchOneOrThrow$default(SemanticsNodeInteraction.kt:150)
+	at androidx.compose.ui.test.SemanticsNodeInteraction.assertExists(SemanticsNodeInteraction.kt:125)
+	at androidx.compose.ui.test.SemanticsNodeInteraction.assertExists$default(SemanticsNodeInteraction.kt:124)
+	at com.casafamilias.app.NativeNavigationTest.familyCanOpenItsTurnAndLargeTextDarkMode(NativeNavigationTest.kt:114)
+
+INSTRUMENTATION_STATUS: test=familyCanOpenItsTurnAndLargeTextDarkMode
+INSTRUMENTATION_STATUS_CODE: -2
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.NativeNavigationTest
+INSTRUMENTATION_STATUS: current=17
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=33
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=familyDepositHistoryGroupsOneReceiptAndThreeMonths
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.NativeNavigationTest
+INSTRUMENTATION_STATUS: current=17
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=33
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=familyDepositHistoryGroupsOneReceiptAndThreeMonths
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.NativeNavigationTest
+INSTRUMENTATION_STATUS: current=18
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=33
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=rotationAndProcessRecreationKeepTheNativeScreen
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.NativeNavigationTest
+INSTRUMENTATION_STATUS: current=18
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=33
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=rotationAndProcessRecreationKeepTheNativeScreen
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.NativeNavigationTest
+INSTRUMENTATION_STATUS: current=19
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=33
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=paymentListIdentifiesMonthsAndLinksToAccount
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.NativeNavigationTest
+INSTRUMENTATION_STATUS: current=19
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=33
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=paymentListIdentifiesMonthsAndLinksToAccount
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.NativeNavigationTest
+INSTRUMENTATION_STATUS: current=20
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=33
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=familyCannotSeeOtherFamilyAdministration
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.NativeNavigationTest
+INSTRUMENTATION_STATUS: current=20
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=33
+INSTRUMENTATION_STATUS: stack=java.lang.AssertionError: Failed: assertExists.
+Can't retrieve node at index '0' of 'Text + EditableText contains 'Mi cuenta' (ignoreCase: false)'
+There are no existing nodes for that selector.
+
+	at androidx.compose.ui.test.SemanticsNodeInteraction.fetchOneOrThrow(SemanticsNodeInteraction.kt:175)
+	at androidx.compose.ui.test.SemanticsNodeInteraction.fetchOneOrThrow$default(SemanticsNodeInteraction.kt:150)
+	at androidx.compose.ui.test.SemanticsNodeInteraction.assertExists(SemanticsNodeInteraction.kt:125)
+	at androidx.compose.ui.test.SemanticsNodeInteraction.assertExists$default(SemanticsNodeInteraction.kt:124)
+	at com.casafamilias.app.NativeNavigationTest.familyCannotSeeOtherFamilyAdministration(NativeNavigationTest.kt:59)
+
+INSTRUMENTATION_STATUS: stream=
+Error in familyCannotSeeOtherFamilyAdministration(com.casafamilias.app.NativeNavigationTest):
+java.lang.AssertionError: Failed: assertExists.
+Can't retrieve node at index '0' of 'Text + EditableText contains 'Mi cuenta' (ignoreCase: false)'
+There are no existing nodes for that selector.
+
+	at androidx.compose.ui.test.SemanticsNodeInteraction.fetchOneOrThrow(SemanticsNodeInteraction.kt:175)
+	at androidx.compose.ui.test.SemanticsNodeInteraction.fetchOneOrThrow$default(SemanticsNodeInteraction.kt:150)
+	at androidx.compose.ui.test.SemanticsNodeInteraction.assertExists(SemanticsNodeInteraction.kt:125)
+	at androidx.compose.ui.test.SemanticsNodeInteraction.assertExists$default(SemanticsNodeInteraction.kt:124)
+	at com.casafamilias.app.NativeNavigationTest.familyCannotSeeOtherFamilyAdministration(NativeNavigationTest.kt:59)
+
+INSTRUMENTATION_STATUS: test=familyCannotSeeOtherFamilyAdministration
+INSTRUMENTATION_STATUS_CODE: -2
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.NativeNavigationTest
+INSTRUMENTATION_STATUS: current=21
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=33
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=recipientFamilyCanAnswerIncomingExchangeAndSenderCannotAnswerOutgoing
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.NativeNavigationTest
+INSTRUMENTATION_STATUS: current=21
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=33
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=recipientFamilyCanAnswerIncomingExchangeAndSenderCannotAnswerOutgoing
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.NativeNavigationTest
+INSTRUMENTATION_STATUS: current=22
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=33
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=accountMakesPaidPartialAndPendingMonthsUnderstandable
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.NativeNavigationTest
+INSTRUMENTATION_STATUS: current=22
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=33
+INSTRUMENTATION_STATUS: stack=java.lang.AssertionError: Failed to inject touch input.
+Reason: Expected exactly '1' node but could not find any node that satisfies: (Text + EditableText contains 'Mi cuenta' (ignoreCase: false))
+
+	at androidx.compose.ui.test.SemanticsNodeInteraction.fetchOneOrThrow(SemanticsNodeInteraction.kt:178)
+	at androidx.compose.ui.test.SemanticsNodeInteraction.fetchOneOrThrow$default(SemanticsNodeInteraction.kt:150)
+	at androidx.compose.ui.test.SemanticsNodeInteraction.fetchSemanticsNode(SemanticsNodeInteraction.kt:84)
+	at androidx.compose.ui.test.ActionsKt.performTouchInput(Actions.kt:394)
+	at androidx.compose.ui.test.Actions_androidKt.performClickImpl(Actions.android.kt:20)
+	at androidx.compose.ui.test.ActionsKt.performClick(Actions.kt:54)
+	at com.casafamilias.app.NativeNavigationTest.accountMakesPaidPartialAndPendingMonthsUnderstandable(NativeNavigationTest.kt:192)
+
+INSTRUMENTATION_STATUS: stream=
+Error in accountMakesPaidPartialAndPendingMonthsUnderstandable(com.casafamilias.app.NativeNavigationTest):
+java.lang.AssertionError: Failed to inject touch input.
+Reason: Expected exactly '1' node but could not find any node that satisfies: (Text + EditableText contains 'Mi cuenta' (ignoreCase: false))
+
+	at androidx.compose.ui.test.SemanticsNodeInteraction.fetchOneOrThrow(SemanticsNodeInteraction.kt:178)
+	at androidx.compose.ui.test.SemanticsNodeInteraction.fetchOneOrThrow$default(SemanticsNodeInteraction.kt:150)
+	at androidx.compose.ui.test.SemanticsNodeInteraction.fetchSemanticsNode(SemanticsNodeInteraction.kt:84)
+	at androidx.compose.ui.test.ActionsKt.performTouchInput(Actions.kt:394)
+	at androidx.compose.ui.test.Actions_androidKt.performClickImpl(Actions.android.kt:20)
+	at androidx.compose.ui.test.ActionsKt.performClick(Actions.kt:54)
+	at com.casafamilias.app.NativeNavigationTest.accountMakesPaidPartialAndPendingMonthsUnderstandable(NativeNavigationTest.kt:192)
+
+INSTRUMENTATION_STATUS: test=accountMakesPaidPartialAndPendingMonthsUnderstandable
+INSTRUMENTATION_STATUS_CODE: -2
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.NativeNavigationTest
+INSTRUMENTATION_STATUS: current=23
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=33
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=payerHasFinanceAndNoSystemAdministration
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.NativeNavigationTest
+INSTRUMENTATION_STATUS: current=23
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=33
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=payerHasFinanceAndNoSystemAdministration
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.NativeNavigationTest
+INSTRUMENTATION_STATUS: current=24
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=33
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=restaurantRemainsReadOnlyAndBalanceIsSixty
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.NativeNavigationTest
+INSTRUMENTATION_STATUS: current=24
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=33
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=restaurantRemainsReadOnlyAndBalanceIsSixty
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.NativeNavigationTest
+INSTRUMENTATION_STATUS: current=25
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=33
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=familyCanPreviewOneDepositAcrossThreeMonths
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.NativeNavigationTest
+INSTRUMENTATION_STATUS: current=25
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=33
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=familyCanPreviewOneDepositAcrossThreeMonths
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.NativeNavigationTest
+INSTRUMENTATION_STATUS: current=26
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=33
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=payerSeesOtherFamilyWeekButCannotRequestTheirExchange
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.NativeNavigationTest
+INSTRUMENTATION_STATUS: current=26
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=33
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=payerSeesOtherFamilyWeekButCannotRequestTheirExchange
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.NativeNavigationTest
+INSTRUMENTATION_STATUS: current=27
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=33
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=engineerAdministratorSeesCurrentFamilyAndWholeCalendarWithoutSwapAuthority
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.NativeNavigationTest
+INSTRUMENTATION_STATUS: current=27
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=33
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=engineerAdministratorSeesCurrentFamilyAndWholeCalendarWithoutSwapAuthority
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.NativeNavigationTest
+INSTRUMENTATION_STATUS: current=28
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=33
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=passwordConfirmationAndPdfExportAreNative
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.NativeNavigationTest
+INSTRUMENTATION_STATUS: current=28
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=33
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=passwordConfirmationAndPdfExportAreNative
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.PhotoAttachmentsTest
+INSTRUMENTATION_STATUS: current=29
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=33
+INSTRUMENTATION_STATUS: stream=
+com.casafamilias.app.PhotoAttachmentsTest:
+INSTRUMENTATION_STATUS: test=photoIsResizedRotatedAndStrippedOfCameraMetadata
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.PhotoAttachmentsTest
+INSTRUMENTATION_STATUS: current=29
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=33
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=photoIsResizedRotatedAndStrippedOfCameraMetadata
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.PhotoAttachmentsTest
+INSTRUMENTATION_STATUS: current=30
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=33
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=cancellingCameraKeepsPreviousAttachment
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.PhotoAttachmentsTest
+INSTRUMENTATION_STATUS: current=30
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=33
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=cancellingCameraKeepsPreviousAttachment
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.PhotoAttachmentsTest
+INSTRUMENTATION_STATUS: current=31
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=33
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=serviceBillPhotoAttachesToCorrectServiceAndOnlyUploadsOnSave
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.PhotoAttachmentsTest
+INSTRUMENTATION_STATUS: current=31
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=33
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=serviceBillPhotoAttachesToCorrectServiceAndOnlyUploadsOnSave
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.PhotoAttachmentsTest
+INSTRUMENTATION_STATUS: current=32
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=33
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=providerOnlySharesReceiptFilesAndIntentGrantsCameraOutput
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.PhotoAttachmentsTest
+INSTRUMENTATION_STATUS: current=32
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=33
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=providerOnlySharesReceiptFilesAndIntentGrantsCameraOutput
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.PhotoAttachmentsTest
+INSTRUMENTATION_STATUS: current=33
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=33
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=delayedCameraResultSurvivesBiometricLockAndKeepsPaymentDraft
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=com.casafamilias.app.PhotoAttachmentsTest
+INSTRUMENTATION_STATUS: current=33
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=33
+INSTRUMENTATION_STATUS: stack=androidx.compose.ui.test.ComposeTimeoutException: Condition still not satisfied after 15000 ms
+	at androidx.compose.ui.test.AndroidComposeUiTestEnvironment$AndroidComposeUiTestImpl.waitUntil(ComposeUiTest.android.kt:441)
+	at androidx.compose.ui.test.junit4.AndroidComposeTestRule.waitUntil(AndroidComposeTestRule.android.kt:306)
+	at com.casafamilias.app.PhotoAttachmentsTest.captured(PhotoAttachmentsTest.kt:75)
+	at com.casafamilias.app.PhotoAttachmentsTest.delayedCameraResultSurvivesBiometricLockAndKeepsPaymentDraft(PhotoAttachmentsTest.kt:131)
+
+INSTRUMENTATION_STATUS: stream=
+Error in delayedCameraResultSurvivesBiometricLockAndKeepsPaymentDraft(com.casafamilias.app.PhotoAttachmentsTest):
+androidx.compose.ui.test.ComposeTimeoutException: Condition still not satisfied after 15000 ms
+	at androidx.compose.ui.test.AndroidComposeUiTestEnvironment$AndroidComposeUiTestImpl.waitUntil(ComposeUiTest.android.kt:441)
+	at androidx.compose.ui.test.junit4.AndroidComposeTestRule.waitUntil(AndroidComposeTestRule.android.kt:306)
+	at com.casafamilias.app.PhotoAttachmentsTest.captured(PhotoAttachmentsTest.kt:75)
+	at com.casafamilias.app.PhotoAttachmentsTest.delayedCameraResultSurvivesBiometricLockAndKeepsPaymentDraft(PhotoAttachmentsTest.kt:131)
+
+INSTRUMENTATION_STATUS: test=delayedCameraResultSurvivesBiometricLockAndKeepsPaymentDraft
+INSTRUMENTATION_STATUS_CODE: -2
+INSTRUMENTATION_RESULT: stream=
+
+Time: 315.039
+There were 5 failures:
+1) verifiedBiometricUnlocksAndLongBackgroundLocksAgain(com.casafamilias.app.BiometricGateTest)
+java.lang.AssertionError: Failed: assertExists.
+Can't retrieve node at index '0' of 'Text + EditableText contains 'Mi cuenta' (ignoreCase: false)'
+There are no existing nodes for that selector.
+
+	at androidx.compose.ui.test.SemanticsNodeInteraction.fetchOneOrThrow(SemanticsNodeInteraction.kt:175)
+	at androidx.compose.ui.test.SemanticsNodeInteraction.fetchOneOrThrow$default(SemanticsNodeInteraction.kt:150)
+	at androidx.compose.ui.test.SemanticsNodeInteraction.assertExists(SemanticsNodeInteraction.kt:125)
+	at androidx.compose.ui.test.SemanticsNodeInteraction.assertExists$default(SemanticsNodeInteraction.kt:124)
+	at com.casafamilias.app.BiometricGateTest.verifiedBiometricUnlocksAndLongBackgroundLocksAgain(BiometricGateTest.kt:67)
+2) familyCanOpenItsTurnAndLargeTextDarkMode(com.casafamilias.app.NativeNavigationTest)
+java.lang.AssertionError: Failed: assertExists.
+Can't retrieve node at index '0' of 'Text + EditableText contains 'Mi cuenta' (ignoreCase: false)'
+There are no existing nodes for that selector.
+
+	at androidx.compose.ui.test.SemanticsNodeInteraction.fetchOneOrThrow(SemanticsNodeInteraction.kt:175)
+	at androidx.compose.ui.test.SemanticsNodeInteraction.fetchOneOrThrow$default(SemanticsNodeInteraction.kt:150)
+	at androidx.compose.ui.test.SemanticsNodeInteraction.assertExists(SemanticsNodeInteraction.kt:125)
+	at androidx.compose.ui.test.SemanticsNodeInteraction.assertExists$default(SemanticsNodeInteraction.kt:124)
+	at com.casafamilias.app.NativeNavigationTest.familyCanOpenItsTurnAndLargeTextDarkMode(NativeNavigationTest.kt:114)
+3) familyCannotSeeOtherFamilyAdministration(com.casafamilias.app.NativeNavigationTest)
+java.lang.AssertionError: Failed: assertExists.
+Can't retrieve node at index '0' of 'Text + EditableText contains 'Mi cuenta' (ignoreCase: false)'
+There are no existing nodes for that selector.
+
+	at androidx.compose.ui.test.SemanticsNodeInteraction.fetchOneOrThrow(SemanticsNodeInteraction.kt:175)
+	at androidx.compose.ui.test.SemanticsNodeInteraction.fetchOneOrThrow$default(SemanticsNodeInteraction.kt:150)
+	at androidx.compose.ui.test.SemanticsNodeInteraction.assertExists(SemanticsNodeInteraction.kt:125)
+	at androidx.compose.ui.test.SemanticsNodeInteraction.assertExists$default(SemanticsNodeInteraction.kt:124)
+	at com.casafamilias.app.NativeNavigationTest.familyCannotSeeOtherFamilyAdministration(NativeNavigationTest.kt:59)
+4) accountMakesPaidPartialAndPendingMonthsUnderstandable(com.casafamilias.app.NativeNavigationTest)
+java.lang.AssertionError: Failed to inject touch input.
+Reason: Expected exactly '1' node but could not find any node that satisfies: (Text + EditableText contains 'Mi cuenta' (ignoreCase: false))
+
+	at androidx.compose.ui.test.SemanticsNodeInteraction.fetchOneOrThrow(SemanticsNodeInteraction.kt:178)
+	at androidx.compose.ui.test.SemanticsNodeInteraction.fetchOneOrThrow$default(SemanticsNodeInteraction.kt:150)
+	at androidx.compose.ui.test.SemanticsNodeInteraction.fetchSemanticsNode(SemanticsNodeInteraction.kt:84)
+	at androidx.compose.ui.test.ActionsKt.performTouchInput(Actions.kt:394)
+	at androidx.compose.ui.test.Actions_androidKt.performClickImpl(Actions.android.kt:20)
+	at androidx.compose.ui.test.ActionsKt.performClick(Actions.kt:54)
+	at com.casafamilias.app.NativeNavigationTest.accountMakesPaidPartialAndPendingMonthsUnderstandable(NativeNavigationTest.kt:192)
+5) delayedCameraResultSurvivesBiometricLockAndKeepsPaymentDraft(com.casafamilias.app.PhotoAttachmentsTest)
+androidx.compose.ui.test.ComposeTimeoutException: Condition still not satisfied after 15000 ms
+	at androidx.compose.ui.test.AndroidComposeUiTestEnvironment$AndroidComposeUiTestImpl.waitUntil(ComposeUiTest.android.kt:441)
+	at androidx.compose.ui.test.junit4.AndroidComposeTestRule.waitUntil(AndroidComposeTestRule.android.kt:306)
+	at com.casafamilias.app.PhotoAttachmentsTest.captured(PhotoAttachmentsTest.kt:75)
+	at com.casafamilias.app.PhotoAttachmentsTest.delayedCameraResultSurvivesBiometricLockAndKeepsPaymentDraft(PhotoAttachmentsTest.kt:131)
+
+FAILURES!!!
+Tests run: 33,  Failures: 5
+
+
+INSTRUMENTATION_CODE: -1

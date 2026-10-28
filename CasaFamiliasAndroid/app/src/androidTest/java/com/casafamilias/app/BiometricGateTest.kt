@@ -42,7 +42,7 @@ class BiometricGateTest {
     private fun idle(){compose.waitUntil(10000){!vm.state.value.busy && !vm.state.value.starting};compose.waitForIdle()}
     @Test fun coldStartAndRetryCannotReadOrMutateBeforeUnlock() {
         launch();compose.onNodeWithText("Tu hogar, protegido").assertIsDisplayed()
-        compose.onNodeWithText("Mis cuotas").assertDoesNotExist()
+        compose.onNodeWithText("Mi\ncuenta").assertDoesNotExist()
         compose.runOnUiThread {vm.start();vm.refresh();vm.mutate("not-a-real-rpc",JSONObject())}
         idle();assertEquals(0,server.loads);assertEquals(0,server.writes);assertTrue(vm.state.value.locked)
         assertNull(vm.state.value.data)
@@ -56,7 +56,7 @@ class BiometricGateTest {
         compose.onNodeWithText("Contraseña").performTextInput("wrong-password")
         compose.onNodeWithText("Entrar a mi cuenta").performClick();idle()
         assertTrue(vm.state.value.locked);assertEquals(0,server.loads)
-        compose.onNodeWithText("Mis cuotas").assertDoesNotExist()
+        compose.onNodeWithText("Mi\ncuenta").assertDoesNotExist()
         compose.onNodeWithText("Volver al acceso con huella").performScrollTo().performClick()
         compose.onNodeWithText("Tu hogar, protegido").assertIsDisplayed()
     }
@@ -64,12 +64,12 @@ class BiometricGateTest {
         launch()
         compose.runOnUiThread {assertTrue(vm.beginBiometric(false));vm.biometricVerified()};idle()
         assertFalse(vm.state.value.locked);assertEquals(1,server.loads)
-        compose.onAllNodesWithText("Mis cuotas").onFirst().assertExists()
+        compose.onAllNodesWithText("Mi\ncuenta").onFirst().assertExists()
         compose.runOnUiThread {vm.background();now+=29999;vm.foreground()}
         assertFalse(vm.state.value.locked)
         compose.runOnUiThread {vm.background();now+=30000;vm.foreground()}
         compose.onNodeWithText("Tu hogar, protegido").assertIsDisplayed()
-        compose.onNodeWithText("Mis cuotas").assertDoesNotExist()
+        compose.onNodeWithText("Mi\ncuenta").assertDoesNotExist()
         val count=server.loads
         compose.runOnUiThread {vm.refresh()};assertEquals(count,server.loads)
     }

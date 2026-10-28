@@ -26,8 +26,8 @@ typealias Go = (String)->Unit
             items(debts){r->Panel{Text(if(r.text("service")=="electricity")"Luz" else "Agua",style=MaterialTheme.typography.titleMedium);DataLine("Mes",Dates.monthLabel(r.text("month_start").take(7)));DataLine("Saldo pendiente",Amounts.format((r.money("amount_due")-r.money("amount_paid")).max(BigDecimal.ZERO)));Badge(if(r.money("amount_due")<=r.money("amount_paid"))"paid" else "pending")}}
             if(debts.isEmpty())item{Empty("No tienes deudas registradas")}
         } else if(p.role==Role.FAMILY) {
-            item {Hero("Saldo pendiente",s.balance(p.familyId),s.family(p.familyId))}
-            item {NavRow("expenses","Mis cuotas","Consulta servicios y vencimientos"){go("dues")}}
+            item {AccountSummary(s,p.familyId)}
+            item {NavRow("expenses","Ver mi estado de cuenta","Revisa qué meses faltan y cuánto debes"){go("dues")}}
             val own=cleaning.firstOrNull {s.ownsCleaning(it.number("family_id"))}
             item {if(own!=null)Panel{Text("Tu próxima limpieza",style=MaterialTheme.typography.titleMedium);DataLine(s.family(s.household(own.number("family_id"))),Dates.label(own.text("turn_date")));Secondary("Ver turno y tareas"){go("turn/${own.id}")}} else Empty("No tienes un turno pendiente","Cuando se asigne aparecerá aquí.")}
             val next=s.rows("family_debts").filter {it.money("balance")>BigDecimal.ZERO}.sortedBy {it.text("due_date")}.firstOrNull()
@@ -79,10 +79,29 @@ fun serviceLabel(s: String)=mapOf("water" to "Agua","electricity" to "Luz","gas"
     var filter by rememberSaveable {mutableStateOf(if(s.profile.role.staff)"pending" else "all")}
     val all=s.paymentEntries().filter {family.isBlank() || it.text("family_id")==family}
     val rows=all.filter {filter=="all" || it.text("status")==filter}.sortedByDescending {it.text("created_at")}
-    ContentList {item{Title(if(family.isBlank())"Pagos" else "Pagos de ${s.family(family.toLongOrNull())}",if(s.profile.role.staff)"Comprobantes y revisión" else "Tus pagos e historial")}
-        item {Filters((if(!s.profile.role.staff)listOf(Choice("all","Todos")) else emptyList())+listOf(Choice("pending","En revisión"),Choice("approved","Aprobados"),Choice("rejected","Rechazados")),filter,{filter=it})}
+    ContentList {
+        item{Title(if(family.isBlank())"Pagos y comprobantes" else "Pagos de ${s.family(family.toLongOrNull())}",if(s.profile.role.staff)"Revisa un depósito completo de una sola vez" else "Aquí ves lo que enviaste y si ya fue aprobado")}
+        if(s.profile.role==Role.FAMILY)item{NavRow("expenses","¿Qué meses me faltan pagar?","Abre tu estado de cuenta por mes"){go("dues")}}
+        else if(family.isNotBlank())item{NavRow("expenses","Ver deudas por mes","Saldo y meses pendientes de esta familia"){go("family/$family")}}
+        item{Panel{
+            val waiting=all.filter {it.text("status")=="pending"}
+            Text("${waiting.size} ${if(waiting.size==1)"comprobante por revisar" else "comprobantes por revisar"}",style=MaterialTheme.typography.titleMedium)
+            if(waiting.isNotEmpty())Text("Total enviado por revisar: "+Amounts.format(waiting.fold(BigDecimal.ZERO){a,r->a+r.money("amount")}))
+            Text("Enviar un comprobante no descuenta la deuda. El saldo se actualiza cuando se aprueba.",style=MaterialTheme.typography.bodySmall)
+        }}
         if(s.profile.role!=Role.RESTAURANT)item{Action("Registrar pago"){go("form/payment")}}
-        items(rows){r->Panel{Text(if(s.profile.role.staff)s.family(r.number("family_id")) else if(r.flag("batch"))"Depósito con un comprobante" else r.text("note").ifBlank {"Pago"},style=MaterialTheme.typography.titleMedium);Text(Amounts.format(r.money("amount")),style=MaterialTheme.typography.titleLarge);Badge(r.text("status"));Text(Dates.label(r.text("paid_at")),style=MaterialTheme.typography.bodySmall);Secondary(if(r.flag("batch"))if(s.profile.role.staff && r.text("status")=="pending")"Revisar depósito completo" else "Ver reparto del depósito" else if(s.profile.role.staff && r.text("status")=="pending")"Revisar comprobante" else "Ver detalle"){go("payment/${r.id}")}}}
+        item{Filters(listOf(Choice("pending","Por revisar"),Choice("approved","Aprobados"),Choice("rejected","Rechazados"),Choice("all","Todos")),filter,{filter=it})}
+        items(rows){r->Panel{
+            Text(if(s.profile.role.staff)s.family(r.number("family_id")) else if(r.flag("batch"))"Depósito con un comprobante" else "Pago registrado",style=MaterialTheme.typography.titleMedium)
+            Text(Amounts.format(r.money("amount")),style=MaterialTheme.typography.titleLarge);Badge(r.text("status"))
+            DataLine("Fecha del pago",Dates.label(r.text("paid_at")))
+            val periods=s.paymentPeriods(r)
+            if(periods.isNotEmpty())Text((when(r.text("status")){"approved"->"Aplicado a: ";"rejected"->"Se solicitó para: ";else->"Previsto para: "})+periods.take(3).joinToString {Dates.monthLabel(it)}+(if(periods.size>3)" y ${periods.size-3} meses más" else ""),style=MaterialTheme.typography.bodyMedium)
+            if(r.text("status")=="approved"){DataLine("Descontado de la deuda",Amounts.format(r.money("applied_amount")));if(r.money("credit_amount")>BigDecimal.ZERO)DataLine("Quedó a favor",Amounts.format(r.money("credit_amount")))}
+            if(r.text("status")=="pending")Text("Todavía no descontado del saldo.",style=MaterialTheme.typography.bodySmall)
+            if(r.text("status")=="rejected")Text("Este comprobante fue rechazado y no descontó tu deuda.",style=MaterialTheme.typography.bodySmall)
+            Secondary(if(r.flag("batch"))if(s.profile.role.staff && r.text("status")=="pending")"Revisar depósito completo" else "Ver reparto del depósito" else if(s.profile.role.staff && r.text("status")=="pending")"Revisar comprobante" else "Ver detalle"){go("payment/${r.id}")}
+        }}
         if(rows.isEmpty())item{Empty("No hay pagos en esta sección")}
     }
 }
@@ -131,22 +150,7 @@ fun serviceLabel(s: String)=mapOf("water" to "Agua","electricity" to "Luz","gas"
         if(rows.isEmpty())item{Empty("No se encontraron familias")}
     }
 }
-@Composable fun DuesScreen(s: Snapshot,go: Go,family: Long?=s.profile.familyId) {
-    val familyMode=s.profile.role==Role.FAMILY
-    val debts=if(familyMode)s.rows("family_debts") else s.rows("expense_shares").filter {it.number("family_id")==family}
-    ContentList {item{Title(if(familyMode)"Mis cuotas" else s.family(family))};item{Hero("Saldo pendiente",s.balance(family))};item{Panel{DataLine("Saldo a favor",Amounts.format(s.credit(family)))}}
-        if(familyMode && s.balance(family)>BigDecimal.ZERO)item{Action("Pagar varios meses con un comprobante"){go("form/payment")}}
-        if(s.profile.role==Role.ADMIN && !familyMode)item{Secondary("Editar nombre de familia"){go("form/family-name?id=$family")}}
-        if(!familyMode)item{NavRow("payments","Historial de pagos","Consultar los pagos de esta familia"){go("payments-family/$family")}}
-        items(debts){r->val expense=s.find("expenses",r.text("expense_id"));val balance=if(familyMode)r.money("balance") else s.shareBalance(r)
-            Panel{Text(r.text("concept").ifBlank {expense?.text("concept") ?: "Cuota"},style=MaterialTheme.typography.titleMedium);if(familyMode){
-                if(r.text("month_start").isNotBlank()){Text("Servicios · "+Dates.monthLabel(r.text("month_start").take(7)),style=MaterialTheme.typography.labelLarge);listOf("Agua" to "water_amount","Luz" to "electricity_amount","Gas" to "gas_amount","WiFi" to "wifi_amount").forEach {(label,key)->DataLine(label,Amounts.format(r.money(key)))}}
-                DataLine("Cuota asignada",Amounts.format(r.money("amount_due")));DataLine("Pagado",Amounts.format(r.money("amount_paid")))
-            };DataLine("Saldo de la cuota",Amounts.format(balance));DataLine("Vencimiento",Dates.label(r.text("due_date").ifBlank {expense?.text("due_date").orEmpty()}));Badge(if(familyMode)r.text("debt_status").ifBlank {"pending"} else if(balance<=BigDecimal.ZERO)"paid" else "pending");if(balance>BigDecimal.ZERO && familyMode)Secondary("Pagar esta cuota"){go("form/payment?id=${r.text("share_id").ifBlank {r.id}}")}}
-        }
-        if(debts.isEmpty())item{Empty("No hay cuotas registradas")}
-    }
-}
+@Composable fun DuesScreen(s: Snapshot,go: Go,family: Long?=s.profile.familyId) = FamilyAccountScreen(s,go,family)
 @Composable fun CleaningScreen(s: Snapshot,go: Go) {
     var month by rememberSaveable {mutableStateOf(Dates.month())};var scope by rememberSaveable {mutableStateOf("all")}
     val rows=s.cleaningMonth(month).filter {scope=="all" || s.representsCleaning(it.number("family_id"))}

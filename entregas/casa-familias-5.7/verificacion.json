@@ -1,0 +1,108 @@
+{
+  "versionName": "5.7",
+  "versionCode": 13,
+  "minSdk": 26,
+  "targetSdk": 36,
+  "unitTests": {
+    "passed": 83,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "suites": [
+      {
+        "name": "com.casafamilias.app.DeviceAlertRulesTest",
+        "tests": "10",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "timestamp": "2026-10-28T22:35:31"
+      },
+      {
+        "name": "com.casafamilias.app.FamilyAccountTest",
+        "tests": "13",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "timestamp": "2026-10-28T22:35:31"
+      },
+      {
+        "name": "com.casafamilias.app.LocalAccessPolicyTest",
+        "tests": "7",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "timestamp": "2026-10-28T22:35:31"
+      },
+      {
+        "name": "com.casafamilias.app.NativeRulesTest",
+        "tests": "29",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "timestamp": "2026-10-28T22:35:31"
+      },
+      {
+        "name": "com.casafamilias.app.PaymentPlansTest",
+        "tests": "10",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "timestamp": "2026-10-28T22:35:31"
+      },
+      {
+        "name": "com.casafamilias.app.RepositoryContractTest",
+        "tests": "14",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "timestamp": "2026-10-28T22:35:31"
+      }
+    ]
+  },
+  "androidTests": {
+    "passed": 33,
+    "failures": 0,
+    "device": "Android11/API30 emulator",
+    "data": "Fictional local accounts, uploader and server only",
+    "cameraFixtures": "Real provider, files and JPEG processing; camera results injected by registry in five automated tests",
+    "physicalCameraTested": false,
+    "biometricSensorTested": false,
+    "display": "320x800/system font130%; additional app130% in dark-mode test"
+  },
+  "cameraSmoke": {
+    "cameraApp": "com.android.camera2",
+    "virtualCameraCapture": true,
+    "returnedToForm": true,
+    "photoAttached": true,
+    "jpegBytes": 35242,
+    "attachmentVerifiedAfterScrolling": true,
+    "emulatorSystemUiRecovery": "Wait after display/font change; no app data cleared",
+    "realReceiptUploaded": false,
+    "physicalCameraTested": false,
+    "data": "Debug read-only design fixture and synthetic emulator scene"
+  },
+  "presentationSmoke": {
+    "updateInstall": "PASS",
+    "versionName": "5.7",
+    "versionCode": 13,
+    "nativeLoginRendered": true,
+    "presentationIgnoresPreviewExtras": true,
+    "physicalPhoneTested": false,
+    "android16RuntimeTested": false
+  },
+  "lint": {
+    "errors": 0,
+    "warnings": 30
+  },
+  "apkCertificateSha256": "be231e4d4f51af408cdc3728c18aacd76b1f3758b2fe452674294df4cbad2b5c",
+  "matchesPreviousApkCertificate": true,
+  "zipalign16k": true,
+  "backendChanged": false,
+  "realReceiptUploaded": false,
+  "realPaymentCreated": false,
+  "currentFinancialSqlSuiteRun": false,
+  "historicalFinancialValidation": "5.6:277 SQL checks and3 concurrency scenarios; not rerun for5.7",
+  "android13NotificationRuntimeTested": false,
+  "android16RuntimeTested": false,
+  "publishedOnGooglePlay": false
+}
