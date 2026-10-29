@@ -1,0 +1,60 @@
+{
+  "gas": 0,
+  "result": "PASS",
+  "migration": "202610280010_invoice_total_services",
+  "monthsCorrected": 6,
+  "semesterInvoices": 2250.5,
+  "newPayerCoverages": 12,
+  "payerBalancesZero": true,
+  "transactionAtomic": true,
+  "privateBackupStored": true,
+  "otherMonthsUnchanged": true,
+  "imagesAndDatesPreserved": true,
+  "originalPaymentsPreserved": true,
+  "verifiedFromAuthenticatedFamilyAccounts": 2,
+  "latestPublishedMonth": "2026-06",
+  "backupRls": true,
+  "authenticatedCannotReadPrivateBackup": true,
+  "anonCannotReadPrivateBackup": true,
+  "existingPaymentsPreservedCount": 36,
+  "manualDepositCreated": false,
+  "newReceiptUploaded": false,
+  "verifiedMonths": [
+    {
+      "month": "2026-01",
+      "gas": 0,
+      "invoiceTotal": 396.5,
+      "shareTotal": 396.5
+    },
+    {
+      "month": "2026-02",
+      "gas": 0,
+      "invoiceTotal": 338.6,
+      "shareTotal": 338.6
+    },
+    {
+      "month": "2026-03",
+      "gas": 0,
+      "invoiceTotal": 326.2,
+      "shareTotal": 326.2
+    },
+    {
+      "month": "2026-04",
+      "gas": 0,
+      "invoiceTotal": 428.6,
+      "shareTotal": 428.6
+    },
+    {
+      "month": "2026-05",
+      "gas": 0,
+      "invoiceTotal": 383.5,
+      "shareTotal": 383.5
+    },
+    {
+      "month": "2026-06",
+      "gas": 0,
+      "invoiceTotal": 377.1,
+      "shareTotal": 377.1
+    }
+  ]
+}

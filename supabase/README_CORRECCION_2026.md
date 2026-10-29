@@ -4,11 +4,12 @@ El propietario pidió usar los totales de su hoja, gas en cero y seis cuentas fi
 
 ## Estado de esta entrega
 
-El intento de lectura administrativa devolvió HTTP 401 «Invalid access token». La configuración conserva la vinculación SUPABASE_ACCESS_TOKEN para api.supabase.com, pero no permitió consultar el proyecto. **Ni la migración 010 ni la reparación se aplicaron a Supabase.** Los resultados de validacion/test_invoice_totals.py pertenecen exclusivamente a PostgreSQL desechable.
+El acceso fue recuperado y la corrección se aplicó el 28 de octubre de 2026, hora de Bolivia. Se guardó lectura privada previa, se verificó que eran las seis cuentas y los seis meses esperados, sin descuentos aplicados ni cobros al restaurante que conciliar. Migración 010 y reparación se ejecutaron en una sola transacción con guardas sobre el estado leído y verificaciones posteriores.
 
-La renovación se hace en Supabase → Account → Access Tokens; el valor se guarda solo en Codex → Editar entorno → Secretos de red → SUPABASE_ACCESS_TOKEN. No guardar tokens en Git, en este documento ni en capturas. Reintentar la lectura después de renovar y guardar/publicar la configuración; el guardado del borrador no demuestra acceso operativo.
+Los 36 pagos existentes quedaron íntegros. Se añadieron 12 coberturas automáticas faltantes para mantener a Salinas y Salinas2 en cero como cuentas del encargado. No se registraron depósitos ni se subieron fotos nuevas. El semestre cierra en Bs2.250,50, gas cero; las asignaciones suman exactamente las facturas. Se comprobaron las lecturas RPC con las cuentas familiares existentes, permisos del punto de entrada y RLS del respaldo. Las otras fechas/meses, imágenes, limpieza, créditos y notificaciones quedaron sin cambios.
 
-## Regla preparada
+`casa_finance_repairs` conserva una instantánea privada; la evidencia pública solo contiene totales y comprobaciones. **No volver a ejecutar como parte de setup.** Los antiguos 401 son históricos: el acceso operativo se comprobó después de actualizar la vinculación segura.
+## Regla activa
 
 - Suma completa de agua, electricidad, gas e internet; restar solo descuentos explícitos.
 - No usar promedios para reducir el importe familiar ni crear deudas automáticas de restaurante.
@@ -17,7 +18,7 @@ La renovación se hace en Supabase → Account → Access Tokens; el valor se gu
 - Referencia histórica sin deudas ni consumo de créditos. Descuento superior a su factura rechazado sin consumirlo.
 - La entrada casa_create_monthly_services comprueba total y cantidad de cuentas esperados. Un cambio desde la vista previa revierte toda la operación. La función anterior conserva su firma para los APK antiguos y adopta la regla corregida después de desplegar.
 
-## Aplicación cuando vuelva el acceso
+## Procedimiento documentado de la operación ya aplicada
 
 1. Leer funciones, restricciones, meses enero-junio, pagos, saldos a favor, descuentos y aportes del restaurante actuales. Guardar la lectura privada fuera del repositorio. Comprobar seis cuentas y sus asignaciones; no confiar en una instantánea anterior.
 2. Revisar/aplicar `migrations/202610280010_invoice_total_services.sql`. Es un cambio de regla y metadatos; no modifica importes históricos.

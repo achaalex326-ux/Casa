@@ -23,10 +23,11 @@ Instala CasaFamilias-5.8-pruebas.apk sobre la versión anterior para conservar l
 
 Total de facturas del semestre: Bs2.250,50. El total de las seis cuentas conserva los centavos: la última puede variar unos centavos respecto al importe aproximado. Salinas y Salinas2 siguen siendo dos cuentas financieras y un hogar para limpieza, tal como las seis filas de la hoja. Los colores no indican pagos.
 
-## Pendiente en tus datos reales
+## Corrección aplicada a los datos reales
 
-Supabase rechazó el acceso administrativo con HTTP 401. La regla nueva y la reparación histórica están preparadas y probadas en una base aislada; no se ejecutaron en el proyecto real. El APK muestra los datos reales que tenga el servidor, sin inventar saldos nuevos. Para registrar servicios con la regla nueva debe desplegarse la migración 010; si falta, aparece un mensaje y no se guarda el mes con el cálculo anterior.
+La regla nueva y la reparación de enero-junio de 2026 ya están aplicadas en Supabase. Los seis meses coinciden con la hoja, con gas cero; el semestre suma Bs2.250,50. Se conservaron todos los pagos anteriores y las cuentas del encargado quedan en cero. No se interpretaron los colores como pagos.
 
-Renueva SUPABASE_ACCESS_TOKEN únicamente en los secretos seguros de Codex. Después debe leerse el estado actual, guardar el respaldo, aplicar la migración y la reparación solicitada y comprobar totales y pagos. Los scripts están en el ZIP del proyecto. No ejecutes fixtures de validación en Supabase.
+Si ya tienes 5.8, abre la aplicación con internet y actualiza los datos; también puedes cerrarla y abrirla. No hace falta instalar otro APK para recibir esta corrección. La pantalla de Gastos muestra junio de 2026 como último mes de servicios registrado. El botón Guardar usa la regla corregida y verifica el resumen mostrado.
 
+Los scripts conservan trazabilidad y respaldo privado. La corrección ya está auditada: no ejecutes otra vez las operaciones financieras ni los fixtures de pruebas en el proyecto real.
 Conserva cámara/galería, huella opcional, avisos periódicos, calendario y permisos existentes. La cámara física, huella real, Android13+ para permisos de avisos y Android 16 deben comprobarse en teléfonos. No es una publicación en Google Play.

@@ -10,9 +10,13 @@ Paquete com.casafamilias.app; versión 5.8/código 14; mínimo API 26, destino A
 - Formato: 34 fuentes Kotlin móviles y de pruebas, ktfmt 0.54/kotlinlang; comprobación dry-run sin cambios. El artefacto del formateador coincide con el checksum SHA1 de Maven Central, descargado con TLS validado.
 - APK:apksigner válido, mismo certificado que la entrega anterior; zipalign -P 16 correcto. Instalado como actualización sobre el APK debug de esta sesión; acceso nativo visible y extras de diseño ignorados por la variante optimizada. El certificado común también coincide con 5.7; no se simuló una migración financiera real ni se borraron datos reales.
 
-## Qué no se ha hecho
+## Despliegue real verificado
 
-La lectura administrativa de Supabase devolvióHTTP 401. No se aplicó la migración 010 ni se cargaron/corrigieron las deudas reales. No se subió ningún comprobante ni se creó un pago real. La renovación del secreto y la lectura del estado actual son requisitos para continuar ese trabajo. `supabase/README_CORRECCION_2026.md` contiene los pasos y las condiciones de conciliación.
+Tras recuperar la conexión se leyó el estado actual y se aplicaron migración 010 y corrección de enero-junio en una transacción con controles de concurrencia, respaldo y postcondiciones. Confirmados seis meses, gas cero, suma semestral 2250,50, reparto exacto y encargado en cero. Los 36 pagos previos siguen idénticos; las 12 filas nuevas son coberturas automáticas identificadas, sin depósitos recibidos ni comprobantes nuevos. No cambiaron otros meses, fechas, fotos, créditos, limpieza ni notificaciones. Dos identidades familiares existentes consultaron el RPC con rol authenticated en transacciones de solo lectura: seis meses, saldo correcto y último registro junio de 2026. No se crearon usuarios de prueba en producción.
+
+La función nueva permite ejecución a authenticated y la rechaza a anon. La tabla de respaldo tiene RLS y no admite lectura anon/authenticated. La evidencia pública `evidencias/backend-deployment.json` excluye cuentas, contactos, pagos individuales y referencias de archivos privados. Los 401 previos quedaron resueltos. El APK es el mismo 5.8 ya verificado; esta actualización de datos y documentación no cambia sus fuentes Android ni requiere recompilarlo.
+
+## Límites de las pruebas
 
 Las pruebas de fotos usan FileProvider, archivos y JPEG reales, con el resultado de cámara inyectado. La prueba manual de cámara virtual de 5.7 es histórica y no se repitió aquí. No se probó cámara física, sensor de huella real, permiso de notificación en Android 13+, Android 16 ni ejecución en hardware de páginas de 16 KB. La alineación de archivo no equivale a esa prueba de dispositivo. Los avisos usan WorkManager, no push instantáneo. No está publicado en Google Play ni firmado con la clave definitiva del propietario.
 
