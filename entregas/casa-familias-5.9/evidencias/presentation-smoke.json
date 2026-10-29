@@ -1,0 +1,10 @@
+{
+  "updateInstall": "PASS",
+  "updateFrom": "Current5.9 debug APK; previous5.8 certificate checked separately",
+  "versionName": "5.9",
+  "versionCode": 15,
+  "nativeLoginRendered": true,
+  "presentationIgnoresPreviewExtras": true,
+  "physicalPhoneTested": false,
+  "android16RuntimeTested": false
+}

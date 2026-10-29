@@ -24,151 +24,6 @@ fun ContentList(content: LazyListScope.() -> Unit) {
     )
 }
 
-@Composable
-fun HomeScreen(s: Snapshot, go: Go) {
-    val p = s.profile
-    val month = Dates.month()
-    val pending = s.paymentEntries().filter { it.text("status") == "pending" }
-    val cleaning =
-        s.rows("cleaning_turns")
-            .filter { it.text("status") == "pending" }
-            .sortedBy { it.text("turn_date") }
-    ContentList {
-        item {
-            Title(
-                "Buen día, ${p.name.split(' ').firstOrNull().orEmpty()}",
-                "Así está nuestra casa hoy",
-            )
-        }
-        if (p.role == Role.RESTAURANT) {
-            val debts = s.rows("external_utility_debts")
-            item {
-                Hero(
-                    "Saldo pendiente de servicios",
-                    debts.fold(BigDecimal.ZERO) { a, r ->
-                        a + (r.money("amount_due") - r.money("amount_paid")).max(BigDecimal.ZERO)
-                    },
-                    "Tus importes de luz y agua",
-                )
-            }
-            items(debts) { r ->
-                Panel {
-                    Text(
-                        if (r.text("service") == "electricity") "Luz" else "Agua",
-                        style = MaterialTheme.typography.titleMedium,
-                    )
-                    DataLine("Mes", Dates.monthLabel(r.text("month_start").take(7)))
-                    DataLine(
-                        "Saldo pendiente",
-                        Amounts.format(
-                            (r.money("amount_due") - r.money("amount_paid")).max(BigDecimal.ZERO)
-                        ),
-                    )
-                    Badge(
-                        if (r.money("amount_due") <= r.money("amount_paid")) "paid" else "pending"
-                    )
-                }
-            }
-            if (debts.isEmpty()) item { Empty("No tienes deudas registradas") }
-        } else if (p.role == Role.FAMILY) {
-            item { AccountSummary(s, p.familyId) }
-            item {
-                NavRow(
-                    "expenses",
-                    "Ver mi estado de cuenta",
-                    "Revisa qué meses faltan y cuánto debes",
-                ) {
-                    go("dues")
-                }
-            }
-            val own = cleaning.firstOrNull { s.ownsCleaning(it.number("family_id")) }
-            item {
-                if (own != null)
-                    Panel {
-                        Text("Tu próxima limpieza", style = MaterialTheme.typography.titleMedium)
-                        DataLine(
-                            s.family(s.household(own.number("family_id"))),
-                            Dates.label(own.text("turn_date")),
-                        )
-                        Secondary("Ver turno y tareas") { go("turn/${own.id}") }
-                    }
-                else Empty("No tienes un turno pendiente", "Cuando se asigne aparecerá aquí.")
-            }
-            val next =
-                s.rows("family_debts")
-                    .filter { it.money("balance") > BigDecimal.ZERO }
-                    .sortedBy { it.text("due_date") }
-                    .firstOrNull()
-            if (next != null)
-                item {
-                    Panel {
-                        Text("Próximo vencimiento", style = MaterialTheme.typography.titleMedium)
-                        DataLine(next.text("concept"), Dates.label(next.text("due_date")))
-                        Text(Amounts.format(next.money("balance")))
-                    }
-                }
-            item {
-                Panel {
-                    DataLine("Saldo a favor", Amounts.format(s.credit(p.familyId)))
-                    Text(
-                        "Se aplica según las reglas de tus próximas cuotas.",
-                        style = MaterialTheme.typography.bodySmall,
-                    )
-                }
-            }
-        } else {
-            item { Hero("Gastos del mes", s.total(month), Dates.monthLabel(month)) }
-            item {
-                Row(
-                    Modifier.height(IntrinsicSize.Min),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
-                ) {
-                    MetricButton(
-                        "payments",
-                        "Pagos por revisar",
-                        "${pending.size}",
-                        "Ver pagos",
-                        Modifier.weight(1f).fillMaxHeight(),
-                    ) {
-                        go("payments")
-                    }
-                    MetricButton(
-                        "families",
-                        "Familias con deuda",
-                        "${s.rows("families").count {s.balance(it.number("id"))>BigDecimal.ZERO}} de ${s.rows("families").size}",
-                        "Ver familias",
-                        Modifier.weight(1f).fillMaxHeight(),
-                    ) {
-                        go("families")
-                    }
-                }
-            }
-            item { CleaningThisWeek(s, go) }
-            item {
-                NavRow(
-                    "cleaning",
-                    "Calendario de todas las familias",
-                    "Consultar semanas anteriores y próximas",
-                ) {
-                    go("cleaning")
-                }
-            }
-            item { Text("Actividad reciente", style = MaterialTheme.typography.titleLarge) }
-            val recent = s.paymentEntries().sortedByDescending { it.text("created_at") }.take(4)
-            items(recent) { r ->
-                NavRow(
-                    "payments",
-                    s.family(r.number("family_id")),
-                    Amounts.format(r.money("amount")) + " · " + statusLabel(r.text("status")),
-                ) {
-                    go("payment/${r.id}")
-                }
-            }
-            if (recent.isEmpty()) item { Empty("Todavía no hay movimientos") }
-        }
-    }
-}
-
 fun statusLabel(s: String) =
     mapOf("pending" to "En revisión", "approved" to "Aprobado", "rejected" to "Rechazado")[s] ?: s
 
@@ -200,7 +55,8 @@ fun PaymentsScreen(s: Snapshot, go: Go, family: String = "") {
     ContentList {
         item {
             Title(
-                if (family.isBlank()) "Pagos y comprobantes"
+                if (family.isBlank())
+                    if (s.profile.role == Role.FAMILY) "Mis pagos" else "Revisar pagos"
                 else "Pagos de ${s.family(family.toLongOrNull())}",
                 if (s.profile.role.staff) "Revisa un depósito completo de una sola vez"
                 else "Aquí ves lo que enviaste y si ya fue aprobado",
@@ -460,16 +316,8 @@ fun FamiliesScreen(s: Snapshot, go: Go) {
     var search by rememberSaveable { mutableStateOf("") }
     val rows = s.rows("families").filter { it.text("name").contains(search, true) }
     ContentList {
-        item { Title("Familias", "Elige una familia para ver sus deudas por mes") }
-        item {
-            Panel {
-                Text("Servicios registrados hasta", style = MaterialTheme.typography.labelLarge)
-                Text(
-                    s.servicePeriods().lastOrNull()?.let(Dates::monthLabel) ?: "Sin registros",
-                    style = MaterialTheme.typography.titleLarge,
-                )
-            }
-        }
+        item { Title("Deudas", "Elige una familia") }
+        item { PublishedThrough(s.servicePeriods().lastOrNull()) }
         item {
             OutlinedTextField(
                 search,
@@ -478,29 +326,21 @@ fun FamiliesScreen(s: Snapshot, go: Go) {
                 leadingIcon = { Glyph("search") },
                 modifier = Modifier.fillMaxWidth(),
                 shape = MaterialTheme.shapes.medium,
+                singleLine = true,
             )
         }
-        item {
-            Text(
-                "${s.rows("families").size} familias · ${s.rows("families").count {s.balance(it.number("id"))>BigDecimal.ZERO}} con saldo pendiente",
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-        }
-        items(rows) { f ->
-            Panel {
-                Text(f.text("name"), style = MaterialTheme.typography.titleMedium)
-                Text(
-                    Amounts.format(s.balance(f.number("id"))),
-                    style = MaterialTheme.typography.titleLarge,
-                )
-                Text(
-                    if (s.balance(f.number("id")) == BigDecimal.ZERO) "Al día"
-                    else "Saldo pendiente"
-                )
-                Secondary("Ver cuenta") { go("family/${f.id}") }
+        items(rows, key = { it.id }) { family ->
+            val balance = s.balance(family.number("id"))
+            TaskButton(
+                family.text("name"),
+                if (balance > BigDecimal.ZERO) "Falta pagar ${Amounts.format(balance)}"
+                else "Al día · Bs 0,00",
+                "families",
+            ) {
+                go("family/${family.id}")
             }
         }
-        if (rows.isEmpty()) item { Empty("No se encontraron familias") }
+        if (rows.isEmpty()) item { Empty("No se encontró esa familia") }
     }
 }
 
@@ -591,7 +431,7 @@ fun CleaningScreen(s: Snapshot, go: Go) {
 }
 
 @Composable
-private fun CleaningThisWeek(s: Snapshot, go: Go) {
+fun CleaningThisWeek(s: Snapshot, go: Go) {
     val turns = s.cleaningWeek()
     Panel {
         Text("¿Quién limpia esta semana?", style = MaterialTheme.typography.titleMedium)

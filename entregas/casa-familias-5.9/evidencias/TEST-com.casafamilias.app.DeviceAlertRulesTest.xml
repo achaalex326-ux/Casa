@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.casafamilias.app.DeviceAlertRulesTest" tests="10" skipped="0" failures="0" errors="0" timestamp="2026-10-29T13:39:29" hostname="716123d90854" time="0.055">
+  <properties/>
+  <testcase name="reminderForFutureWeeksIsNotSentAsThisWeeksCleaning" classname="com.casafamilias.app.DeviceAlertRulesTest" time="0.028"/>
+  <testcase name="newServicePublicationIsDeliveredOnceEvenWhenThereIsNoDebt" classname="com.casafamilias.app.DeviceAlertRulesTest" time="0.001"/>
+  <testcase name="newDebtContainsItsActualBalanceAndDoesNotRepeatEveryPoll" classname="com.casafamilias.app.DeviceAlertRulesTest" time="0.016"/>
+  <testcase name="sharedPayerFamiliesDoNotDuplicateTheSameTurn" classname="com.casafamilias.app.DeviceAlertRulesTest" time="0.0"/>
+  <testcase name="overdueRemindersAreDailyAndBatchesAreBounded" classname="com.casafamilias.app.DeviceAlertRulesTest" time="0.005"/>
+  <testcase name="onlyOwnCurrentCleaningWeekAndAliasAreIncluded" classname="com.casafamilias.app.DeviceAlertRulesTest" time="0.0"/>
+  <testcase name="nextDayDueReminderUsesUpdatedBalance" classname="com.casafamilias.app.DeviceAlertRulesTest" time="0.0"/>
+  <testcase name="historicalAndAlreadyReadPublicationsAreNotReplayed" classname="com.casafamilias.app.DeviceAlertRulesTest" time="0.001"/>
+  <testcase name="paidOrWaivedDebtNeverProducesAnAlertEvenWithAnOldServerReminder" classname="com.casafamilias.app.DeviceAlertRulesTest" time="0.0"/>
+  <testcase name="completedCleaningHasNoReminderAndNoActiveTag" classname="com.casafamilias.app.DeviceAlertRulesTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

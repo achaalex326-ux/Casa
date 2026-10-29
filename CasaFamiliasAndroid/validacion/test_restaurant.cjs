@@ -26,12 +26,12 @@ w.supabase = { createClient: () => ({ from, auth: {
   onAuthStateChange() {},
   getSession: async () => ({ data: { session: { user: { id: 'restaurant-test' } } } })
 }, channel: () => ({ on() { return this; }, subscribe() { return this; } }) }) };
-for (const name of ['startup.js', 'mobile.js', 'config.js', 'app.js']) w.eval(fs.readFileSync(path.join(web, name), 'utf8'));
+for (const name of ['startup.js', 'simple-account.js', 'mobile.js', 'simple-payment.js', 'simple-services.js', 'config.js', 'app.js']) w.eval(fs.readFileSync(path.join(web, name), 'utf8'));
 setTimeout(() => {
   try {
     const doc = w.document;
     assert(!doc.getElementById('mobileApp').hidden);
-    assert.equal(doc.querySelector('.hero-amount strong').textContent, '60');
+    assert.equal(doc.querySelector('.hero-amount strong').textContent, 'Bs 60,00');
     assert(doc.getElementById('mobileContent').textContent.includes('Agua'));
     assert(doc.getElementById('mobileContent').textContent.includes('Luz'));
     assert(doc.querySelector('.badge.partial'));

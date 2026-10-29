@@ -139,54 +139,66 @@ object Forms {
                     }
                 fields =
                     listOf(
-                        f(
-                            "family",
-                            "Familia del depósito",
-                            InputType.CHOICE,
-                            true,
-                            selected?.toString().orEmpty(),
-                            choices = families,
-                        ),
-                        f(
-                            "mode",
-                            "Aplicar el pago a",
-                            InputType.CHOICE,
-                            true,
-                            if (id.isBlank()) "all" else "single",
-                            choices =
-                                listOf(
-                                    Choice("all", "Mis deudas más antiguas"),
-                                    Choice("single", "Una deuda específica"),
-                                ),
-                        ),
-                        f(
-                            "share",
-                            "Deuda específica",
-                            InputType.CHOICE,
-                            true,
-                            id,
-                            choices = opts,
-                            show = "mode" to "single",
-                        ),
-                        amount.copy(label = "Total depositado (Bs)"),
-                        date,
-                        f(
-                            "method",
-                            "Forma de pago",
-                            InputType.CHOICE,
-                            true,
-                            "qr",
-                            choices =
-                                listOf(
-                                    Choice("qr", "QR o transferencia"),
-                                    Choice("cash", "Efectivo"),
-                                ),
-                        ),
-                        receipt,
-                        f("note", "Observación", InputType.MULTILINE, max = 1000),
-                    )
+                            f(
+                                "family",
+                                "Familia del depósito",
+                                InputType.CHOICE,
+                                true,
+                                selected?.toString().orEmpty(),
+                                choices = families,
+                            ),
+                            f(
+                                "mode",
+                                "Aplicar el pago a",
+                                InputType.CHOICE,
+                                true,
+                                if (id.isBlank()) "all" else "single",
+                                choices =
+                                    listOf(
+                                        Choice("all", "Mis deudas más antiguas"),
+                                        Choice("single", "Una deuda específica"),
+                                    ),
+                            ),
+                            f(
+                                "share",
+                                "Deuda específica",
+                                InputType.CHOICE,
+                                true,
+                                id,
+                                choices = opts,
+                                show = "mode" to "single",
+                            ),
+                            amount.copy(label = "Total depositado (Bs)"),
+                            date,
+                            f(
+                                "method",
+                                "Forma de pago",
+                                InputType.CHOICE,
+                                true,
+                                "qr",
+                                choices =
+                                    listOf(
+                                        Choice("qr", "QR o transferencia"),
+                                        Choice("cash", "Efectivo"),
+                                    ),
+                            ),
+                            receipt,
+                            f("note", "Mensaje (opcional)", InputType.MULTILINE, max = 1000),
+                        )
+                        .map { field ->
+                            field.copy(
+                                page =
+                                    when (field.key) {
+                                        "method",
+                                        "receipt" -> 1
+                                        "date",
+                                        "note" -> 2
+                                        else -> 0
+                                    }
+                            )
+                        }
                 help =
-                    "Adjunta un solo comprobante por el total depositado. El reparto comienza por los meses más antiguos; puede cubrir varios meses o una parte del siguiente. El saldo se descuenta al aprobar el depósito."
+                    "Un comprobante puede pagar varios meses. Tú escribes el total y la aplicación lo reparte."
             }
             "expense" -> {
                 title = "Registrar gasto extraordinario"
@@ -245,7 +257,7 @@ object Forms {
                     "Este monto se aplica como descuento al servicio, sin dividirlo como un gasto extraordinario."
             }
             "services" -> {
-                title = "Registrar servicios del mes"
+                title = "Registrar facturas"
                 val list =
                     mutableListOf(
                         f("month", "Mes de las facturas", InputType.MONTH, true, Dates.month()),

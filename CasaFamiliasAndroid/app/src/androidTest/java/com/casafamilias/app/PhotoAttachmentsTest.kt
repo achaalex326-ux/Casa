@@ -268,9 +268,8 @@ class PhotoAttachmentsTest {
                 CasaApp(vm)
             }
         }
-        compose.onNodeWithText("Pagos").performClick()
-        compose.onNode(hasScrollToIndexAction()).performScrollToNode(hasText("Registrar pago"))
-        compose.onNodeWithText("Registrar pago").performClick()
+        compose.onNode(hasScrollToIndexAction()).performScrollToNode(hasText("Pagar"))
+        compose.onNodeWithText("Pagar").performClick()
         compose.onNodeWithText("Total depositado (Bs)").performScrollTo().performTextInput("200")
         compose.runOnUiThread {
             val activity =
@@ -283,6 +282,7 @@ class PhotoAttachmentsTest {
             activity.currentFocus?.clearFocus()
         }
         compose.waitForIdle()
+        compose.onNodeWithText("Continuar").performScrollTo().performClick()
         compose.onNodeWithText("Tomar foto").performScrollTo().performClick()
         assertNotNull("The camera must launch before simulating a long background", registry.uri)
         compose.runOnUiThread {
@@ -299,7 +299,9 @@ class PhotoAttachmentsTest {
         }
         compose.waitUntil(15000) { !vm.state.value.starting && !vm.state.value.locked }
         captured()
-        compose.onNode(hasSetTextAction() and hasText("200")).assertExists()
+        compose.onNodeWithText("Paso anterior").performScrollTo().performClick()
+        compose.onNodeWithText("¿Cuánto pagaste?").assertExists()
+        compose.onNode(hasSetTextAction() and hasText("200")).performScrollTo().assertExists()
         assertEquals(0, server.uploads)
         assertEquals(0, server.writes)
     }

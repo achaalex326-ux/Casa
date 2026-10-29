@@ -58,6 +58,11 @@ fun FormScreen(vm: CasaViewModel, s: Snapshot, form: Form, onBack: () -> Unit) {
     var captureAccepted by rememberSaveable { mutableStateOf(false) }
     val preparing = captureAccepted || cameraUri in state.preparingPhotos
     var confirm by remember { mutableStateOf(false) }
+    var paymentOptions by rememberSaveable(form.kind, form.recordId) { mutableStateOf(false) }
+    var paymentDetails by rememberSaveable(form.kind, form.recordId) { mutableStateOf(false) }
+    var showQr by rememberSaveable { mutableStateOf(false) }
+    var serviceOptions by rememberSaveable { mutableStateOf(false) }
+    var discountOptions by rememberSaveable { mutableStateOf(false) }
     fun update(key: String, value: String) {
         values = values + (key to value)
         localError = null
@@ -106,10 +111,8 @@ fun FormScreen(vm: CasaViewModel, s: Snapshot, form: Form, onBack: () -> Unit) {
         if (uri != null && captureAccepted) {
             val result = state.preparedPhotos[uri]
             if (result != null) {
-                result.uri?.let {
-                    update(cameraField, it)
-                    vm.inform("Foto lista. Revisa que los datos se lean antes de guardar.")
-                }
+                result.uri?.let { update(cameraField, it) }
+
                 result.error?.let { vm.inform(it) }
                 vm.consumeCameraPhoto(uri)
                 cameraUri = null
@@ -121,23 +124,30 @@ fun FormScreen(vm: CasaViewModel, s: Snapshot, form: Form, onBack: () -> Unit) {
         Modifier.fillMaxSize().imePadding().verticalScroll(rememberScrollState()).padding(20.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        Title(form.title)
-        if (form.help.isNotBlank() && (form.kind != "services" || page == 0))
+        if (form.kind !in setOf("payment", "services")) Title(form.title)
+        if (form.help.isNotBlank() && (form.kind !in setOf("services", "payment") || page == 0))
             Text(form.help, color = MaterialTheme.colorScheme.onSurfaceVariant)
         if (form.pages > 1) {
-            Text("Paso ${page+1} de ${form.pages}", style = MaterialTheme.typography.labelLarge)
-            if (form.kind == "services")
-                Text(
-                    listOf(
-                        "Elige el mes y la fecha de pago",
-                        "Escribe los importes y adjunta las facturas",
-                        "Revisa los descuentos y la suma",
-                    )[page],
-                    style = MaterialTheme.typography.titleSmall,
-                )
-            LinearProgressIndicator(
-                progress = { (page + 1f) / form.pages },
-                modifier = Modifier.fillMaxWidth(),
+            GuidedSteps(
+                page,
+                if (form.kind == "payment") listOf("Importe", "Foto", "Revisar")
+                else if (form.kind == "services") listOf("Mes", "Facturas", "Revisar")
+                else if (form.kind == "user") listOf("Datos", "Acceso")
+                else (1..form.pages).map { "Paso $it" },
+            )
+            Text(
+                when (form.kind) {
+                    "payment" ->
+                        listOf("¿Cuánto pagaste?", "Adjunta el comprobante", "Revisa y envía")[page]
+                    "services" ->
+                        listOf(
+                            "¿De qué mes son las facturas?",
+                            "Escribe los importes",
+                            "Revisa la suma",
+                        )[page]
+                    else -> form.title
+                },
+                style = MaterialTheme.typography.headlineMedium,
             )
         }
         if (form.kind == "qr" && values["receipt"].isNullOrBlank())
@@ -151,22 +161,37 @@ fun FormScreen(vm: CasaViewModel, s: Snapshot, form: Form, onBack: () -> Unit) {
                         ImageReceipt(vm, path, true)
                     }
                 }
-        if (form.kind == "payment") {
+        if (form.kind == "payment" && page == 1) {
             val qr = s.rows("payment_qr_settings").firstOrNull()
-            if (qr != null && qr.text("qr_image_path").isNotBlank() && values["method"] != "cash")
-                Panel {
-                    Text(
-                        qr.text("qr_title").ifBlank { "Pago por QR" },
-                        style = MaterialTheme.typography.titleMedium,
-                    )
-                    Text(qr.text("qr_note"))
-                    ImageReceipt(vm, qr.text("qr_image_path"), true)
+            if (qr != null && qr.text("qr_image_path").isNotBlank() && values["method"] != "cash") {
+                TextButton(onClick = { showQr = !showQr }) {
+                    Text(if (showQr) "Ocultar QR" else "Ver QR para pagar")
                 }
+                if (showQr)
+                    Panel {
+                        Text(
+                            qr.text("qr_title").ifBlank { "QR para pagar" },
+                            style = MaterialTheme.typography.titleMedium,
+                        )
+                        ImageReceipt(vm, qr.text("qr_image_path"), true)
+                    }
+            }
         }
+
         form
             .visible(values)
             .filter {
                 it.page == page &&
+                    !(form.kind == "services" && it.key == "reference" && !serviceOptions) &&
+                    !(form.kind == "services" &&
+                        it.key in setOf("other_water", "other_electricity") &&
+                        !discountOptions) &&
+                    !(form.kind == "payment" &&
+                        it.key in setOf("mode", "share") &&
+                        !paymentOptions) &&
+                    !(form.kind == "payment" &&
+                        it.key in setOf("date", "note") &&
+                        !paymentDetails) &&
                     !(form.kind == "assignment" && it.key == "role") &&
                     !(form.kind == "payment" && it.key == "family" && !s.profile.role.staff)
             }
@@ -184,6 +209,11 @@ fun FormScreen(vm: CasaViewModel, s: Snapshot, form: Form, onBack: () -> Unit) {
                                     Uri.parse(value),
                                     field.label,
                                     Modifier.fillMaxWidth().heightIn(min = 120.dp, max = 220.dp),
+                                )
+                                Text(
+                                    "Foto adjunta",
+                                    style = MaterialTheme.typography.labelLarge,
+                                    color = MaterialTheme.colorScheme.primary,
                                 )
                                 TextButton(
                                     onClick = { update(field.key, "") },
@@ -314,6 +344,32 @@ fun FormScreen(vm: CasaViewModel, s: Snapshot, form: Form, onBack: () -> Unit) {
                     Input(actual, value, !state.busy) { update(field.key, it) }
                 }
             }
+        if (form.kind == "payment" && page == 0) {
+            val family = values["family"]?.toLongOrNull()
+            if (family != null)
+                Text(
+                    "Deuda pendiente: " +
+                        Amounts.format(
+                            s.paymentDebts(family).fold(java.math.BigDecimal.ZERO) { sum, debt ->
+                                sum + debt.balance
+                            }
+                        ),
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+            TextButton(onClick = { paymentOptions = !paymentOptions }) {
+                Text(
+                    if (paymentOptions) "Cerrar opciones de meses"
+                    else "Elegir un mes específico (opcional)"
+                )
+            }
+        }
+        if (form.kind == "payment" && page == 2)
+            TextButton(onClick = { paymentDetails = !paymentDetails }) {
+                Text(
+                    if (paymentDetails) "Cerrar datos adicionales"
+                    else "Cambiar fecha o añadir un mensaje"
+                )
+            }
         if (form.kind == "rotation")
             Panel {
                 Text("Vista previa del orden", style = MaterialTheme.typography.titleSmall)
@@ -330,7 +386,7 @@ fun FormScreen(vm: CasaViewModel, s: Snapshot, form: Form, onBack: () -> Unit) {
                     style = MaterialTheme.typography.bodySmall,
                 )
             }
-        if (form.kind == "payment") {
+        if (form.kind == "payment" && page == 2) {
             val debts = s.paymentDebts(values["family"]?.toLongOrNull())
             val amount = Amounts.parse(values["amount"].orEmpty())
             if (
@@ -345,10 +401,7 @@ fun FormScreen(vm: CasaViewModel, s: Snapshot, form: Form, onBack: () -> Unit) {
                         values["share"].takeIf { values["mode"] == "single" },
                     )
                 Panel {
-                    Text(
-                        "Así se repartirá tu depósito",
-                        style = MaterialTheme.typography.titleMedium,
-                    )
+                    Text("Esto se pagará", style = MaterialTheme.typography.titleMedium)
                     plan.allocations.forEach { a ->
                         DataLine(a.debt.label, Amounts.format(a.amount))
                     }
@@ -368,7 +421,18 @@ fun FormScreen(vm: CasaViewModel, s: Snapshot, form: Form, onBack: () -> Unit) {
                 }
             }
         }
-        if (form.kind == "services" && page == form.pages - 1) ServiceFormSummary(s, values)
+        if (form.kind == "services" && page == 0)
+            TextButton(onClick = { serviceOptions = !serviceOptions }) {
+                Text(if (serviceOptions) "Cerrar opciones" else "Opciones de referencia")
+            }
+        if (form.kind == "services" && page == form.pages - 1) {
+            TextButton(onClick = { discountOptions = !discountOptions }) {
+                Text(
+                    if (discountOptions) "Cerrar descuentos" else "Aplicar un descuento (opcional)"
+                )
+            }
+            ServiceFormSummary(s, values)
+        }
         val error = localError ?: state.error
         if (error != null) Text(error, color = MaterialTheme.colorScheme.error)
         if (page > 0) Secondary("Paso anterior", !state.busy) { page-- }
@@ -376,11 +440,19 @@ fun FormScreen(vm: CasaViewModel, s: Snapshot, form: Form, onBack: () -> Unit) {
             if (state.busy) "Guardando…"
             else if (page < form.pages - 1) "Continuar"
             else if (form.kind == "payment")
-                if (s.profile.role.staff) "Registrar depósito" else "Enviar depósito a revisión"
-            else "Guardar",
+                if (s.profile.role.staff) "Guardar pago" else "Enviar comprobante"
+            else if (form.kind == "services") "Guardar facturas" else "Guardar",
             !state.busy && !reading && !preparing,
         ) {
             localError = form.error(values, if (page < form.pages - 1) page else null)
+            if (
+                localError == null &&
+                    form.kind == "payment" &&
+                    page == 1 &&
+                    values["method"] == "qr" &&
+                    values["receipt"].isNullOrBlank()
+            )
+                localError = "Adjunta la foto del comprobante para continuar."
             if (
                 localError == null &&
                     form.kind == "services" &&

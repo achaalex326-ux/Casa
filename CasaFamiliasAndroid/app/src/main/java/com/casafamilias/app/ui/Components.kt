@@ -22,7 +22,7 @@ import com.casafamilias.app.R
 import com.casafamilias.app.domain.*
 import java.math.BigDecimal
 
-val CasaBlue = Color(0xFF155EEF)
+val CasaBlue = Color(0xFF3659E3)
 val CasaTeal = Color(0xFF067982)
 val Navy = Color(0xFF14233D)
 @OptIn(androidx.compose.ui.text.ExperimentalTextApi::class)
@@ -76,20 +76,20 @@ fun CasaTheme(dark: Boolean, content: @Composable () -> Unit) {
             lightColorScheme(
                 primary = CasaBlue,
                 onPrimary = Color.White,
-                primaryContainer = Color(0xFFE8F0FF),
+                primaryContainer = Color(0xFFEEF2FF),
                 onPrimaryContainer = Color(0xFF10489F),
                 secondary = CasaTeal,
                 onSecondary = Color.White,
-                secondaryContainer = Color(0xFFE8F0FF),
+                secondaryContainer = Color(0xFFEEF2FF),
                 onSecondaryContainer = Color(0xFF10489F),
-                background = Color(0xFFF3F7FF),
+                background = Color(0xFFF6F7FB),
                 surface = Color.White,
                 onSurface = Navy,
                 onBackground = Navy,
                 onSurfaceVariant = Color(0xFF5C6B82),
                 surfaceVariant = Color(0xFFEAF0FC),
                 outline = Color(0xFF778AA5),
-                outlineVariant = Color(0xFFDCE5F4),
+                outlineVariant = Color(0xFFE2E7F0),
                 error = Color(0xFFB3261E),
             )
     val baseline = Typography()
@@ -356,10 +356,12 @@ private fun actionIcon(text: String): String {
         "usuario" in value || "cuenta" in value || "familia" in value -> "profile"
         "actualizar" in value || "reintentar" in value || "intercambio" in value -> "refresh"
         "turno" in value || "limpieza" in value -> "cleaning"
+        "factura" in value || "registrar" in value -> "add"
+        "ver " in value || "detalle" in value || "consultar" in value -> "eye"
         "contraseña" in value -> "lock"
         "anterior" in value -> "back"
         "publicar" in value -> "add"
-        else -> "next"
+        else -> "check"
     }
 }
 
@@ -387,17 +389,17 @@ fun Action(text: String, enabled: Boolean = true, onClick: () -> Unit) {
 fun Secondary(text: String, enabled: Boolean = true, onClick: () -> Unit) {
     val destructive =
         listOf("rechazar", "eliminar", "cerrar sesión").any { text.lowercase().contains(it) }
-    FilledTonalButton(
+    OutlinedButton(
         onClick,
         enabled = enabled,
         modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp),
         shape = RoundedCornerShape(16.dp),
         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 14.dp),
         colors =
-            ButtonDefaults.filledTonalButtonColors(
+            ButtonDefaults.outlinedButtonColors(
                 containerColor =
                     if (destructive) MaterialTheme.colorScheme.errorContainer
-                    else MaterialTheme.colorScheme.primaryContainer,
+                    else MaterialTheme.colorScheme.surface,
                 contentColor =
                     if (destructive) MaterialTheme.colorScheme.onErrorContainer
                     else MaterialTheme.colorScheme.onPrimaryContainer,
@@ -555,15 +557,15 @@ fun routeTitle(route: String) =
         "home" to "Inicio",
         "expenses" to "Gastos",
         "payments" to "Pagos",
-        "families" to "Familias",
+        "families" to "Deudas",
         "more" to "Más",
-        "dues" to "Mi cuenta",
+        "dues" to "Deudas",
         "family" to "Deudas por mes",
         "cleaning" to "Limpieza",
         "users" to "Usuarios",
         "reports" to "Reportes",
         "admin" to "Administración",
-        "profile" to "Mi perfil",
+        "profile" to "Mi cuenta",
         "audit" to "Auditoría",
         "periods" to "Cierre y reapertura",
         "templates" to "Plantillas de gastos",
@@ -578,16 +580,15 @@ fun BottomLabel(label: String, slotWidth: Dp) {
     val measurer = rememberTextMeasurer()
     val density = LocalDensity.current
     val style = MaterialTheme.typography.labelMedium
-    val lines = label.replace(" ", "\n")
-    val size =
-        remember(lines, slotWidth, density.fontScale, density.density, style) {
+    var size by
+        remember(label, slotWidth, density.fontScale, density.density, style) {
             val width = with(density) { slotWidth.toPx() }
-            var size = 11f
+            var size = 12f
             while (
-                size > 3f &&
+                size > 8f &&
                     measurer
                         .measure(
-                            AnnotatedString(lines),
+                            AnnotatedString(label),
                             style.copy(fontSize = size.sp),
                             softWrap = false,
                             density = density,
@@ -595,14 +596,35 @@ fun BottomLabel(label: String, slotWidth: Dp) {
                         .size
                         .width > width - 2
             ) size -= .25f
-            size.sp
+            mutableStateOf(size.sp)
         }
     Text(
-        lines,
+        label,
         Modifier.requiredWidth(slotWidth),
         style = style.copy(fontSize = size),
-        maxLines = if (lines.contains("\n")) 2 else 1,
+        maxLines = 1,
         softWrap = false,
         textAlign = TextAlign.Center,
+        onTextLayout = { result ->
+            if (result.didOverflowWidth && size.value > 8f)
+                size = (size.value - .25f).coerceAtLeast(8f).sp
+        },
+    )
+}
+
+@Composable
+fun HeaderLabel(label: String, modifier: Modifier = Modifier) {
+    val density = LocalDensity.current
+    var size by remember(label, density.fontScale) { mutableStateOf(16.sp) }
+    Text(
+        label,
+        modifier.fillMaxWidth(),
+        style = MaterialTheme.typography.titleMedium.copy(fontSize = size),
+        maxLines = 1,
+        softWrap = false,
+        onTextLayout = { result ->
+            if (result.didOverflowWidth && size.value > 8f)
+                size = (size.value - .25f).coerceAtLeast(8f).sp
+        },
     )
 }

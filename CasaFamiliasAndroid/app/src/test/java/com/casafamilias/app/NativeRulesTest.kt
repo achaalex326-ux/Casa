@@ -114,22 +114,20 @@ class NativeRulesTest {
     }
 
     @Test
-    fun navigationHasAtMostFiveUniqueTabs() {
+    fun navigationUsesFourClearDestinations() {
         Role.entries.forEach {
             val tabs = Access.tabs(it)
-            assertTrue(tabs.size <= 5)
+            assertTrue(tabs.size <= 4)
             assertEquals(tabs.size, tabs.distinct().size)
         }
-        assertEquals(
-            listOf("home", "expenses", "payments", "families", "more"),
-            Access.tabs(Role.ADMIN),
-        )
+        assertEquals(listOf("home", "expenses", "families", "more"), Access.tabs(Role.ADMIN))
     }
 
     @Test
     fun moreDoesNotRepeatMainDestinations() {
         Role.entries.forEach { r -> assertTrue(Access.more(r).none { it in Access.tabs(r) }) }
-        assertFalse("profile" in Access.more(Role.ADMIN))
+        assertTrue("profile" in Access.more(Role.ADMIN))
+        assertTrue("payments" in Access.more(Role.FAMILY))
     }
 
     @Test
@@ -371,5 +369,22 @@ class NativeRulesTest {
         assertTrue(label.contains("2026"))
         assertTrue(label.contains("2027"))
         assertTrue(label.contains(" al "))
+    }
+
+    @Test
+    fun paymentHasThreeStepsAndKeepsItsOriginalServerFields() {
+        val form = Forms.build("payment", "", data(Role.FAMILY))
+        assertEquals(3, form.pages)
+        assertEquals(0, form.fields.single { it.key == "amount" }.page)
+        assertEquals(1, form.fields.single { it.key == "receipt" }.page)
+        assertEquals(2, form.fields.single { it.key == "date" }.page)
+        assertEquals("all", form.fields.single { it.key == "mode" }.initial)
+    }
+
+    @Test
+    fun singleDebtEntryKeepsItsSelectionInGuidedPayment() {
+        val form = Forms.build("payment", "s", data(Role.FAMILY))
+        assertEquals("single", form.fields.single { it.key == "mode" }.initial)
+        assertEquals("s", form.fields.single { it.key == "share" }.initial)
     }
 }

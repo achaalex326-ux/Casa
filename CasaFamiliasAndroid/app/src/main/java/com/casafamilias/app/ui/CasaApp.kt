@@ -7,7 +7,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
@@ -343,6 +342,7 @@ fun SignedApp(vm: CasaViewModel, s: Snapshot) {
         root in tabs ||
             root in
                 setOf(
+                    "payments",
                     "cleaning",
                     "users",
                     "reports",
@@ -404,24 +404,30 @@ fun SignedApp(vm: CasaViewModel, s: Snapshot) {
                                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                                 ) {
                                     BrandMark(32.dp)
-                                    Text(
-                                        "Casa Familias",
-                                        style = MaterialTheme.typography.titleMedium,
-                                    )
+                                    HeaderLabel("Casa Familias", Modifier.weight(1f))
                                 }
                             else
-                                Text(
+                                HeaderLabel(
                                     when (root) {
-                                        "form" -> "Formulario"
+                                        "form" ->
+                                            when (entry?.arguments?.getString("kind")) {
+                                                "payment" -> "Pagar"
+                                                "services" -> "Facturas"
+                                                else -> "Completar datos"
+                                            }
                                         "payments-family" -> "Historial"
                                         else -> routeTitle(root)
-                                    },
-                                    style = MaterialTheme.typography.titleMedium,
+                                    }
                                 )
                         },
                         navigationIcon = {
                             if (root !in tabs && root.isNotBlank())
-                                IconButton(onClick = { back() }) { Glyph("back", "Volver") }
+                                TextButton(
+                                    onClick = { back() },
+                                    modifier = Modifier.semantics { contentDescription = "Volver" },
+                                ) {
+                                    Text("Volver")
+                                }
                         },
                         actions = {
                             if (s.profile.role != Role.RESTAURANT)
@@ -440,29 +446,17 @@ fun SignedApp(vm: CasaViewModel, s: Snapshot) {
                                     }
                                 }
                             if (root != "profile" && root != "form")
-                                IconButton(
+                                TextButton(
                                     onClick = { go("profile") },
                                     modifier =
-                                        Modifier.semantics {
-                                            contentDescription = "Abrir mi perfil"
-                                        },
+                                        Modifier.widthIn(min = 64.dp)
+                                            .heightIn(min = 56.dp)
+                                            .semantics { contentDescription = "Abrir mi perfil" },
+                                    contentPadding = PaddingValues(horizontal = 8.dp),
                                 ) {
-                                    Surface(
-                                        shape = CircleShape,
-                                        color = MaterialTheme.colorScheme.primaryContainer,
-                                        modifier = Modifier.size(36.dp),
-                                    ) {
-                                        Box(contentAlignment = Alignment.Center) {
-                                            Text(
-                                                s.profile.name
-                                                    .split(' ')
-                                                    .take(2)
-                                                    .mapNotNull { it.firstOrNull() }
-                                                    .joinToString("")
-                                                    .uppercase(),
-                                                style = MaterialTheme.typography.labelLarge,
-                                            )
-                                        }
+                                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                        Glyph("profile", modifier = Modifier.size(22.dp))
+                                        Text("Cuenta", style = MaterialTheme.typography.labelSmall)
                                     }
                                 }
                         },
@@ -589,20 +583,24 @@ fun SignedApp(vm: CasaViewModel, s: Snapshot) {
                                 "audit" -> AuditScreen(s)
                                 "more" ->
                                     ContentList {
-                                        item {
-                                            Title("Más", "Organiza el resto, sin complicaciones")
-                                        }
+                                        item { Title("Más", "Elige lo que necesitas") }
                                         items(Access.more(s.profile.role)) { item ->
                                             NavRow(
                                                 item,
-                                                routeTitle(item),
+                                                if (item == "payments")
+                                                    if (s.profile.role == Role.FAMILY) "Mis pagos"
+                                                    else "Revisar pagos"
+                                                else routeTitle(item),
                                                 when (item) {
                                                     "cleaning" -> "Turnos y tareas"
                                                     "users" -> "Cuentas, roles y familias"
                                                     "reports" -> "Resúmenes y exportaciones"
                                                     "admin" -> "Configuración y control"
                                                     "notices" -> "Comunicados del hogar"
-                                                    else -> "Ideas y votaciones"
+                                                    "payments" -> "Comprobantes y estados"
+                                                    "profile" -> "Huella, avisos y tamaño de letra"
+                                                    "proposals" -> "Ideas y votación"
+                                                    else -> ""
                                                 },
                                             ) {
                                                 go(item)

@@ -7,61 +7,37 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.unit.dp
 import com.casafamilias.app.domain.*
 import java.math.BigDecimal
 
 @Composable
 fun AccountSummary(s: Snapshot, family: Long?) {
     val account = s.familyAccount(family)
-    Panel {
-        Text("Gastos registrados hasta", style = MaterialTheme.typography.labelLarge)
-        Text(
-            account.latestPublished?.let(Dates::monthLabel) ?: "Todavía sin registros",
-            style = MaterialTheme.typography.titleLarge,
-        )
-        HorizontalDivider()
-        Text("Te falta pagar", style = MaterialTheme.typography.labelLarge)
-        Text(
-            Amounts.format(account.balance),
-            style = MaterialTheme.typography.headlineMedium,
-            color = MaterialTheme.colorScheme.primary,
-        )
-        Text(
-            when {
-                account.months.isEmpty() -> "Todavía no se publicaron gastos para esta familia."
-                account.pending.isEmpty() -> "Al día en los meses registrados"
-                account.pending.size == 1 -> "1 mes con saldo pendiente"
-                else -> "${account.pending.size} meses con saldo pendiente"
-            }
-        )
-        account.earliestPending?.let {
-            Text(
-                "Primero falta ${Dates.monthLabel(it)}.",
-                style = MaterialTheme.typography.bodyMedium,
-            )
-        }
+    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        HomeBalance(s, family)
         if (account.reviewingCount > 0)
             Text(
-                "${account.reviewingCount} ${if (account.reviewingCount == 1) "comprobante por revisar" else "comprobantes por revisar"}. El saldo baja al aprobar el pago.",
+                "${account.reviewingCount} pagos por revisar. Se descuentan cuando se aprueban.",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.primary,
             )
         if (s.credit(family) > BigDecimal.ZERO)
-            DataLine("Saldo a favor disponible", Amounts.format(s.credit(family)))
-        if (account.missingMonths.isNotEmpty()) {
             Text(
-                "Sin registro: " +
-                    account.missingMonths.take(3).joinToString { Dates.monthLabel(it) } +
-                    if (account.missingMonths.size > 3) " y ${account.missingMonths.size - 3} más."
-                    else ".",
+                "Tienes ${Amounts.format(s.credit(family))} a favor.",
                 style = MaterialTheme.typography.bodySmall,
             )
-        }
         Text(
-            "Solo se cuentan los gastos publicados. Un mes sin registro no se considera pagado.",
+            if (account.pending.isEmpty()) "Al día en los meses registrados"
+            else
+                "${account.pending.size} ${if(account.pending.size==1)"mes con saldo pendiente" else "meses con saldo pendiente"}",
             style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
+        if (account.missingMonths.isNotEmpty())
+            Text(
+                "Hay meses sin registro. No se cuentan como pagados.",
+                style = MaterialTheme.typography.bodySmall,
+            )
     }
 }
 
@@ -96,11 +72,11 @@ fun FamilyAccountScreen(s: Snapshot, go: Go, family: Long? = s.profile.familyId)
             }
 
     ContentList {
-        item { Title("Estado de cuenta", s.family(family)) }
+        item { Title("Mis deudas", s.family(family)) }
         item { AccountSummary(s, family) }
         if (familyMode && account.balance > BigDecimal.ZERO)
-            item { Action("Pagar mis deudas") { go("form/payment") } }
-        item { Text("Tus deudas, mes por mes", style = MaterialTheme.typography.titleLarge) }
+            item { Action("Pagar") { go("form/payment") } }
+        item { Text("Meses registrados", style = MaterialTheme.typography.titleLarge) }
         item {
             Filters(
                 listOf(
@@ -125,9 +101,7 @@ fun FamilyAccountScreen(s: Snapshot, go: Go, family: Long? = s.profile.familyId)
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.primary,
                     )
-                Secondary(if (detail) "Cerrar detalle del mes" else "Ver cálculo de este mes") {
-                    detail = !detail
-                }
+                Secondary(if (detail) "Cerrar detalle" else "Ver detalle") { detail = !detail }
                 if (detail) {
                     DataLine("Importe asignado", Amounts.format(month.assigned))
                     DataLine("Pagos y coberturas aplicados", Amounts.format(month.covered))

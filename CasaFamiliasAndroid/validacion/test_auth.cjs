@@ -49,7 +49,7 @@ async function fixture(options = {}) {
     storage: { from: () => ({ createSignedUrl: async () => ({ data: { signedUrl: 'https://example.com/receipt' }, error: null }) }) }
   }) };
   w.eval(fs.readFileSync(path.join(web, 'startup.js'), 'utf8'));
-  w.eval(fs.readFileSync(path.join(web, 'mobile.js'), 'utf8'));
+  for(const name of ['simple-account.js','mobile.js','simple-payment.js','simple-services.js'])w.eval(fs.readFileSync(path.join(web,name),'utf8'));
   w.eval(fs.readFileSync(path.join(web, 'config.js'), 'utf8'));
   w.eval(fs.readFileSync(process.env.CASA_TEST_APP_SOURCE || path.join(web, 'app.js'), 'utf8'));
   await tick();

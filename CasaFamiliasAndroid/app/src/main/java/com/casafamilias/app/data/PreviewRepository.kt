@@ -9,6 +9,7 @@ class PreviewRepository(
     private val role: Role,
     private val accountDemo: Boolean = false,
     private val servicesDemo: Boolean = false,
+    private val paidDemo: Boolean = false,
 ) : CasaDataSource {
     override val session =
         Session("design-only", "design-only", Long.MAX_VALUE, "preview", "vista@example.test")
@@ -336,7 +337,22 @@ class PreviewRepository(
                         "balance" to 80,
                     ),
                 )
-            return Snapshot(profile, tables + ("family_debts" to accountRows), preview = true)
+            return Snapshot(
+                profile,
+                tables +
+                    ("family_debts" to
+                        if (paidDemo)
+                            accountRows.map { row ->
+                                Record(
+                                    org.json
+                                        .JSONObject(row.json.toString())
+                                        .put("amount_paid", row.money("amount_due"))
+                                        .put("balance", 0)
+                                )
+                            }
+                        else accountRows),
+                preview = true,
+            )
         }
         return Snapshot(profile, tables, preview = true)
     }

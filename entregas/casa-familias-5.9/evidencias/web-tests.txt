@@ -1,0 +1,27 @@
+
+> test
+> node test_simple_account.cjs && node test_startup.cjs && node test_auth.cjs && node test_restaurant.cjs && node test_admin.cjs && node test_rotation.cjs && node test_dom.cjs
+
+{"simpleAccountChecks":18,"mockedData":true,"result":"PASS"}
+{"startupChecks":20,"result":"PASS"}
+Recovery retains password screen before account entry: PASS
+Recovery closes the account view and clears the prior display data: PASS
+Expired link returns to login with an explanation: PASS
+Password confirmation prevents an accidental change: PASS
+Repeated submit sends one update and returns to the account: PASS
+Offline recovery preserves inputs and enables retry: PASS
+Offline email request does not leave the control disabled: PASS
+Missing profile leaves a usable login screen: PASS
+Account password confirmation rejects mismatched values: PASS
+Offline account password change preserves inputs and enables retry: PASS
+Offline sign-out keeps the account open with a retry message: PASS
+{"authChecks":11,"mockedBackend":true,"result":"PASS"}
+{"restaurant":"PASS","balance":60,"readOnlyNavigation":"PASS","mockedBackend":true}
+{"adminChecks":37,"mockedBackend":true,"result":"PASS"}
+{"rotationInterfaceChecks":42,"mockedBackend":true,"result":"PASS"}
+{"demoScreens":26,"roles":3,"sourceForms":7,"sourceBootRole":"sysadmin","result":"PASS"}
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.1
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.1
+npm notice To update run: npm install -g npm@12.2.1
+npm notice

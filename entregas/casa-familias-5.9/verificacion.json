@@ -1,0 +1,145 @@
+{
+  "versionName": "5.9",
+  "versionCode": 15,
+  "minSdk": 26,
+  "targetSdk": 36,
+  "unitTests": {
+    "passed": 94,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "suites": [
+      {
+        "name": "com.casafamilias.app.DeviceAlertRulesTest",
+        "tests": "10",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0"
+      },
+      {
+        "name": "com.casafamilias.app.FamilyAccountTest",
+        "tests": "13",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0"
+      },
+      {
+        "name": "com.casafamilias.app.LocalAccessPolicyTest",
+        "tests": "7",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0"
+      },
+      {
+        "name": "com.casafamilias.app.NativeRulesTest",
+        "tests": "31",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0"
+      },
+      {
+        "name": "com.casafamilias.app.PaymentPlansTest",
+        "tests": "10",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0"
+      },
+      {
+        "name": "com.casafamilias.app.RepositoryContractTest",
+        "tests": "15",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0"
+      },
+      {
+        "name": "com.casafamilias.app.ServiceCalculationTest",
+        "tests": "8",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0"
+      }
+    ]
+  },
+  "androidTests": {
+    "passed": 39,
+    "failures": 0,
+    "device": "Android11/API30 emulator",
+    "functionalRunBeforeFinalTypographyAdjustment": true,
+    "finalTypographyRegression": {
+      "passed": 2,
+      "failures": 0,
+      "checks": "Actual glyph bounds and one line for header/profile/cleaning labels, home actions, dark mode and extra-large text"
+    },
+    "data": "Fictional local accounts and servers only",
+    "display": "320x800; system font130%; additional app130% in dark-mode test",
+    "physicalCameraTested": false,
+    "biometricSensorTested": false,
+    "cameraFixtures": "Real provider/files/JPEG; camera results injected in five tests",
+    "initialRun": {
+      "passed": 37,
+      "failed": 1,
+      "issue": "Photo-success snackbar covered previous-step button at large font",
+      "resolution": "Inline photo-attached label; focused and full reruns passed"
+    }
+  },
+  "webTests": {
+    "simpleAccountChecks": 18,
+    "startupChecks": 20,
+    "authChecks": 11,
+    "adminChecks": 37,
+    "rotationChecks": 42,
+    "domScreens": 26,
+    "sourceForms": 7,
+    "restaurantReadOnly": "PASS",
+    "backend": "Mocked",
+    "bundledWebMatchesWebsiteZip": true
+  },
+  "browserTests": {
+    "checks": 168,
+    "roles": 4,
+    "widths": [
+      320,
+      390,
+      768
+    ],
+    "fontScales": [
+      1,
+      1.3
+    ],
+    "browserErrors": [],
+    "externalRequests": [],
+    "realSupabaseWrites": 0,
+    "result": "PASS"
+  },
+  "presentationSmoke": {
+    "updateInstall": "PASS",
+    "updateFrom": "Current5.9 debug APK; previous5.8 certificate checked separately",
+    "versionName": "5.9",
+    "versionCode": 15,
+    "nativeLoginRendered": true,
+    "presentationIgnoresPreviewExtras": true,
+    "physicalPhoneTested": false,
+    "android16RuntimeTested": false
+  },
+  "lint": {
+    "errors": 0,
+    "warnings": 30
+  },
+  "apkCertificateSha256": "be231e4d4f51af408cdc3728c18aacd76b1f3758b2fe452674294df4cbad2b5c",
+  "matchesPreviousApkCertificate": true,
+  "zipalign16k": true,
+  "android16RuntimeTested": false,
+  "backendSourceChanged": false,
+  "backendDataModified": false,
+  "previousFinanceCorrection": "5.8 migration010 and historical correction already deployed and verified; not repeated",
+  "realReceiptUploaded": false,
+  "realPaymentCreated": false,
+  "publicWebsite": {
+    "url": "https://casafliagalarza.netlify.app/",
+    "sameSupabaseProject": true,
+    "deploymentMethod": "Owner manual upload",
+    "deployedByThisTask": false,
+    "preparedZip": true
+  },
+  "publishedOnGooglePlay": false
+}

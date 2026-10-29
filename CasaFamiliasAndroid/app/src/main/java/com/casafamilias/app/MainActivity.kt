@@ -38,6 +38,7 @@ class MainActivity : FragmentActivity() {
                     Role.from(intent.getStringExtra("preview_role") ?: "sysadmin"),
                     intent.getBooleanExtra("preview_account", false),
                     intent.getBooleanExtra("preview_services", false),
+                    intent.getBooleanExtra("preview_paid", false),
                 )
             else
                 CasaRepository(

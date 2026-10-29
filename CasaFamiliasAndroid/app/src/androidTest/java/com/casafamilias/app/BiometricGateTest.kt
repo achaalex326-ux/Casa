@@ -93,7 +93,7 @@ class BiometricGateTest {
     fun coldStartAndRetryCannotReadOrMutateBeforeUnlock() {
         launch()
         compose.onNodeWithText("Tu hogar, protegido").assertIsDisplayed()
-        compose.onNodeWithText("Mi\ncuenta").assertDoesNotExist()
+        compose.onNodeWithText("Deudas").assertDoesNotExist()
         compose.runOnUiThread {
             vm.start()
             vm.refresh()
@@ -122,7 +122,7 @@ class BiometricGateTest {
         idle()
         assertTrue(vm.state.value.locked)
         assertEquals(0, server.loads)
-        compose.onNodeWithText("Mi\ncuenta").assertDoesNotExist()
+        compose.onNodeWithText("Deudas").assertDoesNotExist()
         compose.onNodeWithText("Volver al acceso con huella").performScrollTo().performClick()
         compose.onNodeWithText("Tu hogar, protegido").assertIsDisplayed()
     }
@@ -137,7 +137,7 @@ class BiometricGateTest {
         idle()
         assertFalse(vm.state.value.locked)
         assertEquals(1, server.loads)
-        compose.onAllNodesWithText("Mi\ncuenta").onFirst().assertExists()
+        compose.onAllNodesWithText("Deudas").onFirst().assertExists()
         compose.runOnUiThread {
             vm.background()
             now += 29999
@@ -150,7 +150,7 @@ class BiometricGateTest {
             vm.foreground()
         }
         compose.onNodeWithText("Tu hogar, protegido").assertIsDisplayed()
-        compose.onNodeWithText("Mi\ncuenta").assertDoesNotExist()
+        compose.onNodeWithText("Deudas").assertDoesNotExist()
         val count = server.loads
         compose.runOnUiThread { vm.refresh() }
         assertEquals(count, server.loads)

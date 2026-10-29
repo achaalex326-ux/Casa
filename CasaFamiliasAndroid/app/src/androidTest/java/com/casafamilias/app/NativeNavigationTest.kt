@@ -18,7 +18,12 @@ class NativeNavigationTest {
     @get:Rule val compose = createEmptyComposeRule()
     private var scenario: ActivityScenario<MainActivity>? = null
 
-    private fun launch(role: String, account: Boolean = false, services: Boolean = false) {
+    private fun launch(
+        role: String,
+        account: Boolean = false,
+        services: Boolean = false,
+        paid: Boolean = false,
+    ) {
         val context = InstrumentationRegistry.getInstrumentation().targetContext
         val intent =
             Intent(context, MainActivity::class.java)
@@ -27,6 +32,7 @@ class NativeNavigationTest {
                 .putExtra("preview_role", role)
                 .putExtra("preview_account", account)
                 .putExtra("preview_services", services)
+                .putExtra("preview_paid", paid)
         scenario = ActivityScenario.launch(intent)
         compose.waitUntil(90000) {
             compose
@@ -42,6 +48,42 @@ class NativeNavigationTest {
             return compose.onNodeWithText(text)
         }
         return compose.onNodeWithText(text).performScrollTo()
+    }
+
+    private fun assertReadableLabel(label: String) {
+        compose.onNodeWithText(label, useUnmergedTree = true).performSemanticsAction(
+            SemanticsActions.GetTextLayoutResult
+        ) { action ->
+            val layouts = mutableListOf<TextLayoutResult>()
+            action(layouts)
+            val layout = layouts.single()
+            // Paragraph width can include unused space from an intrinsic measurement.
+            // Check the actual characters, with one pixel for fractional rounding.
+            label.indices.forEach { index ->
+                val bounds = layout.getBoundingBox(index)
+                assertTrue(
+                    "$label debe caber completo: $bounds dentro de ${layout.size}",
+                    bounds.left >= -1f &&
+                        bounds.top >= -1f &&
+                        bounds.right <= layout.size.width + 1f &&
+                        bounds.bottom <= layout.size.height + 1f,
+                )
+            }
+            assertEquals("$label debe verse en una línea", 1, layout.lineCount)
+        }
+    }
+
+    private fun openPayments() {
+        if (compose.onAllNodesWithText("Mis pagos").fetchSemanticsNodes().isNotEmpty())
+            scroll("Mis pagos").performClick()
+        else scroll("Revisar pagos").performClick()
+    }
+
+    private fun cashReview() {
+        scroll("Continuar").performClick()
+        scroll("Forma de pago").performClick()
+        compose.onNodeWithText("Efectivo").performClick()
+        scroll("Continuar").performClick()
     }
 
     @After
@@ -68,9 +110,9 @@ class NativeNavigationTest {
     }
 
     @Test
-    fun administratorHasFiveTabsAndUniqueMoreMenu() {
+    fun administratorHasFourTabsAndUniqueMoreMenu() {
         launch("sysadmin")
-        listOf("Inicio", "Gastos", "Pagos", "Familias", "Más").forEach {
+        listOf("Inicio", "Gastos", "Deudas", "Más").forEach {
             compose.onNodeWithText(it).assertExists()
         }
         compose.onNodeWithText("Más").performClick()
@@ -81,14 +123,14 @@ class NativeNavigationTest {
         compose.onNodeWithContentDescription("Volver").performClick()
         compose.onNodeWithText("Inicio").performClick()
         compose.onNodeWithText("Gastos").performClick()
-        scroll("Registrar servicios del mes").performClick()
+        scroll("Registrar facturas").performClick()
         compose.onNodeWithText("Paso 1 de 3").assertExists()
     }
 
     @Test
     fun familyCannotSeeOtherFamilyAdministration() {
         launch("family")
-        compose.onAllNodesWithText("Mi\ncuenta").onFirst().assertExists()
+        compose.onAllNodesWithText("Deudas").onFirst().assertExists()
         compose.onNodeWithText("Familias").assertDoesNotExist()
         compose.onNodeWithText("Más").performClick()
         compose.onNodeWithText("Usuarios").assertDoesNotExist()
@@ -145,11 +187,14 @@ class NativeNavigationTest {
     fun adminDesignScreensAreImplementedInNativeAndroid() {
         launch("sysadmin")
         screenshot("01-inicio")
-        listOf("Gastos" to "02-gastos", "Pagos" to "03-pagos", "Familias" to "04-familias")
-            .forEach { (title, file) ->
-                compose.onNodeWithText(title).performClick()
-                screenshot(file)
-            }
+        compose.onNodeWithText("Gastos").performClick()
+        screenshot("02-gastos")
+        compose.onNodeWithText("Inicio").performClick()
+        openPayments()
+        screenshot("03-pagos")
+        compose.onNodeWithText("Inicio").performClick()
+        compose.onNodeWithText("Deudas").performClick()
+        screenshot("04-familias")
         compose.onNodeWithText("Más").performClick()
         screenshot("09-mas")
         listOf(
@@ -183,23 +228,16 @@ class NativeNavigationTest {
         scroll("Extra grande").assertIsSelected()
         compose.onNode(isToggleable()).assertIsOn()
         compose.onNodeWithContentDescription("Volver").performClick()
-        compose.onAllNodesWithText("Mi\ncuenta").onFirst().assertExists()
-        compose.onNodeWithText("Limpieza").performSemanticsAction(
-            SemanticsActions.GetTextLayoutResult
-        ) { action ->
-            val layouts = mutableListOf<TextLayoutResult>()
-            assertTrue(action(layouts))
-            assertEquals(1, layouts.single().lineCount)
-            assertFalse(layouts.single().hasVisualOverflow)
-        }
+        compose.onAllNodesWithText("Deudas").onFirst().assertExists()
+        listOf("Casa Familias", "Cuenta", "Limpieza").forEach(::assertReadableLabel)
         screenshot("13-familia-oscuro-texto-grande")
     }
 
     @Test
     fun engineerAdministratorSeesCurrentFamilyAndWholeCalendarWithoutSwapAuthority() {
         launch("sysadmin")
-        scroll("¿Quién limpia esta semana?").assertExists()
-        scroll("Ver tareas de esta semana").performClick()
+        scroll("Limpieza esta semana").assertExists()
+        scroll("Limpieza esta semana").performClick()
         compose.onNodeWithText("Familia Choque").assertExists()
         compose.onNodeWithText("Solicitar intercambio").assertDoesNotExist()
         compose.onNodeWithContentDescription("Volver").performClick()
@@ -215,7 +253,7 @@ class NativeNavigationTest {
     @Test
     fun payerSeesOtherFamilyWeekButCannotRequestTheirExchange() {
         launch("payer")
-        scroll("Ver tareas de esta semana").performClick()
+        scroll("Limpieza esta semana").performClick()
         compose.onNodeWithText("Familia Choque").assertExists()
         compose.onNodeWithText("Completar turno").assertDoesNotExist()
         compose.onNodeWithText("Solicitar intercambio").assertDoesNotExist()
@@ -246,10 +284,11 @@ class NativeNavigationTest {
     @Test
     fun familyCanPreviewOneDepositAcrossThreeMonths() {
         launch("family")
-        compose.onNodeWithText("Pagos").performClick()
+        openPayments()
         scroll("Registrar pago").performClick()
         scroll("Total depositado (Bs)").performTextInput("200")
-        scroll("Así se repartirá tu depósito").assertExists()
+        cashReview()
+        scroll("Esto se pagará").assertExists()
         scroll("Deuda que quedaría").assertExists()
         compose.onAllNodesWithText("Bs 40,00").onLast().assertExists()
         screenshot("21-vista-previa-pago-varios-meses")
@@ -258,7 +297,7 @@ class NativeNavigationTest {
     @Test
     fun familyDepositHistoryGroupsOneReceiptAndThreeMonths() {
         launch("family")
-        compose.onNodeWithText("Pagos").performClick()
+        openPayments()
         scroll("Ver reparto del depósito").performClick()
         scroll("Reparto previsto al enviar").assertExists()
         scroll("enero 2030").assertExists()
@@ -275,7 +314,7 @@ class NativeNavigationTest {
     @Test
     fun administratorReviewsWholeDepositWithOneDecision() {
         launch("sysadmin")
-        compose.onNodeWithText("Pagos").performClick()
+        openPayments()
         scroll("Revisar depósito completo").performClick()
         scroll("Aprobar depósito completo").performClick()
         compose
@@ -291,8 +330,8 @@ class NativeNavigationTest {
     @Test
     fun accountMakesPaidPartialAndPendingMonthsUnderstandable() {
         launch("family", account = true)
-        compose.onNodeWithText("Mi\ncuenta").performClick()
-        scroll("Gastos registrados hasta").assertExists()
+        compose.onNodeWithText("Deudas").performClick()
+        scroll("Registrado hasta octubre 2026").assertExists()
         scroll("2 meses con saldo pendiente").assertExists()
         compose
             .onNode(hasScrollToIndexAction())
@@ -316,7 +355,7 @@ class NativeNavigationTest {
     @Test
     fun paymentListIdentifiesMonthsAndLinksToAccount() {
         launch("family")
-        compose.onNodeWithText("Pagos").performClick()
+        openPayments()
         scroll("¿Qué meses me faltan pagar?").assertExists()
         scroll("2 comprobantes por revisar").assertExists()
         scroll("Registrar pago").assertExists()
@@ -331,7 +370,7 @@ class NativeNavigationTest {
     fun servicesShowLatestRecordedMonthAndDistinguishBillsFromSharedAmounts() {
         launch("sysadmin", services = true)
         compose.onNodeWithText("Gastos").performClick()
-        scroll("Servicios registrados hasta").assertExists()
+        scroll("Registrado hasta").assertExists()
         compose.onAllNodesWithText("junio 2026").onFirst().assertExists()
         screenshot("29-gastos-hasta-junio")
         compose
@@ -345,9 +384,9 @@ class NativeNavigationTest {
     @Test
     fun familyAccountSummaryShowsLatestMonthBeforeMonthCards() {
         launch("family", account = true)
-        compose.onNodeWithText("Mi\ncuenta").performClick()
-        compose.onNodeWithText("Gastos registrados hasta").assertIsDisplayed()
-        compose.onNodeWithText("octubre 2026").assertIsDisplayed()
+        compose.onNodeWithText("Deudas").performClick()
+        compose.onNodeWithText("Registrado hasta octubre 2026").assertIsDisplayed()
+        compose.onNodeWithText("Registrado hasta octubre 2026").assertIsDisplayed()
         screenshot("31-cuenta-resumen-simple")
     }
 
@@ -355,20 +394,55 @@ class NativeNavigationTest {
     fun servicesFormPreviewsWholeSumBeforeAnyWrite() {
         launch("sysadmin", services = true)
         compose.onNodeWithText("Gastos").performClick()
-        scroll("Registrar servicios del mes").performClick()
+        scroll("Registrar facturas").performClick()
         scroll("Continuar").performClick()
         listOf("Agua (Bs)" to "36", "Luz (Bs)" to "211,50", "Internet (Bs)" to "149").forEach {
             (label, value) ->
             compose.onNodeWithText(label).performScrollTo().performTextReplacement(value)
         }
         compose.onNodeWithText("Continuar").performScrollTo().performClick()
-        scroll("Revisa la suma antes de guardar").assertExists()
-        scroll("Total a repartir").assertExists()
+        scroll("Total de las facturas").assertExists()
         compose.onAllNodes(hasText("396,50", substring = true)).onFirst().assertExists()
-        scroll("Dividido entre 6 cuentas: Bs 66,08 por cuenta, aproximadamente.").assertExists()
+        scroll("6 cuentas · Bs 66,08 por cuenta, aproximadamente.").assertExists()
         screenshot("32-formulario-suma-antes-de-guardar")
-        scroll("Guardar").performClick()
-        compose.onNodeWithText("Confirmar registrar servicios del mes").assertExists()
+        scroll("Guardar facturas").performClick()
+        compose.onNodeWithText("Confirmar registrar facturas").assertExists()
         compose.onNodeWithText("Cancelar").performClick()
+    }
+
+    @Test
+    fun guidedPaymentRequiresPhotoBeforeReview() {
+        launch("family", account = true)
+        scroll("Pagar").performClick()
+        compose.onNodeWithText("¿Cuánto pagaste?").assertExists()
+        scroll("Total depositado (Bs)").performTextInput("120")
+        scroll("Continuar").performClick()
+        compose.onNodeWithText("Adjunta el comprobante").assertExists()
+        scroll("Continuar").performClick()
+        scroll("Adjunta la foto del comprobante para continuar.").assertExists()
+        compose.onNodeWithText("Revisa y envía").assertDoesNotExist()
+        screenshot("33-pago-guiado-requiere-foto")
+    }
+
+    @Test
+    fun homeOffersDirectActionsWithFourReadableDestinations() {
+        launch("family", account = true)
+        listOf("Inicio", "Deudas", "Limpieza", "Más").forEach {
+            compose.onNodeWithText(it).assertExists()
+        }
+        listOf("Cuenta", "Limpieza").forEach(::assertReadableLabel)
+        scroll("Pagar").assertExists()
+        scroll("Ver mis deudas").assertExists()
+        scroll("Mis pagos").assertExists()
+        screenshot("34-inicio-sencillo-familia")
+    }
+
+    @Test
+    fun paidFamilyOpensPaymentHistoryWithoutStartingANewPayment() {
+        launch("family", account = true, paid = true)
+        scroll("Estás al día").assertExists()
+        scroll("Ver mis pagos").performClick()
+        scroll("Mis pagos").assertExists()
+        compose.onNodeWithText("¿Cuánto pagaste?").assertDoesNotExist()
     }
 }

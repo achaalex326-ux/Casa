@@ -314,15 +314,26 @@ object Access {
     fun tabs(role: Role): List<String> =
         when (role) {
             Role.RESTAURANT -> listOf("home", "profile")
-            Role.FAMILY -> listOf("home", "dues", "payments", "cleaning", "more")
-            else -> listOf("home", "expenses", "payments", "families", "more")
+            Role.FAMILY -> listOf("home", "dues", "cleaning", "more")
+            else -> listOf("home", "expenses", "families", "more")
         }
 
     fun more(role: Role) =
         when (role) {
-            Role.ADMIN -> listOf("cleaning", "users", "reports", "notices", "proposals", "admin")
-            Role.PAYER -> listOf("cleaning", "reports", "notices", "proposals")
-            Role.FAMILY -> listOf("notices", "proposals")
+            Role.ADMIN ->
+                listOf(
+                    "payments",
+                    "cleaning",
+                    "users",
+                    "reports",
+                    "notices",
+                    "proposals",
+                    "profile",
+                    "admin",
+                )
+            Role.PAYER ->
+                listOf("payments", "cleaning", "reports", "notices", "proposals", "profile")
+            Role.FAMILY -> listOf("payments", "notices", "proposals", "profile")
             else -> emptyList()
         }
 }

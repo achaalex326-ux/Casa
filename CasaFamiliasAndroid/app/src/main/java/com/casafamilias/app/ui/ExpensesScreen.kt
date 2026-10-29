@@ -7,6 +7,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.unit.dp
 import com.casafamilias.app.domain.*
 import java.math.BigDecimal
 
@@ -15,6 +16,7 @@ fun ExpensesScreen(s: Snapshot, go: Go) {
     val periods = s.servicePeriods()
     var selected by rememberSaveable { mutableStateOf("all") }
     var section by rememberSaveable { mutableStateOf("services") }
+    var extras by rememberSaveable { mutableStateOf(false) }
     val choices =
         listOf(Choice("all", "Todos los meses")) +
             (periods + s.rows("expenses").map { it.text("expense_date").take(7) })
@@ -28,26 +30,14 @@ fun ExpensesScreen(s: Snapshot, go: Go) {
             .sortedByDescending { it.text("month_start") }
 
     ContentList {
-        item { Title("Gastos", "Facturas de la casa, ordenadas por mes") }
-        item {
-            Panel(Modifier.testTag("registered-services")) {
-                Text("Servicios registrados hasta", style = MaterialTheme.typography.labelLarge)
-                Text(
-                    periods.lastOrNull()?.let(Dates::monthLabel) ?: "Todavía no hay registros",
-                    style = MaterialTheme.typography.titleLarge,
-                )
-                Text(
-                    "${periods.size} meses registrados. Un mes sin registro todavía no tiene un cobro publicado.",
-                    style = MaterialTheme.typography.bodySmall,
-                )
-            }
-        }
+        item { Title("Gastos", "Las facturas de cada mes") }
+        item { PublishedThrough(periods.lastOrNull()) }
         item {
             Action(
                 when (section) {
                     "external" -> "Registrar gasto extraordinario"
                     "credits" -> "Registrar descuento"
-                    else -> "Registrar servicios del mes"
+                    else -> "Registrar facturas"
                 }
             ) {
                 go(
@@ -59,19 +49,15 @@ fun ExpensesScreen(s: Snapshot, go: Go) {
                 )
             }
         }
-        item { Secondary("Ver deudas de las familias") { go("families") } }
+
         item {
             Filters(
-                listOf(
-                    Choice("services", "Facturas"),
-                    Choice("external", "Otros gastos"),
-                    Choice("credits", "Descuentos"),
-                    Choice("restaurant", "Restaurante"),
-                ),
+                listOf(Choice("services", "Facturas"), Choice("external", "Otros gastos")),
                 section,
                 { section = it },
             )
         }
+        item { TextButton(onClick = { extras = true }) { Text("Más opciones de gastos") } }
         item {
             Input(
                 Field(
@@ -178,6 +164,24 @@ fun ExpensesScreen(s: Snapshot, go: Go) {
             }
         }
     }
+    if (extras)
+        AlertDialog(
+            onDismissRequest = { extras = false },
+            title = { Text("Otras opciones") },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                    Secondary("Ver descuentos") {
+                        section = "credits"
+                        extras = false
+                    }
+                    Secondary("Ver aportes del restaurante") {
+                        section = "restaurant"
+                        extras = false
+                    }
+                }
+            },
+            confirmButton = { TextButton(onClick = { extras = false }) { Text("Cerrar") } },
+        )
 }
 
 @Composable
@@ -194,7 +198,7 @@ private fun ServiceInvoiceCard(s: Snapshot, row: Record) {
             Dates.monthLabel(row.text("month_start").take(7)),
             style = MaterialTheme.typography.titleLarge,
         )
-        Text("Total de las facturas", style = MaterialTheme.typography.labelLarge)
+        Text("Total del mes", style = MaterialTheme.typography.labelLarge)
         Text(Amounts.format(gross), style = MaterialTheme.typography.headlineMedium)
         if (reference) Text("Solo referencia: no genera deuda.")
         else {
@@ -221,9 +225,7 @@ private fun ServiceInvoiceCard(s: Snapshot, row: Record) {
             "Pagar hasta ${Dates.label(row.text("due_date"))}",
             style = MaterialTheme.typography.bodySmall,
         )
-        Secondary(if (detail) "Cerrar detalle de facturas" else "Ver facturas y cálculo") {
-            detail = !detail
-        }
+        Secondary(if (detail) "Cerrar detalle de facturas" else "Ver facturas") { detail = !detail }
         if (detail) {
             ServiceCalculation.services.forEach { service ->
                 DataLine(serviceLabel(service), Amounts.format(bills.getValue(service)))
@@ -278,30 +280,39 @@ private fun ServiceInvoiceCard(s: Snapshot, row: Record) {
 @Composable
 fun ServiceFormSummary(s: Snapshot, values: Map<String, String>) {
     val preview = runCatching { s.servicePreview(values) }.getOrNull() ?: return
+    var detail by rememberSaveable { mutableStateOf(false) }
     Panel(Modifier.testTag("service-calculation-preview")) {
-        Text("Revisa la suma antes de guardar", style = MaterialTheme.typography.titleMedium)
-        DataLine("Total de las cuatro facturas", Amounts.format(preview.invoices))
-        if (values["reference"] == "true") Text("Referencia histórica: no se crea deuda.")
+        Text("Total de las facturas", style = MaterialTheme.typography.titleMedium)
+        Text(Amounts.format(preview.invoices), style = MaterialTheme.typography.headlineLarge)
+        if (values["reference"] == "true") Text("Solo referencia: no se crea deuda.")
         else {
-            DataLine("Descuentos registrados", Amounts.format(preview.discounts))
-            DataLine("Total a repartir", Amounts.format(preview.toShare))
+            if (preview.discounts > BigDecimal.ZERO) {
+                DataLine("Descuentos", Amounts.format(preview.discounts))
+                DataLine("Total a repartir", Amounts.format(preview.toShare))
+            }
             Text(
-                "Dividido entre ${preview.shares.size} cuentas: ${Amounts.format(preview.regularShare)} por cuenta, aproximadamente."
+                "${preview.shares.size} cuentas · ${Amounts.format(preview.regularShare)} por cuenta, aproximadamente.",
+                style = MaterialTheme.typography.bodyLarge,
             )
-            if (preview.finalShare != preview.regularShare)
-                Text(
-                    "La última cuenta recibe ${Amounts.format(preview.finalShare)} para conservar los centavos del total.",
-                    style = MaterialTheme.typography.bodySmall,
-                )
-            if (preview.excessiveDiscount)
-                Text(
-                    "Hay un descuento mayor a su factura. Corrígelo antes de guardar.",
-                    color = MaterialTheme.colorScheme.error,
-                )
             Text(
-                "No se descuenta un promedio histórico. Gas en 0 no suma ningún cobro.",
+                "Las cuentas del encargado quedan cubiertas.",
                 style = MaterialTheme.typography.bodySmall,
             )
+            TextButton(onClick = { detail = !detail }) {
+                Text(if (detail) "Cerrar reparto" else "Ver importe por familia")
+            }
+            if (detail)
+                s.rows("families")
+                    .sortedBy { it.number("id") }
+                    .zip(preview.shares)
+                    .forEach { (family, amount) ->
+                        DataLine(family.text("name"), Amounts.format(amount))
+                    }
+            if (preview.excessiveDiscount)
+                Text(
+                    "El descuento es mayor que su factura. Revisa el importe.",
+                    color = MaterialTheme.colorScheme.error,
+                )
         }
     }
 }

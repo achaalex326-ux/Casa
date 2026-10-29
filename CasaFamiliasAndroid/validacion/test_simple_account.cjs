@@ -1,0 +1,33 @@
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const path=require('node:path');
+const vm=require('node:vm');
+const context={window:{},Intl,Date,BigInt,Number};vm.createContext(context);
+vm.runInContext(fs.readFileSync(path.join(__dirname,'../app/src/main/assets/web/simple-account.js'),'utf8'),context);
+const A=context.window.CasaAccounts;let checks=0;
+const check=(value,message)=>{assert(value,message);checks++;};
+check(A.cents('0,10')+A.cents('0,20')===30,'Exact cents');
+check(A.cents('1.005')===101&&A.cents('-1.005')===-101,'Half-up decimal rounding matches native');
+check(A.cents('1.234,56')===123456&&A.cents('1,234.56')===123456,'Both decimal conventions');
+const source={me:{role:'family',family_id:1},D:{families:[{id:1}],shares:[],payments:[],batches:[]},familyDebts:[0,1,2].map((i)=>({share_id:'s'+i,month_start:'2026-0'+(i+1)+'-01',amount_due:80,amount_paid:0,balance:80}))};
+const p=A.plan(source,1,200);
+check(p.allocations.map(r=>r.applied).join(',')==='8000,8000,4000'&&p.remainingDebt===4000,'One payment across three months');
+source.D.payments=[{id:'b',batch_id:'b',amount:200,status:'pending'},{id:'legacy',amount:20,status:'pending'}];source.D.batches=[{id:'b',amount:200,status:'pending'}];
+check(A.entries(source).length===2,'Batch header and anchor are not counted twice');
+check(A.account(source,1).balance===24000,'Pending proof does not reduce balance');
+check(A.debts(source,2).length===0,'A family cannot query another family');
+source.familyDebts[0].amount_paid=80;source.familyDebts[0].balance=0;source.familyDebts[1].amount_paid=40;source.familyDebts[1].balance=40;
+const account=A.account(source,1);
+check(account.balance===12000&&account.pending.length===2&&account.latest==='2026-03','Published months, partial payment and last actual month');
+const admin={me:{role:'sysadmin'},D:{families:Array.from({length:6},(_,i)=>({id:i+1})),utilityCredits:[]}};
+let semester=0;
+for(const [water,electricity,total,regular] of [[36,211.5,39650,6608],[24,165.6,33860,5643],[32,145.2,32620,5437],[36,243.6,42860,7143],[36.5,198,38350,6392],[36.5,191.6,37710,6285]]){
+ const plan=A.servicePlan(admin,{water,electricity,wifi:149,gas:0});
+ check(plan.total===total&&plan.shares[0]===regular&&plan.shares.reduce((a,b)=>a+b,0)===total,'Worksheet invoice sum closes');semester+=plan.total;
+}
+check(semester===225050,'Semester exact total');
+admin.D.utilityCredits=[{service:'water',amount:10},{service:'water',amount:100,applied_month_start:'2026-01-01'}];
+check(A.servicePlan(admin,{water:36,electricity:211.5,wifi:149,gas:0,other_water:2}).total===38450,'Only unapplied explicit credits counted');
+check(A.servicePlan(admin,{water:36,electricity:211.5,wifi:149,gas:0,reference:true}).total===39650,'Reference does not consume credit');
+check(A.servicePlan(admin,{water:1,electricity:200,wifi:149,gas:0}).invalid,'Discount bigger than its service is rejected');
+console.log(JSON.stringify({simpleAccountChecks:checks,mockedData:true,result:'PASS'}));

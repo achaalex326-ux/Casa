@@ -56,7 +56,7 @@ async function setup(role = 'sysadmin') {
     }
   };
   w.supabase = { createClient: () => client };
-  for (const file of ['startup.js', 'mobile.js', 'config.js', 'app.js']) w.eval(fs.readFileSync(path.join(web, file), 'utf8'));
+  for (const file of ['startup.js', 'simple-account.js', 'mobile.js', 'simple-payment.js', 'simple-services.js', 'config.js', 'app.js']) w.eval(fs.readFileSync(path.join(web, file), 'utf8'));
   await tick();
   assert(w.CF.state().me, 'Account entered');
   const $ = id => w.document.getElementById(id);
@@ -76,7 +76,9 @@ if (require.main !== module) module.exports = { setup };
 else (async () => {
   const h = await setup(); const { w, $, change, input, submit } = h;
   try {
-    w.Mobile.go('settings');
+    w.Mobile.go('more');
+    check(w.document.querySelector('[data-go="administration"]'),'Administration is separate from everyday account settings');
+    w.Mobile.go('administration');
     check(w.document.querySelector('[data-source="familyNamesPanel"]'), 'Family names entry point');
     check(w.document.querySelector('[data-source="userFamiliesPanel"]'), 'Assignments entry point');
     $('renameFamily').value = '1'; change('renameFamily'); input('familyNameInput', 'Familia García');
