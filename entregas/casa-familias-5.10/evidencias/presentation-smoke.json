@@ -1,0 +1,5 @@
+{
+  "status": "NOT_RUN",
+  "reason": "Android framework unavailable before installing the app",
+  "staticChecks": "APK not debuggable, valid signature matching5.9, version5.10/code16; preview-extra guard unchanged from5.9"
+}

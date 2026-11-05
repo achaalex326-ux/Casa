@@ -1,0 +1,17 @@
+{
+  "checks": 168,
+  "roles": 4,
+  "widths": [
+    320,
+    390,
+    768
+  ],
+  "fontScales": [
+    1,
+    1.3
+  ],
+  "browserErrors": [],
+  "externalRequests": [],
+  "realSupabaseWrites": 0,
+  "result": "PASS"
+}

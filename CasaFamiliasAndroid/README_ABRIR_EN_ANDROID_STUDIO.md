@@ -1,4 +1,4 @@
-# Abrir Casa Familias 5.9 en Android Studio
+# Abrir Casa Familias 5.10 en Android Studio
 
 1. Actualiza el repositorio desde GitHub Desktop: Fetch origin → Pull origin.
 2. Abre la carpeta **CasaFamiliasAndroid**, que contiene settings.gradle. No abras el ZIP histórico.
@@ -46,3 +46,7 @@ Sigue [la guía de Google Play](../entregas/google-play/GUIA_GOOGLE_PLAY.md). La
 La web usa `simple-account.js` para agrupar saldos en centavos, `simple-payment.js` y `simple-services.js` para los formularios y `simple.css` para el diseño compartido. `app.js` conserva autenticación y operaciones del servidor. No se cambió el contrato financiero ni se añadieron migraciones en 5.9. Las fotos web se preparan en el navegador y una solicitud fallida conserva foto e identificador para reintentar sin duplicar el depósito.
 
 Para pruebas web: `cd validacion`, `npm install --no-package-lock`, `npm test` (Node 20.19 o posterior compatible con jsdom 29). Para publicar manualmente, comprime únicamente el contenido de `app/src/main/assets/web`, con `index.html` en la raíz. No incluyas APK, pruebas, credenciales ni carpetas de compilación. Consulta la guía en `../entregas/casa-familias-5.9/LEEME.md`. El `netlify.toml` de la raíz sirve si después se conecta este repositorio al sitio; no es necesario para subir la carpeta manualmente.
+
+## Accesibilidad y limpieza en 5.10
+
+`ui/AccessibilityScreens.kt` reúne los botones grandes de lectura y el panel para activar/probar avisos de limpieza. `Snapshot.nextCleaningTurn` selecciona desde la semana vigente, respetando los alias y descartando pendientes antiguos. `DeviceAlerts` permite comprobar el canal de limpieza y abrir sus ajustes. Las fechas y el turno de cada familia siguen en Supabase; esta entrega no cambia servidor ni saldos. Ver `../entregas/casa-familias-5.10/LEEME.md`.

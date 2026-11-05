@@ -1,6 +1,8 @@
-# Casa Familias 5.9 — interfaz sencilla para Android y web
+# Casa Familias 5.10 — letra grande y recordatorio de limpieza
 
-Versión **5.9**, código **15**, paquete `com.casafamilias.app`. Android 8 o posterior; destino Android 16/API 36. La casa, sus cuentas autorizadas y los datos existentes se conservan.
+Versión **5.10**, código **16**, paquete `com.casafamilias.app`. Android 8 o posterior; destino Android 16/API 36. La casa, sus cuentas autorizadas y los datos existentes se conservan.
+
+Cuenta coloca **Letras y colores** al inicio, con botones grandes Normal/Grande/Extra grande y toda la fila Modo oscuro pulsable. Limpieza incorpora **Activar recordatorio** y **Probar aviso de limpieza**, usando el canal real de esa semana. El aviso requiere permiso por celular y conexión; se mantiene la revisión periódica mínima de15minutos. El próximo turno excluye pendientes de semanas pasadas. No se cambiaron saldos, fechas ni el orden de la rotación.
 
 El inicio presenta tareas con botones grandes y una explicación corta. Las familias ven cuánto falta pagar, hasta qué mes hay registros, sus pagos y la próxima limpieza. Administración y encargado acceden a facturas, comprobantes por revisar, deudas de las familias y calendario. La navegación habitual se reduce a cuatro pestañas; las funciones administrativas y ajustes están en Más.
 
@@ -12,7 +14,7 @@ La web utiliza el mismo diseño, navegación y formularios guiados. El sitio act
 
 ## Archivos de la entrega
 
-En [entregas/casa-familias-5.9](entregas/casa-familias-5.9) están el APK, el ZIP web para Netlify, el código fuente, las instrucciones y las evidencias. [LEEME](entregas/casa-familias-5.9/LEEME.md) explica la instalación y la actualización del sitio. [VERIFICACION](entregas/casa-familias-5.9/VERIFICACION.md) detalla los resultados y límites.
+En [entregas/casa-familias-5.10](entregas/casa-familias-5.10) están el APK, el ZIP web para Netlify, el código fuente, las instrucciones y las evidencias. [LEEME](entregas/casa-familias-5.10/LEEME.md) explica la instalación y la actualización del sitio. [VERIFICACION](entregas/casa-familias-5.10/VERIFICACION.md) detalla los resultados y límites.
 
 El APK `presentation` está optimizado y firmado con el certificado de pruebas de las entregas anteriores. Puede instalarse directamente sin Google Play. Una actualización requiere el mismo certificado y un código de versión mayor; no desinstales antes si quieres conservar la sesión y ajustes locales. La variante `release` requiere la clave de subida propia antes de enviar un AAB a Play Console. Consulta [la guía de Google Play](entregas/google-play/GUIA_GOOGLE_PLAY.md); esta entrega no está publicada allí.
 
@@ -20,7 +22,7 @@ El APK `presentation` está optimizado y firmado con el certificado de pruebas d
 
 La corrección financiera de **5.8 ya está aplicada en Supabase**. Se suman las facturas completas de agua, luz, gas e internet, se restan únicamente descuentos explícitos y se divide entre las seis identidades contables. Enero-junio2026 suma Bs2.250,50 con gas cero. Las dos cuentas del encargado tienen su cobertura automática y saldo cero para esos servicios. Se conservaron pagos, fotos y fechas, otros meses, créditos y calendario. [Evidencia del despliegue anterior](entregas/casa-familias-5.8/evidencias/backend-deployment.json).
 
-5.9 no ejecuta reparaciones, migraciones ni escrituras en los datos reales. Los formularios nuevos usan las mismas funciones protegidas del servidor. Un depósito de Bs200 ante tres meses de Bs80 se aplica 80/80/40 al aprobar y deja Bs40; el sobrante queda a favor. El historial agrupa un solo depósito y los reintentos conservan su identificador. Los formularios web preparan las fotos antes de subirlas y conservan la imagen si falla el envío.
+5.10 no ejecuta reparaciones, migraciones ni escrituras en los datos reales. Los formularios nuevos usan las mismas funciones protegidas del servidor. Un depósito de Bs200 ante tres meses de Bs80 se aplica 80/80/40 al aprobar y deja Bs40; el sobrante queda a favor. El historial agrupa un solo depósito y los reintentos conservan su identificador. Los formularios web preparan las fotos antes de subirlas y conservan la imagen si falla el envío.
 
 El ciclo semanal sigue **Choque → Galarza → Salinas → David → Acha**. Salinas y Salinas2 comparten limpieza, con cuentas financieras separadas. Solo los participantes de las familias correspondientes pueden proponer y responder intercambios; ser administrador no permite aceptar por otra familia.
 

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.casafamilias.app.RepositoryContractTest" tests="15" skipped="0" failures="0" errors="0" timestamp="2026-11-05T12:31:26" hostname="3322fb2b2879" time="2.084">
+  <properties/>
+  <testcase name="unmigratedServerCannotSilentlySaveUsingOldAverageCalculation" classname="com.casafamilias.app.RepositoryContractTest" time="0.894"/>
+  <testcase name="batchRpcKeepsIdempotencyKeyTotalFamilyAndNullableShare" classname="com.casafamilias.app.RepositoryContractTest" time="0.039"/>
+  <testcase name="anotherRepositoryReusesTheLatestRotatedSession" classname="com.casafamilias.app.RepositoryContractTest" time="0.026"/>
+  <testcase name="failedSignOutKeepsSessionForRetry" classname="com.casafamilias.app.RepositoryContractTest" time="0.016"/>
+  <testcase name="rejectedAccessTokenForcesARefreshEvenBeforeItsExpiry" classname="com.casafamilias.app.RepositoryContractTest" time="0.099"/>
+  <testcase name="loginUsesExistingAuthContract" classname="com.casafamilias.app.RepositoryContractTest" time="0.015"/>
+  <testcase name="legacyMissingUserIdKeepsRefreshedTokensDuringLoad" classname="com.casafamilias.app.RepositoryContractTest" time="0.241"/>
+  <testcase name="familyLoadNeverRequestsOtherFamilyFinancialTables" classname="com.casafamilias.app.RepositoryContractTest" time="0.251"/>
+  <testcase name="selectFetchesEveryPageWithoutDroppingRows" classname="com.casafamilias.app.RepositoryContractTest" time="0.073"/>
+  <testcase name="recoveryUsesRegisteredAndroidDeepLink" classname="com.casafamilias.app.RepositoryContractTest" time="0.009"/>
+  <testcase name="rpcPreservesArgumentsAndUserAuthorization" classname="com.casafamilias.app.RepositoryContractTest" time="0.019"/>
+  <testcase name="rejectedRefreshClearsSession" classname="com.casafamilias.app.RepositoryContractTest" time="0.008"/>
+  <testcase name="expiredSessionsRefreshBeforeBusinessCall" classname="com.casafamilias.app.RepositoryContractTest" time="0.08"/>
+  <testcase name="oldRepositoryCannotEraseTheNewAccountsSession" classname="com.casafamilias.app.RepositoryContractTest" time="0.006"/>
+  <testcase name="backgroundSyncReadsOnlyItsOwnNotificationsAndDoesNotGenerateOrChangeData" classname="com.casafamilias.app.RepositoryContractTest" time="0.303"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

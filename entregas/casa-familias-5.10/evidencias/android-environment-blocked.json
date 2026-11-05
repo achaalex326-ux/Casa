@@ -1,0 +1,13 @@
+{
+  "status": "BLOCKED_BEFORE_APPLICATION_TESTS",
+  "instrumentationCasesPrepared": 41,
+  "targetedCasesPlanned": 8,
+  "applicationTestsExecuted": 0,
+  "device": "Android11/API30, emulator37.2.12 software rendering without KVM",
+  "initialProfile": "Android system services restarted repeatedly; package service unavailable",
+  "freshProfile": "Preserved original AVD and created separate 390x844/160dpi profile; Android startup remained incomplete",
+  "observedInstallFailure": "Android StorageManagerService: PackageManagerInternal.freeStorage was null during pm install",
+  "applicationCrashObserved": false,
+  "realFinancialDataModified": false,
+  "physicalPhoneTested": false
+}

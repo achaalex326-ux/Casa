@@ -251,6 +251,13 @@ class DeviceAlerts(private val activity: FragmentActivity, private val vm: CasaV
 
     fun allowed() = DeviceAlertState.permitted(activity)
 
+    fun cleaningAllowed() =
+        allowed() &&
+            activity
+                .getSystemService(NotificationManager::class.java)
+                .getNotificationChannel("casa_cleaning")
+                ?.importance != NotificationManager.IMPORTANCE_NONE
+
     fun enable() {
         if (
             vm.state.value.locked ||
@@ -297,17 +304,53 @@ class DeviceAlerts(private val activity: FragmentActivity, private val vm: CasaV
 
     fun test() {
         if (!enabled() || !allowed()) return
-        DeviceAlertDisplay.show(
-            activity,
-            DeviceAlert(
-                "test",
-                "test",
-                "general",
-                "Las notificaciones están activas",
-                "Esta es una prueba de Casa Familias. Los avisos reales se revisan en segundo plano.",
-            ),
+        val shown =
+            DeviceAlertDisplay.show(
+                activity,
+                DeviceAlert(
+                    "test",
+                    "test",
+                    "general",
+                    "Las notificaciones están activas",
+                    "Esta es una prueba de Casa Familias. Los avisos reales se revisan en segundo plano.",
+                ),
+            )
+        vm.inform(
+            if (shown) "Revisa la barra de notificaciones de tu celular."
+            else "Permite los avisos de Casa Familias en los ajustes de notificaciones."
         )
-        vm.inform("Revisa la barra de notificaciones de tu celular.")
+    }
+
+    fun testCleaning() {
+        if (!enabled() || !cleaningAllowed()) return
+        val shown =
+            DeviceAlertDisplay.show(
+                activity,
+                DeviceAlert(
+                    "test-cleaning",
+                    "test-cleaning",
+                    "cleaning",
+                    "Prueba: aviso de limpieza",
+                    "Aquí recibirás el aviso durante la semana que le toca limpiar a tu familia.",
+                ),
+            )
+        vm.inform(
+            if (shown) "Busca el aviso de limpieza en la barra de tu celular."
+            else "Permite los avisos de limpieza en los ajustes del teléfono."
+        )
+    }
+
+    fun cleaningSettings() {
+        if (!allowed()) {
+            settings()
+            return
+        }
+        DeviceAlertDisplay.channels(activity)
+        activity.startActivity(
+            Intent(Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS)
+                .putExtra(Settings.EXTRA_APP_PACKAGE, activity.packageName)
+                .putExtra(Settings.EXTRA_CHANNEL_ID, "casa_cleaning")
+        )
     }
 
     fun settings() {

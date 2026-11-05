@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.casafamilias.app.ServiceCalculationTest" tests="8" skipped="0" failures="0" errors="0" timestamp="2026-11-05T12:31:28" hostname="3322fb2b2879" time="0.013">
+  <properties/>
+  <testcase name="onlyExplicitDiscountsReduceTheTotal" classname="com.casafamilias.app.ServiceCalculationTest" time="0.001"/>
+  <testcase name="sixWorksheetMonthsUseWholeInvoicesAndConserveEveryCent" classname="com.casafamilias.app.ServiceCalculationTest" time="0.0"/>
+  <testcase name="latestRegisteredMonthIsBasedOnRecordsRatherThanTodaysDate" classname="com.casafamilias.app.ServiceCalculationTest" time="0.001"/>
+  <testcase name="zeroGasAddsNoChargeAndOtherServicesStillSum" classname="com.casafamilias.app.ServiceCalculationTest" time="0.0"/>
+  <testcase name="smallBillsNeverAssignNegativeRoundingRemainders" classname="com.casafamilias.app.ServiceCalculationTest" time="0.006"/>
+  <testcase name="discountGreaterThanItsServiceIsRejectedEvenWhenOtherBillsAreLarge" classname="com.casafamilias.app.ServiceCalculationTest" time="0.0"/>
+  <testcase name="cannotDivideWithoutFamilies" classname="com.casafamilias.app.ServiceCalculationTest" time="0.0"/>
+  <testcase name="previewCountsOnlyUnconsumedDiscountsAndIgnoresBaselines" classname="com.casafamilias.app.ServiceCalculationTest" time="0.005"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -6,6 +6,7 @@ const context={window:{},Intl,Date,BigInt,Number};vm.createContext(context);
 vm.runInContext(fs.readFileSync(path.join(__dirname,'../app/src/main/assets/web/simple-account.js'),'utf8'),context);
 const A=context.window.CasaAccounts;let checks=0;
 const check=(value,message)=>{assert(value,message);checks++;};
+check(A.weekStart('2026-11-01')==='2026-10-26'&&A.weekStart('2026-11-02')==='2026-11-02','Cleaning weeks cross month boundaries from Monday');
 check(A.cents('0,10')+A.cents('0,20')===30,'Exact cents');
 check(A.cents('1.005')===101&&A.cents('-1.005')===-101,'Half-up decimal rounding matches native');
 check(A.cents('1.234,56')===123456&&A.cents('1,234.56')===123456,'Both decimal conventions');

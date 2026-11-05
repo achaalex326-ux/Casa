@@ -10,6 +10,56 @@ import org.junit.Test
 class NativeRulesTest {
     private fun row(vararg p: Pair<String, Any?>) = Record(json(*p))
 
+    @Test
+    fun nextCleaningSelectsOwnCurrentWeekBeforeFutureAndIgnoresPast() {
+        val original = data(Role.FAMILY)
+        fun turn(id: String, family: Int, date: String) =
+            row("id" to id, "family_id" to family, "turn_date" to date, "status" to "pending")
+        val s =
+            original.copy(
+                tables =
+                    original.tables +
+                        ("cleaning_turns" to
+                            listOf(
+                                turn("past", 1, "2026-10-12"),
+                                turn("other", 3, "2026-10-19"),
+                                turn("future", 1, "2026-11-02"),
+                                turn("current-alias", 2, "2026-10-19"),
+                            ))
+            )
+        assertEquals("current-alias", s.nextCleaningTurn("2026-10-22")?.id)
+    }
+
+    @Test
+    fun nextCleaningDoesNotPresentOldOrCompletedWeeksAsUpcoming() {
+        val original = data(Role.FAMILY)
+        val past =
+            row(
+                "id" to "past",
+                "family_id" to 1,
+                "turn_date" to "2026-10-12",
+                "status" to "pending",
+            )
+        val done =
+            row("id" to "done", "family_id" to 1, "turn_date" to "2026-10-19", "status" to "done")
+        val future =
+            row(
+                "id" to "future",
+                "family_id" to 1,
+                "turn_date" to "2026-11-02",
+                "status" to "pending",
+            )
+        val s =
+            original.copy(
+                tables = original.tables + ("cleaning_turns" to listOf(past, done, future))
+            )
+        assertEquals("future", s.nextCleaningTurn("2026-10-22")?.id)
+        assertNull(
+            s.copy(tables = original.tables + ("cleaning_turns" to listOf(past, done)))
+                .nextCleaningTurn("2026-10-22")
+        )
+    }
+
     private fun data(role: Role = Role.ADMIN) =
         Snapshot(
             Profile("u", "Test", "test@example.test", role, 1, 2),

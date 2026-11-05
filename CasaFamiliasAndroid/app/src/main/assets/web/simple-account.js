@@ -12,6 +12,11 @@ window.CasaAccounts = (() => {
       .map((type) => parts.find((p) => p.type === type).value)
       .join("-");
   };
+  const weekStart = (day = today()) => {
+    const date = new Date(day + "T12:00:00Z");
+    date.setUTCDate(date.getUTCDate() - ((date.getUTCDay() + 6) % 7));
+    return date.toISOString().slice(0, 10);
+  };
   const cents = (value) => {
     let text = String(value || 0)
       .trim()
@@ -202,6 +207,7 @@ window.CasaAccounts = (() => {
   }
   return {
     today,
+    weekStart,
     servicePlan,
     cents,
     number,

@@ -1,6 +1,8 @@
 # Casa Familias
 
-Entrega actual: **5.9, aplicación y web con una interfaz más sencilla**. Consulta [la entrega y los pendientes](ENTREGA.md), [las instrucciones de instalación y actualización web](entregas/casa-familias-5.9/LEEME.md) y [la guía de publicación](entregas/google-play/GUIA_GOOGLE_PLAY.md).
+Entrega actual: **5.10, letra grande y acceso directo al recordatorio de limpieza**. Consulta [la entrega y los pendientes](ENTREGA.md), [las instrucciones de instalación y actualización web](entregas/casa-familias-5.10/LEEME.md) y [la guía de publicación](entregas/google-play/GUIA_GOOGLE_PLAY.md).
+
+En **Cuenta**, los controles **Normal, Grande y Extra grande** son botones de ancho completo al principio de la pantalla. Toda la fila Modo oscuro responde al toque. En **Limpieza → Activar recordatorio** se permite el aviso de la semana en ese celular; **Probar aviso de limpieza** comprueba su canal de Android. Si está bloqueado, el botón abre los ajustes correspondientes. El inicio descarta semanas antiguas al buscar el próximo turno. [Guía de activación](entregas/casa-familias-5.10/LEEME.md).
 
 El inicio ofrece botones grandes con una tarea por botón. Para las familias: **Pagar**, **Ver mis deudas**, **Mis pagos** y su próxima limpieza. Para administración y encargado: **Registrar facturas**, **Revisar pagos**, **Ver deudas** y **Limpieza esta semana**. El pago se hace en tres pasos: importe, foto y revisión. Los detalles y opciones poco frecuentes se abren cuando se necesitan. Las deudas muestran cuánto falta en cada mes y hasta qué mes existen registros. El texto de navegación se adapta y los botones admiten varias líneas.
 
@@ -20,7 +22,7 @@ En **Inicio** y **Limpieza**, el ingeniero/administrador y encargado consultan q
 
 Después de iniciar sesión, entra en **Cuenta → Activar huella** y confirma con la biometría de Android. Necesita un lector compatible y una huella previamente registrada. La opción se activa solo para la cuenta de ese teléfono; no se puede habilitar remotamente para los otros celulares. La contraseña sigue disponible. Se solicita autenticación al reiniciar el proceso o regresar tras 30 segundos fuera de la app. Consulta [la instalación y sus límites](entregas/casa-familias-5.3/LEEME.md).
 
-La interfaz utiliza Kotlin, Jetpack Compose, Material 3, Navigation Compose y MVVM. Incluye azul, fondos claros, botones con iconos y texto, Inter, tema claro y oscuro y letras ampliables. Las familias tienen cuatro pestañas: Inicio, Deudas, Limpieza y Más; administración y encargado: Inicio, Gastos, Deudas y Más. Pagos y Mi cuenta también se encuentran en Más. Las [capturas de 5.9](entregas/casa-familias-5.9/capturas) muestran datos ficticios; las propuestas y auditorías de versiones anteriores son históricas.
+La interfaz utiliza Kotlin, Jetpack Compose, Material 3, Navigation Compose y MVVM. Incluye azul, fondos claros, botones con iconos y texto, Inter, tema claro y oscuro y letras ampliables. Las familias tienen cuatro pestañas: Inicio, Deudas, Limpieza y Más; administración y encargado: Inicio, Gastos, Deudas y Más. Pagos y Mi cuenta también se encuentran en Más. Las [capturas históricas de 5.9](entregas/casa-familias-5.9/capturas) muestran datos ficticios; las propuestas y auditorías de versiones anteriores son históricas.
 
 Conserva Supabase, cuentas, cuotas, pagos parciales, crédito, comprobantes, QR privado, nombres y asignaciones de familias, limpieza semanal, propuestas, avisos, cierre de meses, auditoría y reportes PDF/Excel. Fondo Común no aparece en las consultas ni en las rutas activas. Los datos históricos no se eliminan.
 

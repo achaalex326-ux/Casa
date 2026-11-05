@@ -61,7 +61,7 @@ async function launch(mode) {
       } else if (mode === 'saved-session') {
         check($('startupScreen').hidden && !$('mobileApp').hidden && $('mobileNav').children.length === 4, 'Saved account reaches complete home');
         const clean = w.CF.state().D.cleaning;
-        clean.push({id:'turn',family_id:1,status:'pending',turn_date:'2026-10-19'});
+        clean.push({id:'turn',family_id:1,status:'pending',turn_date:w.CasaAccounts.weekStart()});
         const can = w.CF.canManageCleaning;
         w.CF.canManageCleaning = undefined;
         w.Mobile.render();

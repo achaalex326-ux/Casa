@@ -7,6 +7,7 @@ import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createEmptyComposeRule
 import androidx.compose.ui.text.TextLayoutResult
+import androidx.compose.ui.unit.dp
 import androidx.test.core.app.ActivityScenario
 import androidx.test.platform.app.InstrumentationRegistry
 import com.casafamilias.app.data.ExportFiles
@@ -219,6 +220,8 @@ class NativeNavigationTest {
         screenshot("11-familia-turno")
         compose.onNodeWithContentDescription("Volver").performClick()
         compose.onNodeWithContentDescription("Abrir mi perfil").performClick()
+        compose.onNodeWithText("Grande").assertIsDisplayed().assertHeightIsAtLeast(56.dp)
+        compose.onNodeWithText("Extra grande").assertIsDisplayed().assertHeightIsAtLeast(56.dp)
         scroll("Acceso con huella").assertExists()
         scroll("Modo oscuro").assertExists()
         compose.onNode(isToggleable()).performScrollTo().performClick()
@@ -435,6 +438,19 @@ class NativeNavigationTest {
         scroll("Ver mis deudas").assertExists()
         scroll("Mis pagos").assertExists()
         screenshot("34-inicio-sencillo-familia")
+    }
+
+    @Test
+    fun cleaningScreenExplainsPhoneRemindersWithoutEnablingThemInPreview() {
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        val before = com.casafamilias.app.data.DeviceAlertState.owner(context)
+        launch("family")
+        compose.onNodeWithText("Limpieza").performClick()
+        scroll("Aviso de limpieza en tu celular").assertExists()
+        scroll("Actívalo al ingresar con tu cuenta. El aviso llega a este celular.").assertExists()
+        compose.onNodeWithText("Activar recordatorio").assertDoesNotExist()
+        assertEquals(before, com.casafamilias.app.data.DeviceAlertState.owner(context))
+        screenshot("35-limpieza-recordatorio")
     }
 
     @Test

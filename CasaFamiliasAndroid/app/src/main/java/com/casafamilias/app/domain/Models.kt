@@ -225,6 +225,15 @@ data class Snapshot(
             .filter { Dates.monday(it.text("turn_date")) == Dates.monday(date) }
             .sortedBy { it.text("turn_date") }
 
+    fun nextCleaningTurn(date: String = Dates.today()): Record? =
+        rows("cleaning_turns")
+            .filter {
+                it.text("status") == "pending" &&
+                    representsCleaning(it.number("family_id")) &&
+                    it.text("turn_date") >= Dates.monday(date)
+            }
+            .minByOrNull { it.text("turn_date") }
+
     fun cleaningMonth(month: String) =
         rows("cleaning_turns")
             .filter { r ->

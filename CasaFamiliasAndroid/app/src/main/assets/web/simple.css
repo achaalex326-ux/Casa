@@ -1,4 +1,4 @@
-/* Casa Familias5.9. Same colours, type, hierarchy and actions as the native app. */
+/* Casa Familias5.10. Same colours, type, hierarchy and actions as the native app. */
 @font-face {
   font-family: CasaInter;
   src: url("fonts/inter.ttf") format("truetype");
@@ -668,4 +668,33 @@ html.dark-mode .task-button .tileIcon {
 }
 .ghost[href] {
   text-decoration: none;
+}
+
+.reading-choices {
+  display: grid;
+  gap: 12px;
+  margin: 16px 0;
+}
+.reading-choices button {
+  min-height: 56px;
+  width: 100%;
+}
+.reading-choices button[aria-pressed="true"] {
+  background: #eef2ff;
+  color: #10489f;
+  border-color: #3659e3;
+}
+html.dark-mode .reading-choices button[aria-pressed="true"] {
+  background: #163b68;
+  color: #dceaff;
+}
+
+html.dark-mode .settings-profile {
+  background: var(--surface);
+  color: var(--ink);
+}
+html.dark-mode .settings-profile .avatar,
+html.dark-mode #mobileNav button.active {
+  background: #163b68;
+  color: #dceaff;
 }

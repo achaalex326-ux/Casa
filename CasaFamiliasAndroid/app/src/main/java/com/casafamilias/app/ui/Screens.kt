@@ -349,7 +349,7 @@ fun DuesScreen(s: Snapshot, go: Go, family: Long? = s.profile.familyId) =
     FamilyAccountScreen(s, go, family)
 
 @Composable
-fun CleaningScreen(s: Snapshot, go: Go) {
+fun CleaningScreen(s: Snapshot, go: Go, vm: CasaViewModel) {
     var month by rememberSaveable { mutableStateOf(Dates.month()) }
     var scope by rememberSaveable { mutableStateOf("all") }
     val rows =
@@ -365,6 +365,7 @@ fun CleaningScreen(s: Snapshot, go: Go) {
             )
         }
         item { CleaningThisWeek(s, go) }
+        item { CleaningReminderPanel(s, vm) }
         item { MonthPicker(month, { month = it }) }
         if (month != Dates.month())
             item { Secondary("Volver al mes actual") { month = Dates.month() } }
@@ -867,6 +868,7 @@ fun ProfileScreen(s: Snapshot, vm: CasaViewModel, go: Go) {
     val alerts = LocalDeviceAlerts.current
     ContentList {
         item { Title("Mi perfil", s.profile.role.label) }
+        item { ReadingPreferences(vm) }
         item {
             Panel {
                 DataLine("Nombre", s.profile.name)
@@ -937,24 +939,6 @@ fun ProfileScreen(s: Snapshot, vm: CasaViewModel, go: Go) {
                 }
                 if (!s.preview && alerts != null)
                     Secondary("Ajustes de notificaciones") { alerts.settings() }
-            }
-        }
-        item {
-            Panel {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text("Modo oscuro", Modifier.weight(1f))
-                    Switch(state.dark, { vm.theme(it) })
-                }
-                Text("Tamaño del texto", style = MaterialTheme.typography.titleMedium)
-                Filters(
-                    listOf(
-                        Choice("1.0", "Normal"),
-                        Choice("1.15", "Grande"),
-                        Choice("1.3", "Extra grande"),
-                    ),
-                    state.textScale.toString(),
-                    { vm.scale(it.toFloat()) },
-                )
             }
         }
         item { Secondary("Actualizar datos", !state.busy) { vm.refresh() } }

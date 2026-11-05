@@ -137,6 +137,71 @@ class DeviceNotificationsTest {
     }
 
     @Test
+    fun currentCleaningWeekNotifiesOnceWithoutAnActivityAndCompletedTurnWithdrawsIt() =
+        runBlocking {
+            InstrumentationRegistry.getInstrumentation().runOnMainSync {
+                assertTrue(
+                    ActivityLifecycleMonitorRegistry.getInstance()
+                        .getActivitiesInStage(Stage.RESUMED)
+                        .isEmpty()
+                )
+            }
+            val monday = Dates.monday(Dates.today())
+            fun turn(id: String, date: String, status: String = "pending") =
+                Record(json("id" to id, "family_id" to 2, "turn_date" to date, "status" to status))
+            val current = turn("week-test", monday)
+            val future =
+                turn("future-test", java.time.LocalDate.parse(monday).plusWeeks(1).toString())
+            val s =
+                snapshot(0)
+                    .copy(
+                        tables =
+                            mapOf(
+                                "families" to
+                                    listOf(Record(json("id" to 1, "name" to "Familia de ejemplo"))),
+                                "cleaning_family_aliases" to
+                                    listOf(Record(json("family_id" to 2, "household_id" to 1))),
+                                "cleaning_turns" to listOf(current, future),
+                            )
+                    )
+            worker(s).doWork()
+            waitForSystem {
+                manager.activeNotifications.any { it.tag == "casa:cleaning:week-test" }
+            }
+            val shown = manager.activeNotifications.single { it.tag == "casa:cleaning:week-test" }
+            assertEquals(
+                "Esta semana te toca la limpieza",
+                shown.notification.extras.getString(Notification.EXTRA_TITLE),
+            )
+            assertTrue(
+                shown.notification.extras
+                    .getString(Notification.EXTRA_TEXT)
+                    .orEmpty()
+                    .contains(Dates.label(monday))
+            )
+            assertFalse(manager.activeNotifications.any { it.tag == "casa:cleaning:future-test" })
+            val seen = DeviceAlertState.history(context, user).getString("seen", null)
+            worker(s).doWork()
+            assertEquals(seen, DeviceAlertState.history(context, user).getString("seen", null))
+            assertEquals(
+                1,
+                manager.activeNotifications.count { it.tag == "casa:cleaning:week-test" },
+            )
+            worker(
+                    s.copy(
+                        tables =
+                            s.tables +
+                                ("cleaning_turns" to
+                                    listOf(turn("week-test", monday, "done"), future))
+                    )
+                )
+                .doWork()
+            waitForSystem {
+                manager.activeNotifications.none { it.tag == "casa:cleaning:week-test" }
+            }
+        }
+
+    @Test
     fun disabledAlertsCancelDeliveryAndSchedulingUsesOnePeriodicJob() = runBlocking {
         DeviceAlertState.schedule(context, user, false)
         DeviceAlertState.schedule(context, user, false)

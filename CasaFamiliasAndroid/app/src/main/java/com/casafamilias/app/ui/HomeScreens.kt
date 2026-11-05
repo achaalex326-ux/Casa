@@ -62,12 +62,7 @@ fun TaskButton(
 fun HomeScreen(s: Snapshot, go: Go) {
     val profile = s.profile
     val pending = s.paymentEntries().count { it.text("status") == "pending" }
-    val ownTurn =
-        s.rows("cleaning_turns")
-            .filter {
-                it.text("status") == "pending" && s.representsCleaning(it.number("family_id"))
-            }
-            .minByOrNull { it.text("turn_date") }
+    val ownTurn = s.nextCleaningTurn()
     ContentList {
         item {
             Title(
@@ -110,7 +105,12 @@ fun HomeScreen(s: Snapshot, go: Go) {
                     if (ownTurn != null)
                         Panel {
                             Text(
-                                "Tu próxima limpieza",
+                                if (
+                                    Dates.monday(ownTurn.text("turn_date")) ==
+                                        Dates.monday(Dates.today())
+                                )
+                                    "Esta semana te toca limpiar"
+                                else "Tu próxima limpieza",
                                 style = MaterialTheme.typography.titleMedium,
                             )
                             Text(

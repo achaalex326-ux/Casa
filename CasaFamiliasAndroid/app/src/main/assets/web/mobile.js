@@ -299,6 +299,7 @@ window.Mobile = (() => {
         .filter(
           (t) =>
             t.status === "pending" &&
+            t.turn_date >= CasaAccounts.weekStart() &&
             (demo
               ? t.family_id === s.me.family_id
               : CF.canManageCleaning(t.family_id)),
@@ -715,27 +716,27 @@ window.Mobile = (() => {
         ? "large"
         : "normal";
     return (
-      profileCard(s) +
-      row(
-        "lock",
-        "Cambiar contraseña",
-        'data-source="passwordForm" data-title="Cambiar contraseña"',
-      ) +
-      `<section class="card"><h3>Tamaño de letra</h3><div class="tabs">${[
+      `<section class="card"><h3>Letras y colores</h3><p>Si las letras se ven pequeñas, elige Grande o Extra grande.</p><div class="reading-choices">${[
         ["normal", "Normal"],
         ["large", "Grande"],
         ["extra", "Extra grande"],
       ]
         .map(
           ([value, label]) =>
-            `<button data-font-size="${value}" class="${size === value ? "selected" : ""}" aria-pressed="${size === value}">${label}</button>`,
+            `<button data-font-size="${value}" class="ghost ${size === value ? "selected" : ""}" aria-pressed="${size === value}">${label}</button>`,
         )
         .join(
           "",
         )}</div><label class="theme-toggle"><span>Modo oscuro</span><input type="checkbox" id="simpleDark" ${document.documentElement.classList.contains("dark-mode") ? "checked" : ""}></label></section>` +
+      profileCard(s) +
+      row(
+        "lock",
+        "Cambiar contraseña",
+        'data-source="passwordForm" data-title="Cambiar contraseña"',
+      ) +
       row("bell", "Activar notificaciones", 'data-click="phoneNotifyBtn"') +
       row("calendar", "Actualizar datos", 'data-click="refreshBtn"') +
-      '<a class="ghost" href="https://raw.githubusercontent.com/achaalex326-ux/Casa/main/entregas/casa-familias-5.9/CasaFamilias-5.9-pruebas.apk">Descargar app Android</a><p class="form-note">Casa Familias 5.9</p>' +
+      '<a class="ghost" href="https://raw.githubusercontent.com/achaalex326-ux/Casa/main/entregas/casa-familias-5.10/CasaFamilias-5.10-pruebas.apk">Descargar app Android</a><p class="form-note">Casa Familias 5.10</p>' +
       row("logout", "Cerrar sesión", 'data-logout="1"')
     );
   }

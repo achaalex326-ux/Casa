@@ -568,7 +568,7 @@ fun SignedApp(vm: CasaViewModel, s: Snapshot) {
                                 "payments" -> PaymentsScreen(s, ::go)
                                 "families" -> FamiliesScreen(s, ::go)
                                 "dues" -> DuesScreen(s, ::go)
-                                "cleaning" -> CleaningScreen(s, ::go)
+                                "cleaning" -> CleaningScreen(s, ::go, vm)
                                 "swaps" -> SwapsScreen(s, vm)
                                 "notices",
                                 "notifications" ->
