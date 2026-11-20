@@ -60,7 +60,6 @@ fun FormScreen(vm: CasaViewModel, s: Snapshot, form: Form, onBack: () -> Unit) {
     var confirm by remember { mutableStateOf(false) }
     var paymentOptions by rememberSaveable(form.kind, form.recordId) { mutableStateOf(false) }
     var paymentDetails by rememberSaveable(form.kind, form.recordId) { mutableStateOf(false) }
-    var showQr by rememberSaveable { mutableStateOf(false) }
     var serviceOptions by rememberSaveable { mutableStateOf(false) }
     var discountOptions by rememberSaveable { mutableStateOf(false) }
     fun update(key: String, value: String) {
@@ -164,17 +163,13 @@ fun FormScreen(vm: CasaViewModel, s: Snapshot, form: Form, onBack: () -> Unit) {
         if (form.kind == "payment" && page == 1) {
             val qr = s.rows("payment_qr_settings").firstOrNull()
             if (qr != null && qr.text("qr_image_path").isNotBlank() && values["method"] != "cash") {
-                TextButton(onClick = { showQr = !showQr }) {
-                    Text(if (showQr) "Ocultar QR" else "Ver QR para pagar")
+                Panel {
+                    Text(
+                        qr.text("qr_title").ifBlank { "QR para pagar" },
+                        style = MaterialTheme.typography.titleLarge,
+                    )
+                    ImageReceipt(vm, qr.text("qr_image_path"), true)
                 }
-                if (showQr)
-                    Panel {
-                        Text(
-                            qr.text("qr_title").ifBlank { "QR para pagar" },
-                            style = MaterialTheme.typography.titleMedium,
-                        )
-                        ImageReceipt(vm, qr.text("qr_image_path"), true)
-                    }
             }
         }
 

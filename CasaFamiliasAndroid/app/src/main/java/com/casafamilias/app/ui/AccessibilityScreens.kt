@@ -75,10 +75,8 @@ fun CleaningReminderPanel(s: Snapshot, vm: CasaViewModel) {
                 s.preview ->
                     Text("Actívalo al ingresar con tu cuenta. El aviso llega a este celular.")
                 alerts == null -> Text("Abre la aplicación Android para activar este aviso.")
-                alerts.enabled() && alerts.cleaningAllowed() -> {
+                alerts.enabled() && alerts.cleaningAllowed() ->
                     Text("Recordatorio activado en este celular.")
-                    Secondary("Probar aviso de limpieza") { alerts.testCleaning() }
-                }
                 alerts.enabled() && !alerts.cleaningAllowed() -> {
                     Text("El teléfono está bloqueando los avisos de limpieza.")
                     Action("Permitir avisos de limpieza", !state.busy) { alerts.cleaningSettings() }
