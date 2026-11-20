@@ -15,8 +15,8 @@ data class ServiceTotals(
     val regularShare: BigDecimal
         get() = shares.firstOrNull() ?: BigDecimal.ZERO
 
-    val finalShare: BigDecimal
-        get() = shares.lastOrNull() ?: BigDecimal.ZERO
+    val roundingWaived: BigDecimal
+        get() = toShare - regularShare * BigDecimal(shares.size)
 }
 
 object ServiceCalculation {
@@ -40,17 +40,8 @@ object ServiceCalculation {
             bills.zip(reductions).fold(BigDecimal.ZERO) { sum, (bill, reduction) ->
                 sum + (bill - reduction).max(BigDecimal.ZERO)
             }
-        // Match the existing accounting convention; assign the rounding difference once.
-        val regular = net.divide(BigDecimal(families), 2, RoundingMode.HALF_UP)
-        // For very small bills use truncation, so the final share can never be negative.
-        val base =
-            if (regular * BigDecimal(families - 1) > net)
-                net.divide(BigDecimal(families), 2, RoundingMode.DOWN)
-            else regular
-        val shares =
-            List(families) { index ->
-                if (index == families - 1) net - base * BigDecimal(families - 1) else base
-            }
+        val base = net.divide(BigDecimal(families), 2, RoundingMode.DOWN)
+        val shares = List(families) { base }
         return ServiceTotals(gross, discount, net, shares, invalid)
     }
 }

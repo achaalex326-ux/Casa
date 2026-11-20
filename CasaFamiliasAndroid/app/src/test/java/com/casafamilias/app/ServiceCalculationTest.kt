@@ -25,14 +25,14 @@ class ServiceCalculationTest {
         assertEquals(0, money(expected).compareTo(actual))
 
     @Test
-    fun sixWorksheetMonthsUseWholeInvoicesAndConserveEveryCent() {
+    fun sixWorksheetMonthsChargeEqualSharesAndWaiveRemainder() {
         val months =
             listOf(
                 listOf("36", "211.5", "396.50", "66.08"),
                 listOf("24", "165.6", "338.60", "56.43"),
-                listOf("32", "145.2", "326.20", "54.37"),
+                listOf("32", "145.2", "326.20", "54.36"),
                 listOf("36", "243.6", "428.60", "71.43"),
-                listOf("36.5", "198", "383.50", "63.92"),
+                listOf("36.5", "198", "383.50", "63.91"),
                 listOf("36.5", "191.6", "377.10", "62.85"),
             )
         months.forEach { row ->
@@ -40,7 +40,8 @@ class ServiceCalculationTest {
             equal(row[2], result.invoices)
             equal(row[2], result.toShare)
             equal(row[3], result.regularShare)
-            equal(row[2], result.shares.fold(BigDecimal.ZERO, BigDecimal::add))
+            assertTrue(result.shares.all { it == result.regularShare })
+            equal(row[2], result.shares.fold(result.roundingWaived, BigDecimal::add))
             assertFalse(result.excessiveDiscount)
         }
     }
@@ -69,7 +70,7 @@ class ServiceCalculationTest {
             val amount = BigDecimal(cents).movePointLeft(2)
             val result = ServiceCalculation.calculate(mapOf("water" to amount))
             assertTrue(result.shares.all { it >= BigDecimal.ZERO })
-            assertEquals(0, amount.compareTo(result.shares.fold(BigDecimal.ZERO, BigDecimal::add)))
+            assertEquals(0, amount.compareTo(result.shares.fold(result.roundingWaived, BigDecimal::add)))
         }
     }
 

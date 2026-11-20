@@ -289,7 +289,7 @@ object Forms {
                 list +=
                     f(
                         "other_water",
-                        "Descuento adicional de agua (Bs)",
+                        "Aporte del local al agua (Bs)",
                         InputType.MONEY,
                         initial = "0",
                         page = 2,
@@ -298,7 +298,7 @@ object Forms {
                 list +=
                     f(
                         "other_electricity",
-                        "Descuento adicional de luz (Bs)",
+                        "Aporte del local a la luz (Bs)",
                         InputType.MONEY,
                         initial = "0",
                         page = 2,

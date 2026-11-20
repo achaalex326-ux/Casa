@@ -62,7 +62,6 @@ fun FormScreen(vm: CasaViewModel, s: Snapshot, form: Form, onBack: () -> Unit) {
     var paymentDetails by rememberSaveable(form.kind, form.recordId) { mutableStateOf(false) }
     var showQr by rememberSaveable { mutableStateOf(false) }
     var serviceOptions by rememberSaveable { mutableStateOf(false) }
-    var discountOptions by rememberSaveable { mutableStateOf(false) }
     fun update(key: String, value: String) {
         values = values + (key to value)
         localError = null
@@ -185,7 +184,7 @@ fun FormScreen(vm: CasaViewModel, s: Snapshot, form: Form, onBack: () -> Unit) {
                     !(form.kind == "services" && it.key == "reference" && !serviceOptions) &&
                     !(form.kind == "services" &&
                         it.key in setOf("other_water", "other_electricity") &&
-                        !discountOptions) &&
+                        values["reference"] == "true") &&
                     !(form.kind == "payment" &&
                         it.key in setOf("mode", "share") &&
                         !paymentOptions) &&
@@ -426,11 +425,6 @@ fun FormScreen(vm: CasaViewModel, s: Snapshot, form: Form, onBack: () -> Unit) {
                 Text(if (serviceOptions) "Cerrar opciones" else "Opciones de referencia")
             }
         if (form.kind == "services" && page == form.pages - 1) {
-            TextButton(onClick = { discountOptions = !discountOptions }) {
-                Text(
-                    if (discountOptions) "Cerrar descuentos" else "Aplicar un descuento (opcional)"
-                )
-            }
             ServiceFormSummary(s, values)
         }
         val error = localError ?: state.error

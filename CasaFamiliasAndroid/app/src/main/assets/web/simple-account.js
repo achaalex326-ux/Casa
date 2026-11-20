@@ -193,15 +193,13 @@ window.CasaAccounts = (() => {
         0,
       ),
       count = state.D.families.length;
-    let base = count ? Math.round(total / count) : 0;
-    if (base * (count - 1) > total) base = Math.floor(total / count);
+    const base = count ? Math.floor(total / count) : 0;
     return {
       invoices,
       discounts: discounts.reduce((a, b) => a + b, 0),
       total,
-      shares: Array.from({ length: count }, (_, i) =>
-        i === count - 1 ? total - base * (count - 1) : base,
-      ),
+      roundingWaived: total - base * count,
+      shares: Array.from({ length: count }, () => base),
       invalid: bills.some((bill, i) => discounts[i] > bill),
     };
   }

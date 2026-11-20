@@ -291,9 +291,11 @@ fun ServiceFormSummary(s: Snapshot, values: Map<String, String>) {
                 DataLine("Total a repartir", Amounts.format(preview.toShare))
             }
             Text(
-                "${preview.shares.size} cuentas · ${Amounts.format(preview.regularShare)} por cuenta, aproximadamente.",
+                "${preview.shares.size} cuentas · ${Amounts.format(preview.regularShare)} por cuenta.",
                 style = MaterialTheme.typography.bodyLarge,
             )
+            if (preview.roundingWaived > BigDecimal.ZERO)
+                DataLine("Centavos sin cobrar", Amounts.format(preview.roundingWaived))
             Text(
                 "Las cuentas del encargado quedan cubiertas.",
                 style = MaterialTheme.typography.bodySmall,

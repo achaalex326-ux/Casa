@@ -22,9 +22,9 @@ const account=A.account(source,1);
 check(account.balance===12000&&account.pending.length===2&&account.latest==='2026-03','Published months, partial payment and last actual month');
 const admin={me:{role:'sysadmin'},D:{families:Array.from({length:6},(_,i)=>({id:i+1})),utilityCredits:[]}};
 let semester=0;
-for(const [water,electricity,total,regular] of [[36,211.5,39650,6608],[24,165.6,33860,5643],[32,145.2,32620,5437],[36,243.6,42860,7143],[36.5,198,38350,6392],[36.5,191.6,37710,6285]]){
+for(const [water,electricity,total,regular] of [[36,211.5,39650,6608],[24,165.6,33860,5643],[32,145.2,32620,5436],[36,243.6,42860,7143],[36.5,198,38350,6391],[36.5,191.6,37710,6285]]){
  const plan=A.servicePlan(admin,{water,electricity,wifi:149,gas:0});
- check(plan.total===total&&plan.shares[0]===regular&&plan.shares.reduce((a,b)=>a+b,0)===total,'Worksheet invoice sum closes');semester+=plan.total;
+ check(plan.total===total&&plan.shares.every(share=>share===regular)&&plan.shares.reduce((a,b)=>a+b,plan.roundingWaived)===total,'Worksheet invoice sum closes');semester+=plan.total;
 }
 check(semester===225050,'Semester exact total');
 admin.D.utilityCredits=[{service:'water',amount:10},{service:'water',amount:100,applied_month_start:'2026-01-01'}];

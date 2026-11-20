@@ -73,7 +73,7 @@ window.SimpleServices = (() => {
     return `<section class="card"><h3>Total de las facturas</h3><strong class="card-amount">${CasaAccounts.money(CasaAccounts.number(plan.invoices))}</strong>${
       draft.reference
         ? "<p>Solo referencia: no se crea deuda.</p>"
-        : `${plan.discounts ? `<div class="amount-line"><span>Descuentos</span><strong>${CasaAccounts.money(CasaAccounts.number(plan.discounts))}</strong></div><div class="amount-line"><span>Total a repartir</span><strong>${CasaAccounts.money(CasaAccounts.number(plan.total))}</strong></div>` : ""}<p>${plan.shares.length} cuentas · ${CasaAccounts.money(CasaAccounts.number(plan.shares[0] || 0))} por cuenta, aproximadamente.</p><p class="form-note">Las cuentas del encargado quedan cubiertas.</p><details><summary>Ver importe por familia</summary>${state()
+        : `${plan.discounts ? `<div class="amount-line"><span>Descuentos</span><strong>${CasaAccounts.money(CasaAccounts.number(plan.discounts))}</strong></div><div class="amount-line"><span>Total a repartir</span><strong>${CasaAccounts.money(CasaAccounts.number(plan.total))}</strong></div>` : ""}<p>${plan.shares.length} cuentas · ${CasaAccounts.money(CasaAccounts.number(plan.shares[0] || 0))} por cuenta.</p>${plan.roundingWaived ? `<p>Centavos sin cobrar: ${CasaAccounts.money(CasaAccounts.number(plan.roundingWaived))}</p>` : ""}<p class="form-note">Las cuentas del encargado quedan cubiertas.</p><details><summary>Ver importe por familia</summary>${state()
             .D.families.slice()
             .sort((a, b) => a.id - b.id)
             .map(
@@ -93,7 +93,7 @@ window.SimpleServices = (() => {
             `<label>${label} (Bs)<input data-service-amount="${key}" inputmode="decimal" value="${esc(draft[key])}"></label><details><summary>Adjuntar factura de ${label.toLowerCase()}</summary>${previews[key] ? `<img class="receiptPreview" src="${previews[key]}" alt="Factura de ${label}"><button class="text-action" data-service-remove="${key}">Quitar imagen</button>` : ""}<button class="ghost" data-service-camera="${key}">Tomar foto</button><button class="ghost" data-service-gallery="${key}">Elegir de galería</button><input type="file" hidden id="serviceCamera-${key}" accept="image/jpeg,image/png,image/webp" capture="environment"><input type="file" hidden id="serviceGallery-${key}" accept="image/jpeg,image/png,image/webp"></details>`,
         )
         .join("");
-    return `<details><summary>Aplicar un descuento (opcional)</summary><label>Descuento adicional de agua (Bs)<input data-service-amount="other_water" inputmode="decimal" value="${esc(draft.other_water)}"></label><label>Descuento adicional de luz (Bs)<input data-service-amount="other_electricity" inputmode="decimal" value="${esc(draft.other_electricity)}"></label></details><div id="serviceSummary">${summary()}</div>`;
+    return `${draft.reference ? "" : `<label>Aporte del local al agua (Bs)<input data-service-amount="other_water" inputmode="decimal" value="${esc(draft.other_water)}"></label><label>Aporte del local a la luz (Bs)<input data-service-amount="other_electricity" inputmode="decimal" value="${esc(draft.other_electricity)}"></label>`}<div id="serviceSummary">${summary()}</div>`;
   }
   async function choose(key, file) {
     if (!file) return;
